@@ -4,10 +4,9 @@ project name: Dislike. Share your opinions with the world
 
 ## Structure
 
-| Codebase | Description   |
-| -------- | ------------- |
-| bisasam  | Next Frontend |
-| glumanda | Tests         |
+| Codebase | Description      |
+| -------- | ---------------- |
+| bisasam  | Next.js Frontend |
 
 ## Bisasam Folder Structure
 
@@ -43,7 +42,7 @@ Next.js uses this directory to statically serve files like the robots.txt or the
 
 ### Styles:
 
-    The styling directory. Add the CSS stylings here.
+The styling directory. Add the CSS stylings here.
 
 ### Tests:
 
