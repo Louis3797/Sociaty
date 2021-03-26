@@ -1,34 +1,53 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# For what is this Folder ?
+
+The Bisasam Folder is for the NExt.js Frontend
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
+cd ../bisasam
+yarn build
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Folder Structure
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+### Assets:
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Directory for Images, SVG and etc...
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Components:
 
-## Learn More
+The components directory contains all your elements, modules, templates, and layouts.
 
-To learn more about Next.js, take a look at the following resources:
+    Elements:
+        This directory contains all the basic building blocks for your app. For example a button or a headline component.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    Modules:
+        Create all your components here which are more than a basic building block. This could be a header or a footer component. Most likely those modules are built out of multiple elements.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    Templates:
+        In the templates directory, you should place all your page templates which are then called from your Next.js specific pages.
 
-## Deploy on Vercel
+    Layouts:
+        Layouts are used to wrap your Templates and provide them with the components which will be displayed by default in a specific layout. For example, you would include the Footer and the Header in a default layout.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Pages:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+All the routes of your Next.js application will be placed in this directory. For each route, you will have a separate file, which is named as the route. So for example the file about.tsx in the pages directory would create the following route: https://dislike.com/about. You will get more information about the routing in the official documentation from Next.js.
+
+https://nextjs.org/docs/routing/introduction
+
+### Public:
+
+Next.js uses this directory to statically serve files like the robots.txt or the favicon.ico. You will get more information on how to include these files in the official docs.
+
+### Styles:
+
+The styling directory. Add the CSS stylings here.
+
+### Tests:
+
+Directory for all Tests in Bisasam Folder
