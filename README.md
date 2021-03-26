@@ -34,7 +34,7 @@ The components directory contains all your elements, modules, templates, and lay
 
 All the routes of your Next.js application will be placed in this directory. For each route, you will have a separate file, which is named as the route. So for example the file about.tsx in the pages directory would create the following route: https://dislike.com/about. You will get more information about the routing in the official documentation from Next.js.
 
-    [Next.js Routing documentation](https://nextjs.org/docs/routing/introduction)
+https://nextjs.org/docs/routing/introduction
 
 ### Public:
 
