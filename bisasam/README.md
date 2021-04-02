@@ -14,9 +14,13 @@ yarn dev
 
 ## Folder Structure
 
+### In public/
+
 ### Assets:
 
 Directory for Images, SVG and etc...
+
+### In src/
 
 ### Components:
 
@@ -37,16 +41,15 @@ The components directory contains all your elements, modules, templates, and lay
 ### Pages:
 
 All the routes of your Next.js application will be placed in this directory. For each route, you will have a separate file, which is named as the route. So for example the file about.tsx in the pages directory would create the following route: https://dislike.com/about. You will get more information about the routing in the official documentation from Next.js.
-
 https://nextjs.org/docs/routing/introduction
-
-### Public:
-
-Next.js uses this directory to statically serve files like the robots.txt or the favicon.ico. You will get more information on how to include these files in the official docs.
 
 ### Styles:
 
 The styling directory. Add the CSS stylings here.
+
+### Public:
+
+Next.js uses this directory to statically serve files like the robots.txt or the favicon.ico. You will get more information on how to include these files in the official docs.
 
 ### Tests:
 

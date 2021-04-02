@@ -1,24 +1,22 @@
 import { signIn, signOut, useSession } from "next-auth/client";
+import Dashboard from "../components/templates/Dashboard/Dashboard";
 
-export const Page = () => {
+export const Page: React.FC = () => {
   const [session, loading] = useSession();
 
-  return (
-    <>
-      {!session && (
-        <>
-          Not signed in <br />
-          <button onClick={() => signIn()}>Sign in</button>
-        </>
-      )}
-      {session && (
-        <>
-          Signed in as {session.user.username} <br />
-          <button onClick={() => signOut()}>Sign out</button>
-        </>
-      )}
-    </>
-  );
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+  if (!session) {
+    return (
+      <>
+        Not signed in <br />
+        <button onClick={() => signIn()}>Sign in</button>
+      </>
+    );
+  } else {
+    return Promise.resolve("/dash");
+  }
 };
 
 export default Page;
