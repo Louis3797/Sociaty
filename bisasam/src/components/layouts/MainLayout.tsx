@@ -1,5 +1,4 @@
 import React from "react";
-import { LoginContext } from "../context/LoginContext";
 
 export interface MainLayoutProps {
   children: React.ReactNode;
@@ -8,11 +7,6 @@ export interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({
   children,
 }: MainLayoutProps) => {
-  return (
-    <>
-      <LoginContext.Provider value={null}>{children}</LoginContext.Provider>
-    </>
-  );
+  return <>{children}</>;
 };
-
 export default MainLayout;

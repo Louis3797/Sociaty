@@ -15,17 +15,26 @@ const Register: React.FC = () => {
       <div className={styles.formContainer}>
         <h1 className={styles.title}>Sign Up</h1>
         <form className={styles.form}>
-          <input type="text" className={styles.input} placeholder="Username" />
-          <input type="email" className={styles.input} placeholder="E-Mail" />
           <input
-            type="password"
+            type="text"
             className={styles.input}
-            placeholder="Password"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setusername(e.target.value)}
+          />
+          <input
+            type="email"
+            className={styles.input}
+            placeholder="E-Mail"
+            value={email}
+            onChange={(e) => setemail(e.target.value)}
           />
           <input
             type="password"
             className={styles.input}
-            placeholder="Confirm Password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setpassword(e.target.value)}
           />
           <button className={styles.button}>Let's go</button>
         </form>

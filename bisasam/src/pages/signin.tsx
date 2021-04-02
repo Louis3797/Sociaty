@@ -9,6 +9,10 @@ export default function SignIn({ csrfToken }) {
         <input name="username" type="text" />
       </label>
       <label>
+        Email
+        <input name="email" type="email" />
+      </label>
+      <label>
         Password
         <input name="password" type="text" />
       </label>

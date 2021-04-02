@@ -1,14 +1,24 @@
-import { Dashboard } from "../components/templates/Dashboard/Dashboard";
-import MainLayout from "../components/layouts/MainLayout";
+import { signIn, signOut, useSession } from "next-auth/client";
 
-export const Home = () => {
+export const Page = () => {
+  const [session, loading] = useSession();
+
   return (
-    <div>
-      <MainLayout>
-        <Dashboard />
-      </MainLayout>
-    </div>
+    <>
+      {!session && (
+        <>
+          Not signed in <br />
+          <button onClick={() => signIn()}>Sign in</button>
+        </>
+      )}
+      {session && (
+        <>
+          Signed in as {session.user.username} <br />
+          <button onClick={() => signOut()}>Sign out</button>
+        </>
+      )}
+    </>
   );
 };
 
-export default Home;
+export default Page;
