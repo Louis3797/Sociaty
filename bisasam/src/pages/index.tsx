@@ -1,7 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/client";
 import Dashboard from "../components/templates/Dashboard/Dashboard";
 
-export const Page: React.FC = () => {
+export const Page = () => {
   const [session, loading] = useSession();
 
   if (loading) {
