@@ -2,6 +2,7 @@ import React from "react";
 import { AppProps } from "next/app";
 import { Provider } from "next-auth/client";
 import "../styles/globals.css";
+import SessionLayout from "../components/layouts/SessionLayout";
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -25,7 +26,9 @@ function App({ Component, pageProps }: AppProps) {
       }}
       session={pageProps.session}
     >
-      <Component {...pageProps} />
+      <SessionLayout>
+        <Component {...pageProps} />
+      </SessionLayout>
     </Provider>
   );
 }
