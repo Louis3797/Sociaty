@@ -35,7 +35,13 @@ const options = {
   // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
   // a separate secret is defined explicitly for encrypting the JWT.
   secret: process.env.SECRET,
-
+  pages: {
+    // signIn: '/auth/signin',  // Displays signin buttons
+    // signOut: '/auth/signout', // Displays form with sign out button
+    // error: '/auth/error', // Error code passed in query string as ?error=
+    // verifyRequest: '/auth/verify-request', // Used for check email page
+    // newUser: null // If set, new users will be directed here on first sign in
+  },
   session: {
     jwt: true,
     maxAge: 30 * 24 * 60 * 60 // 30 days
@@ -46,7 +52,9 @@ const options = {
         return Promise.resolve('/dash')
       }
       return Promise.resolve('/api/auth/signin')
-    },},
+    },
+    
+  },
 
     debug: true
 }

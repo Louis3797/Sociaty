@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 5vh;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--bg-color);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-family: "Comfortaa", cursive;
+  color: var(--secondary-color);
+}
+
+.img {
+  height: 60%;
+  width: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  justify-self: flex-end;
+}
