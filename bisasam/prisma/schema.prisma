@@ -47,7 +47,15 @@ model User {
   bio           String?   @db.Text
   createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
+  blockedBy     User[]    @relation("user1_blocked_user2", references: [user_id])
+  blocked       User[]    @relation("user1_blocked_user2", references: [user_id])
+  followedBy    User[]    @relation("UserFollows", references: [user_id])
+  following     User[]    @relation("UserFollows", references: [user_id])
 
+  user_creates_group user_creates_group[]
+  user_in_group      user_in_group[]
+  user_liked_comment user_liked_comment[] @ignore
+  user_liked_content user_liked_content[]
   @@map("users")
 }
 
@@ -63,17 +71,20 @@ model VerificationRequest {
 }
 
 model content {
-  content_id   Int      @unique @default(autoincrement())
-  content_text String?  @db.Text
-  created_at   DateTime @default(now()) @db.Timestamp(0)
-  user_id      Int
-  image_id     Int?
+  content_id         Int                  @unique @default(autoincrement())
+  content_text       String?              @db.Text
+  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  user_id            Int
+  image_id           Int?
+  user_liked_content user_liked_content[]
 }
 
 model group_chat {
-  group_id          Int     @unique @default(autoincrement())
-  group_name        String  @db.VarChar(30)
-  group_description String? @db.VarChar(255)
+  group_id           Int                  @unique @default(autoincrement())
+  group_name         String               @db.VarChar(30)
+  group_description  String?              @db.VarChar(255)
+  user_creates_group user_creates_group[]
+  user_in_group      user_in_group[]
 }
 
 model image {
@@ -89,58 +100,47 @@ model message {
   group_id     Int
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model user1_blocked_user2 {
-  user_id_1 Int
-  user_id_2 Int
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model user1_follows_user2 {
-  user_id_1 Int
-  user_id_2 Int
-
-  @@ignore
-}
-
 model user_comment {
-  comment_id   Int      @unique @default(autoincrement())
-  content_id   Int
-  comment_text String   @db.VarChar(255)
-  created_at   DateTime @default(now()) @db.Timestamp(0)
-  user_id      Int
+  comment_id         Int                  @unique @default(autoincrement())
+  content_id         Int
+  comment_text       String               @db.VarChar(255)
+  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  user_id            Int
+  user_liked_comment user_liked_comment[] @ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model user_creates_group {
+  user     User       @relation(fields: [user_id], references: [user_id])
   user_id  Int
+  group    group_chat @relation(fields: [group_id], references: [group_id])
   group_id Int
 
-  @@ignore
+  @@id([user_id, group_id])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model user_in_group {
+  user     User       @relation(fields: [user_id], references: [user_id])
   user_id  Int
+  group    group_chat @relation(fields: [group_id], references: [group_id])
   group_id Int
 
-  @@ignore
+  @@id([user_id, group_id])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model user_liked_comment {
   user_id    Int
   comment_id Int
+  user       User         @relation(fields: [user_id], references: [user_id])
+  comment    user_comment @relation(fields: [comment_id], references: [comment_id])
 
-  @@ignore
+  @@id([user_id, comment_id])
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model user_liked_content {
   user_id    Int
   content_id Int
+  user       User    @relation(fields: [user_id], references: [user_id])
+  content    content @relation(fields: [content_id], references: [content_id])
 
-  @@ignore
+  @@id([user_id, content_id])
 }
