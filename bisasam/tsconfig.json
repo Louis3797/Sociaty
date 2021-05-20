@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/pages/api/auth/[...nextauth].js", "tests/Register.test.js", "tests/Index.test.js"  ],
+, "src/pages/api/auth/[...nextauth].js", "tests/Register.test.js", "tests/Index.test.js", "next.config.js"  ],
   "exclude": [
     "node_modules"
   ],

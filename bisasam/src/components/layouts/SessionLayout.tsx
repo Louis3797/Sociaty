@@ -1,7 +1,7 @@
 import { getSession, useSession } from "next-auth/client";
 import React, { ReactNode } from "react";
-import AccessDenied from "../modules/AccessDenied";
-import Loading from "../modules/Loading";
+import AccessDenied from "../templates/AccessDenied/AccessDenied";
+import Loading from "../templates/Loading/Loading";
 
 export interface SessionLayoutProps {
   children: ReactNode;

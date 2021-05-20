@@ -4,7 +4,10 @@ import NextAuth from "next-auth"
 import Providers from "next-auth/providers"
 
 
+import { PrismaClient } from "@prisma/client";
+import Adapters from "next-auth/adapters";
 
+const prisma = new PrismaClient();
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -30,11 +33,13 @@ const options = {
   // * You must to install an appropriate node_module for your database
   // * The Email provider requires a database (OAuth providers do not)
 
+  adapter: Adapters.Prisma.Adapter({ prisma }),
 
   // The secret should be set to a reasonably long random string.
   // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
   // a separate secret is defined explicitly for encrypting the JWT.
   secret: process.env.SECRET,
+  
   pages: {
     // signIn: '/auth/signin',  // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
@@ -47,13 +52,10 @@ const options = {
     maxAge: 30 * 24 * 60 * 60 // 30 days
   },
   callbacks: {
-    redirect: async (url, _) => {
-      if (url === '/api/auth/signin') {
-        return Promise.resolve('/dash')
-      }
-      return Promise.resolve('/api/auth/signin')
-    },
-    
+   // async signIn(user, account, profile) { return true },
+   // async redirect(url, baseUrl) { return baseUrl },
+   // async session(session, user) { return session },
+   // async jwt(token, user, account, profile, isNewUser) { return token }  
   },
 
     debug: true

@@ -9,10 +9,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "@prisma/client": "2.20.1",
     "axios": "^0.21.1",
+    "eslint": "^7.23.0",
     "mysql": "^2.18.1",
     "next": "10.0.9",
     "next-auth": "^3.13.3",
+    "prisma": "2.20.1",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
@@ -21,7 +24,7 @@
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@types/next-auth": "^3.13.0",
-    "@types/node": "^14.14.36",
+    "@types/node": "^14.14.37",
     "@types/react": "^17.0.3",
     "babel-jest": "^26.6.3",
     "jest": "^26.6.3",

@@ -1,14 +1,19 @@
-import { getSession, useSession } from "next-auth/client";
 import React from "react";
+import { getSession, useSession } from "next-auth/client";
 
 import styles from "../../styles/Navbar.module.css";
 
 const Navbar: React.FC = () => {
-  const [session, loading] = useSession();
+  const [session] = useSession();
   return (
     <div className={styles.container}>
-      <p className={styles.logo}>Dislike</p>
-      <img src={session?.user.image} className={styles.img}></img>
+      <div className={styles.innerContainer}>
+        <p className={styles.logo}>The Sociaty</p>
+        <p>{session.user.name}</p>
+        <p>{session.user.email ? "" : "null"}</p>
+        <p>{session.user.image}</p>
+        <img src={session?.user.image} className={styles.img}></img>
+      </div>
     </div>
   );
 };
