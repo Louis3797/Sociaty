@@ -8,72 +8,74 @@ datasource db {
 }
 
 model Account {
-  acc_id             Int       @id @default(autoincrement())
-  compoundId         String    @unique @map("compound_id") @db.VarChar(255)
-  userId             Int       @map("user_id")
-  providerType       String    @map("provider_type") @db.VarChar(255)
-  providerId         String    @map("provider_id") @db.VarChar(255)
-  providerAccountId  String    @map("provider_account_id") @db.VarChar(255)
-  refreshToken       String?   @map("refresh_token") @db.Text
-  accessToken        String?   @map("access_token") @db.Text
-  accessTokenExpires DateTime? @map("access_token_expires") @db.Timestamp(6)
-  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt          DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
+  id                 Int       @id @default(autoincrement())
+  compoundId         String    @unique @map(name: "compound_id")
+  userId             Int       @map(name: "user_id")
+  providerType       String    @map(name: "provider_type")
+  providerId         String    @map(name: "provider_id")
+  providerAccountId  String    @map(name: "provider_account_id")
+  refreshToken       String?   @map(name: "refresh_token")
+  accessToken        String?   @map(name: "access_token")
+  accessTokenExpires DateTime? @map(name: "access_token_expires")
+  createdAt          DateTime  @default(now()) @map(name: "created_at")
+  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
 
-  @@index([providerAccountId], name: "provider_account_id")
-  @@index([providerId], name: "provider_id")
-  @@index([userId], name: "user_id")
-  @@map("accounts")
+
+  @@index([providerAccountId], name: "providerAccountId")
+  @@index([providerId], name: "providerId")
+  @@index([userId], name: "userId")
+  @@map(name: "accounts")
 }
 
 model Session {
   id           Int      @id @default(autoincrement())
-  userId       Int      @map("user_id")
-  expires      DateTime @db.Timestamp(6)
-  sessionToken String   @unique @map("session_token") @db.VarChar(255)
-  accessToken  String   @unique @map("access_token") @db.VarChar(255)
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt    DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  userId       Int      @map(name: "user_id")
+  expires      DateTime
+  sessionToken String   @unique @map(name: "session_token")
+  accessToken  String   @unique @map(name: "access_token")
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  updatedAt    DateTime @default(now()) @map(name: "updated_at")
 
-  @@map("sessions")
+  @@map(name: "sessions")
 }
 
 model User {
-  user_id       Int       @id @default(autoincrement())
-  username      String?   @db.VarChar(255)
-  email         String?   @unique @db.VarChar(255)
-  emailVerified DateTime? @map("email_verified") @db.Timestamp(6)
-  image         String?   @db.VarChar(255)
-  bio           String?   @db.Text
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
-  blockedBy     User[]    @relation("user1_blocked_user2", references: [user_id])
-  blocked       User[]    @relation("user1_blocked_user2", references: [user_id])
-  followedBy    User[]    @relation("UserFollows", references: [user_id])
-  following     User[]    @relation("UserFollows", references: [user_id])
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map(name: "email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+
+  bio        String? @db.VarChar(255)
+  blockedBy  User[]  @relation("user1_blocked_user2", references: [id])
+  blocked    User[]  @relation("user1_blocked_user2", references: [id])
+  followedBy User[]  @relation("user1_follows_user2", references: [id])
+  following  User[]  @relation("user1_follows_user2", references: [id])
 
   user_creates_group user_creates_group[]
   user_in_group      user_in_group[]
   user_liked_comment user_liked_comment[] @ignore
   user_liked_content user_liked_content[]
-  @@map("users")
+  @@map(name: "users")
 }
 
 model VerificationRequest {
   id         Int      @id @default(autoincrement())
-  identifier String   @db.VarChar(255)
-  token      String   @unique @db.VarChar(255)
-  expires    DateTime @db.Timestamp(6)
-  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt  DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  createdAt  DateTime @default(now()) @map(name: "created_at")
+  updatedAt  DateTime @default(now()) @map(name: "updated_at")
 
-  @@map("verification_requests")
+  @@map(name: "verification_requests")
 }
 
 model content {
   content_id         Int                  @unique @default(autoincrement())
   content_text       String?              @db.Text
-  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  createdAt          DateTime             @default(now()) @map(name: "created_at")
   user_id            Int
   image_id           Int?
   user_liked_content user_liked_content[]
@@ -94,7 +96,7 @@ model image {
 
 model message {
   message_id   Int      @unique @default(autoincrement())
-  created_at   DateTime @default(now()) @db.Timestamp(0)
+  createdAt    DateTime @default(now()) @map(name: "created_at")
   text_message String   @db.VarChar(255)
   user_id      Int
   group_id     Int
@@ -104,13 +106,13 @@ model user_comment {
   comment_id         Int                  @unique @default(autoincrement())
   content_id         Int
   comment_text       String               @db.VarChar(255)
-  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  createdAt          DateTime             @default(now()) @map(name: "created_at")
   user_id            Int
   user_liked_comment user_liked_comment[] @ignore
 }
 
 model user_creates_group {
-  user     User       @relation(fields: [user_id], references: [user_id])
+  user     User       @relation(fields: [user_id], references: [id])
   user_id  Int
   group    group_chat @relation(fields: [group_id], references: [group_id])
   group_id Int
@@ -119,7 +121,7 @@ model user_creates_group {
 }
 
 model user_in_group {
-  user     User       @relation(fields: [user_id], references: [user_id])
+  user     User       @relation(fields: [user_id], references: [id])
   user_id  Int
   group    group_chat @relation(fields: [group_id], references: [group_id])
   group_id Int
@@ -130,7 +132,7 @@ model user_in_group {
 model user_liked_comment {
   user_id    Int
   comment_id Int
-  user       User         @relation(fields: [user_id], references: [user_id])
+  user       User         @relation(fields: [user_id], references: [id])
   comment    user_comment @relation(fields: [comment_id], references: [comment_id])
 
   @@id([user_id, comment_id])
@@ -139,7 +141,7 @@ model user_liked_comment {
 model user_liked_content {
   user_id    Int
   content_id Int
-  user       User    @relation(fields: [user_id], references: [user_id])
+  user       User    @relation(fields: [user_id], references: [id])
   content    content @relation(fields: [content_id], references: [content_id])
 
   @@id([user_id, content_id])
