@@ -11,6 +11,7 @@
 ### API:
 
 - Graph QL
+- Apollo Micro Server
 
 ### Node modules:
 
