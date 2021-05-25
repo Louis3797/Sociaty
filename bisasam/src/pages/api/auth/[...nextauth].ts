@@ -1,8 +1,6 @@
-
-import { NextApiRequest, NextApiResponse } from "next"
-import NextAuth from "next-auth"
-import Providers from "next-auth/providers"
-
+import { NextApiRequest, NextApiResponse } from "next";
+import NextAuth from "next-auth";
+import Providers from "next-auth/providers";
 
 import { PrismaClient } from "@prisma/client";
 import Adapters from "next-auth/adapters";
@@ -25,7 +23,6 @@ const options = {
     }),
   ],
 
-    
   // Database optional. MySQL, Maria DB, Postgres and MongoDB are supported.
   // https://next-auth.js.org/configuration/databases
   //
@@ -33,13 +30,21 @@ const options = {
   // * You must to install an appropriate node_module for your database
   // * The Email provider requires a database (OAuth providers do not)
 
-  adapter: Adapters.Prisma.Adapter({ prisma }),
+  adapter: Adapters.Prisma.Adapter({
+    prisma,
+    modelMapping: {
+      User: "user",
+      Account: "account",
+      Session: "session",
+      VerificationRequest: "verificationRequest",
+    },
+  }),
 
   // The secret should be set to a reasonably long random string.
   // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
   // a separate secret is defined explicitly for encrypting the JWT.
   secret: process.env.SECRET,
-  
+
   pages: {
     // signIn: '/auth/signin',  // Displays signin buttons
     // signOut: '/auth/signout', // Displays form with sign out button
@@ -49,16 +54,17 @@ const options = {
   },
   session: {
     jwt: true,
-    maxAge: 30 * 24 * 60 * 60 // 30 days
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-   // async signIn(user, account, profile) { return true },
-   // async redirect(url, baseUrl) { return baseUrl },
-   // async session(session, user) { return session },
-   // async jwt(token, user, account, profile, isNewUser) { return token }  
+    // async signIn(user, account, profile) { return true },
+    // async redirect(url, baseUrl) { return baseUrl },
+    // async session(session, user) { return session },
+    // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 
-    debug: true
-}
+  debug: true,
+};
 
-export default (req: NextApiRequest, res: NextApiResponse) => NextAuth(req, res, options);
+export default (req: NextApiRequest, res: NextApiResponse) =>
+  NextAuth(req, res, options);

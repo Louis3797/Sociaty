@@ -8,10 +8,7 @@ const Navbar: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.innerContainer}>
-        <p className={styles.logo}>The Sociaty</p>
-        <p>{session.user.name}</p>
-        <p>{session.user.email ? "" : "null"}</p>
-        <p>{session.user.image}</p>
+        <p className={styles.logo}>Sociaty</p>
         <img src={session?.user.image} className={styles.img}></img>
       </div>
     </div>
