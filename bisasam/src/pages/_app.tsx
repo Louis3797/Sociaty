@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AppProps } from "next/app";
-import { Provider } from "next-auth/client";
+import { Provider, useSession } from "next-auth/client";
 import "../styles/globals.css";
 import SessionLayout from "../components/layouts/SessionLayout";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 function App({ Component, pageProps }: AppProps) {
+  const client = new ApolloClient({
+    uri: "http://localhost:3000/api/graphql",
+    cache: new InMemoryCache(),
+  });
+
   return (
     <Provider
       // Provider options are not required but can be useful in situations where
@@ -27,7 +33,9 @@ function App({ Component, pageProps }: AppProps) {
       session={pageProps.session}
     >
       <SessionLayout>
-        <Component {...pageProps} />
+        <ApolloProvider client={client}>
+          <Component {...pageProps} />
+        </ApolloProvider>
       </SessionLayout>
     </Provider>
   );
