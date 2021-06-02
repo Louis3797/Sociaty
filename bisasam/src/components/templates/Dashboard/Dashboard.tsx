@@ -3,7 +3,7 @@ import Navbar from "../../modules/Navbar";
 
 import styles from "../../../styles/Dashboard.module.css";
 import { useSession } from "next-auth/client";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
 import { GET_USER_ID } from "../../../graphql/querys";
 
@@ -41,8 +41,8 @@ export const Dashboard: React.FC = () => {
     // If the session is true than setItem UID in SessionStorage , The item is the User_ID
     else if (session) {
       window.sessionStorage.setItem(
-        data?.findUserWithEmail.id.toString(),
-        "UID"
+        "UID",
+        data?.findUserWithEmail.id.toString()
       );
     }
   }, [session, data]);
