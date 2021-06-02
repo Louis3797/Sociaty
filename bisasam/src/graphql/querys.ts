@@ -7,3 +7,15 @@ export const GET_USER_ID = gql`
     }
   }
 `;
+
+export const GET_USER_WITH_ID = gql`
+  query GET_USER($id: Int!) {
+    findUser(id: $id) {
+      id
+      name
+      email
+      image
+      bio
+    }
+  }
+`;
