@@ -3,8 +3,6 @@ import React from "react";
 import ProfileHeader from "../../components/elements/ProfileHeader";
 import ProfileInfoBox from "../../components/elements/ProfileInfoBox";
 import Navbar from "../../components/modules/Navbar";
-import { GET_USER_WITH_ID } from "../../graphql/querys";
-import { initializeApollo } from "../../lib/apolloClient";
 import styles from "../../styles/ProfilePage.module.css";
 
 interface USER {
@@ -21,7 +19,6 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
-  console.log(data.findUser.name);
   const [session] = useSession();
   return (
     <>
