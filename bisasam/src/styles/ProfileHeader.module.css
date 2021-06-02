@@ -1,0 +1,54 @@
+.outerContainer {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  background-color: var(--primary-color);
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.userImg {
+  height: 6.5rem;
+  width: 6.5em;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.innerContainer {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.userInfoContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: justify;
+  margin-left: 10%;
+}
+
+.username {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+}
+
+.useremail {
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  opacity: 0.6;
+  margin-top: -20px;
+}
+
+.userBio {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  margin-top: 20px;
+}

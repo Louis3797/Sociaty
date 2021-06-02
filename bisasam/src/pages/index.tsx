@@ -1,3 +1,3 @@
-import Dash from "./dash";
+import Dashboard from "../components/templates/Dashboard/Dashboard";
 
-export default Dash;
+export default Dashboard;

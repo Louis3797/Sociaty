@@ -13,20 +13,21 @@
   display: flex;
   flex-direction: row;
   width: 80%;
-  height: 95vh;
+  height: 91vh;
   background-color: var(--bg-color);
+  margin-top: 3vh;
 }
 
 .feedContainer {
   display: flex;
   flex-grow: 2;
   height: 100%;
-  background-color: #000099;
+  background-color: #232323;
   justify-content: center;
 }
 
 .groupContainer {
   flex-grow: 1;
   height: 100%;
-  background-color: #009900;
+  background-color: #343434;
 }

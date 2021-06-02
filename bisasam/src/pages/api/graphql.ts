@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 const typeDefs = gql`
   type Query {
     allUsers: [User!]!
-    findUser(id: Int): User!
+    findUser(id: Int!): User!
+    findUserWithEmail(email: String!): User!
   }
   type User {
     id: Int!
@@ -23,10 +24,18 @@ const resolvers = {
       return prisma.user.findMany();
     },
 
-    findUser: (userId) => {
+    findUser: (_parent, _args, ctx) => {
       return prisma.user.findUnique({
         where: {
-          id: userId,
+          id: _args.id,
+        },
+      });
+    },
+
+    findUserWithEmail: (_parent, _args, ctx) => {
+      return prisma.user.findUnique({
+        where: {
+          email: _args.email,
         },
       });
     },

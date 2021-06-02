@@ -3,8 +3,11 @@ import { AppProps } from "next/app";
 import { Provider } from "next-auth/client";
 import "../styles/globals.css";
 import SessionLayout from "../components/layouts/SessionLayout";
+import { ApolloProvider } from "@apollo/client";
+import { useApollo } from "../lib/apolloClient";
 
 function App({ Component, pageProps }: AppProps) {
+  const apolloClient = useApollo(pageProps.initialApolloState);
   return (
     <Provider
       // Provider options are not required but can be useful in situations where
@@ -27,7 +30,9 @@ function App({ Component, pageProps }: AppProps) {
       session={pageProps.session}
     >
       <SessionLayout>
-        <Component {...pageProps} />
+        <ApolloProvider client={apolloClient}>
+          <Component {...pageProps} />
+        </ApolloProvider>
       </SessionLayout>
     </Provider>
   );
