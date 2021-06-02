@@ -8,7 +8,9 @@ const Navbar: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.innerContainer}>
-        <p className={styles.logo}>Sociaty</p>
+        <Link href={"/"}>
+          <p className={styles.logo}>Sociaty</p>
+        </Link>
         <Link href={`/u/${sessionStorage.getItem("UID")}`}>
           <img src={session?.user.image} className={styles.img}></img>
         </Link>
