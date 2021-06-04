@@ -49,7 +49,6 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <Navbar />
       <div className={styles.innerContainer}>
         <div className={styles.feedContainer}>
           <Feed>

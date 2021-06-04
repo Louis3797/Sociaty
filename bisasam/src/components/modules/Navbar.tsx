@@ -1,7 +1,8 @@
 import React from "react";
-import { getSession, useSession } from "next-auth/client";
+import { useSession } from "next-auth/client";
 import Link from "next/link";
 import styles from "../../styles/Navbar.module.css";
+import { SolidChatBubble, SolidPlus } from "../../icons";
 
 const Navbar: React.FC = () => {
   const [session] = useSession();
@@ -11,19 +12,24 @@ const Navbar: React.FC = () => {
         <Link href={"/"}>
           <p className={styles.logo}>Sociaty</p>
         </Link>
-        <Link href={`/u/${sessionStorage.getItem("UID")}`}>
-          <img src={session?.user.image} className={styles.img}></img>
-        </Link>
+        <div className={styles.iconContainer}>
+          <Link href={"/chats"}>
+            <SolidChatBubble />
+          </Link>
+          <Link href={"/submit"}>
+            <SolidPlus />
+          </Link>
+          <Link href={`/u/${sessionStorage.getItem("UID")}`}>
+            <img
+              src={session?.user.image}
+              className={styles.img}
+              alt="UserImg"
+            ></img>
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Navbar;
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  return {
-    props: { session },
-  };
-}

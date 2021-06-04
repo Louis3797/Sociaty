@@ -36,3 +36,16 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+.iconContainer {
+  display: flex;
+  flex-direction: row;
+  width: 150px;
+  height: 5vh;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-color);
+  top: 0;
+  position: relative;
+  padding: 0px 10px 0px 10px;
+}
