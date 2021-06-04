@@ -1,6 +1,8 @@
+import { useMutation } from "@apollo/client";
 import { useSession } from "next-auth/client";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
+import { POST_CONTENT } from "../../../graphql/mutations";
 import styles from "../../../styles/SubmitPage.module.scss";
 
 //Add error toast if u cant submit bc of text size
@@ -10,9 +12,19 @@ const SubmitPage: React.FC = () => {
   const [session] = useSession();
   const [text, settext] = useState("");
 
+  const [addTodo] = useMutation(POST_CONTENT);
+
   function handleSubmit(text: String) {
     if (text.length <= 255) {
+      addTodo({
+        variables: {
+          content_text: text.toString(),
+          user_id: parseInt(sessionStorage.getItem("UID")),
+        },
+      });
+
       router.back();
+      settext("");
     }
   }
 

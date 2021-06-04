@@ -8,6 +8,11 @@ const typeDefs = gql`
     allUsers: [User!]!
     findUser(id: Int!): User!
     findUserWithEmail(email: String!): User!
+    getContentFromUser(id: Int!): [Content!]
+  }
+
+  type Mutation {
+    postContent(content_text: String!, user_id: Int!, image_id: Int): Content
   }
   type User {
     id: Int!
@@ -15,6 +20,20 @@ const typeDefs = gql`
     image: String!
     email: String
     bio: String
+    content: [Content!]!
+    follow: [UserFollowsUser!]!
+  }
+  type UserFollowsUser {
+    userA: User!
+    userB: User!
+  }
+
+  type Content {
+    content_id: Int!
+    content_text: String!
+    user_id: Int!
+    image_id: Int
+    createdAt: DateTime
   }
 `;
 
@@ -36,6 +55,16 @@ const resolvers = {
       return prisma.user.findUnique({
         where: {
           email: _args.email,
+        },
+      });
+    },
+  },
+  Mutation: {
+    postContent: (_parent, _args, ctx) => {
+      return prisma.content.create({
+        data: {
+          content_text: _args.content_text,
+          user_id: _args.user_id,
         },
       });
     },
