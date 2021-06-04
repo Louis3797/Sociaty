@@ -1,0 +1,119 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--bg-color);
+  align-items: center;
+}
+
+.innerContainer {
+  display: grid;
+  grid-template-columns: 600px;
+  grid-template-rows: 50px 300px;
+  width: 600px;
+  height: 250px;
+  margin-top: 20vh;
+  background-color: var(--primary-color);
+  border-radius: 20px;
+}
+.head {
+  width: 100%;
+  height: 100%;
+  border-bottom: solid var(--text-color) 1px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.head h1 {
+  font-size: 1.5rem;
+  font-weight: bolder;
+  font-family: "Comfortaa", cursive;
+  color: var(--txt-color);
+  margin-left: 10px;
+}
+
+.body {
+  width: 100%;
+  height: 200px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+.bodyContainerTop {
+  width: 100%;
+  height: 40%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.userImg {
+  height: 60%;
+  width: auto;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+  margin-left: 10px;
+}
+
+.bodyContainerTop {
+  textarea {
+    width: 100%;
+    height: 60%;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: none;
+    resize: none;
+    outline: none;
+    background-color: transparent;
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+}
+
+.bodyContainerBottom {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.buttonCancel {
+  width: 100px;
+  height: 30px;
+  border-radius: 18px;
+  background-color: var(--primary-color);
+  border: solid 1px transparent;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: "Comfortaa", cursive;
+  cursor: pointer;
+  transition: all 0.1s ease-in-out;
+  margin: 0px 10px 10px 0px;
+  &:hover {
+    background-color: transparent;
+    border-color: #fff;
+    transition: all 0.1s ease-in-out;
+  }
+}
+
+.buttonSubmit {
+  width: 100px;
+  height: 30px;
+  border-radius: 18px;
+  background: var(--gradient);
+  border: solid 1px transparent;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 300;
+  font-family: "Comfortaa", cursive;
+  cursor: pointer;
+  margin: 0px 10px 10px 0px;
+}
