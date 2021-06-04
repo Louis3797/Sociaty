@@ -6,6 +6,7 @@
   --text-color: #f1f1f1;
   --bg-color: #1e1e1e;
   --error-color: #df0000;
+  --gradient: linear-gradient(100deg, #b011f5 40%, #8900c4);
 }
 
 html {
