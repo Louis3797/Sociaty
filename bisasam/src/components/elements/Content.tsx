@@ -14,6 +14,7 @@ const Content: React.FC<ContentProps> = ({ userImg, name, text, img }) => {
         <img
           src={userImg}
           className="h-4/5 w-auto rounded-full object-cover ml-5 mr-4"
+          alt="UserImg"
         />
         <p className="text-lg font-semibold tracking-wide">{name}</p>
       </div>
