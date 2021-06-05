@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "../../styles/ProfileHeader.module.css";
 
 export interface ProfileCompOneProps {
   name: string;
@@ -15,15 +14,20 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   bio,
 }) => {
   return (
-    <div className={styles.outerContainer}>
-      <div className={styles.innerContainer}>
-        <img src={img} alt="" className={styles.userImg} />
-        <div className={styles.userInfoContainer}>
-          <p className={styles.username}>{name}</p>
-          <p className={styles.useremail}>{email}</p>
+    <div className="flex flex-col w-2/5 bg-primary p-5 rounded-3xl">
+      <div className="flex flex-row w-full bg-transparent justify-start items-center ">
+        <img
+          src={img}
+          alt=""
+          className="h-16 w-auto rounded-full object-cover mr-5"
+        />
+
+        <div className="flex flex-col w-full h-5/6 justify-between items-start text-justify">
+          <p className="text-2xl font-semibold tracking-wide">{name}</p>
+          <p className="text-base tracking-wider opacity-60">{email}</p>
         </div>
       </div>
-      <p className={styles.userBio}>Status: {bio}</p>
+      <p className="text-base tracking-wider mt-6">Status: {bio}</p>
     </div>
   );
 };

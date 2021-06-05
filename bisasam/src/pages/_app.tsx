@@ -6,6 +6,8 @@ import SessionLayout from "../components/layouts/SessionLayout";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../lib/apolloClient";
 
+import NavLayout from "../components/layouts/NavLayout";
+
 function App({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState);
   return (
@@ -31,7 +33,9 @@ function App({ Component, pageProps }: AppProps) {
     >
       <SessionLayout>
         <ApolloProvider client={apolloClient}>
-          <Component {...pageProps} />
+          <NavLayout>
+            <Component {...pageProps} />
+          </NavLayout>
         </ApolloProvider>
       </SessionLayout>
     </Provider>
