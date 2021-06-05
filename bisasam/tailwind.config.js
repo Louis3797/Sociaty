@@ -1,3 +1,4 @@
+const colors = require("tailwindcss/colors");
 module.exports = {
   purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   darkMode: false, // or 'media' or 'class'
@@ -16,6 +17,7 @@ module.exports = {
       text: "#f1f1f1",
       bg: "#1e1e1e",
       error: "#df0000",
+      gray: colors.gray,
     },
     fontFamily: {
       comfortaa: ["Comfortaa", "cursive"],
