@@ -1,5 +1,3 @@
-import styles from "../../styles/ProfileInfoBox.module.css";
-
 interface ProfileInfoBoxProps {
   follower: number;
   follows: number;
@@ -12,10 +10,10 @@ const ProfileInfoBox: React.FC<ProfileInfoBoxProps> = ({
   posts,
 }) => {
   return (
-    <div className={styles.container}>
-      <p className={styles.stats}>Beiträge: {posts}</p>
-      <p className={styles.stats}>Abonnenten: {follower}</p>
-      <p className={styles.stats}>Abonniert: {follows}</p>
+    <div className="flex flex-row w-2/5 bg-primary p-3 rounded-3xl justify-around mt-10">
+      <p className="text-base font-medium">Beiträge: {posts}</p>
+      <p className="text-base font-medium">Abonnenten: {follower}</p>
+      <p className="text-base font-medium">Abonniert: {follows}</p>
     </div>
   );
 };

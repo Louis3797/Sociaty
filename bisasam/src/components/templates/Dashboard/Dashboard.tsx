@@ -1,7 +1,4 @@
 import Feed from "../../modules/Feed";
-import Navbar from "../../modules/Navbar";
-
-import styles from "../../../styles/Dashboard.module.css";
 import { useSession } from "next-auth/client";
 import { useQuery } from "@apollo/client";
 import { useEffect } from "react";
@@ -48,14 +45,16 @@ export const Dashboard: React.FC = () => {
   }, [session, data]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.innerContainer}>
-        <div className={styles.feedContainer}>
+    <div className="flex flex-col w-full h-full justify-center items-center bg-error mt-16">
+      <div className="flex flex-row w-4/5 h-full bg-bg mt-12">
+        <div className="flex w-2/3 h-full bg-text justify-center">
           <Feed>
             <h1>Hello World</h1>
           </Feed>
         </div>
-        <div className={styles.groupContainer}></div>
+        <div className="flex flex-grow h-full bg-secondary">
+          <h1>test</h1>
+        </div>
       </div>
     </div>
   );

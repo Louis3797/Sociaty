@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&display=swap");
 
 :root {
@@ -13,7 +16,6 @@ html {
   scroll-behavior: smooth;
 }
 body {
-  /* background-color: var(--bg-color); */
   background-color: var(--bg-color);
   color: var(--text-color);
   padding: 0;

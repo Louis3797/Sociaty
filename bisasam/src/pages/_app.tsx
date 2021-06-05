@@ -5,7 +5,7 @@ import "../styles/globals.css";
 import SessionLayout from "../components/layouts/SessionLayout";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../lib/apolloClient";
-import Navbar from "../components/modules/Navbar";
+
 import NavLayout from "../components/layouts/NavLayout";
 
 function App({ Component, pageProps }: AppProps) {
