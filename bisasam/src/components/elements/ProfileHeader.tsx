@@ -18,7 +18,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
       <div className="flex flex-row w-full bg-transparent justify-start items-center ">
         <img
           src={img}
-          alt=""
+          alt="UserImg"
           className="h-16 w-auto rounded-full object-cover mr-5"
         />
 

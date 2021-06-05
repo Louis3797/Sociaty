@@ -11,5 +11,5 @@ export default async function handler(req, res) {
     variables: { id: parseInt(uid) },
   });
 
-  res.status(200).json(data);
+  res.status(200).json(JSON.stringify(data));
 }
