@@ -1,14 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
-
-const prisma = new PrismaClient();
 
 const typeDefs = gql`
   type Query {
     allUsers: [User!]!
     findUser(id: Int!): User!
     findUserWithEmail(email: String!): User!
-    getContentFromUser(id: Int!): [Content!]
+    getContentWithUserID(id: Int!): [Content!]
   }
 
   type Mutation {
@@ -33,7 +31,6 @@ const typeDefs = gql`
     content_text: String!
     user_id: Int!
     image_id: Int
-    createdAt: DateTime
   }
 `;
 
@@ -55,6 +52,13 @@ const resolvers = {
       return prisma.user.findUnique({
         where: {
           email: _args.email,
+        },
+      });
+    },
+    getContentWithUserID: (_parent, _args, ctx) => {
+      return prisma.content.findMany({
+        where: {
+          user_id: _args.id,
         },
       });
     },
