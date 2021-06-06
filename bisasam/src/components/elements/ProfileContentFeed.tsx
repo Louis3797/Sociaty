@@ -1,21 +1,25 @@
-import styles from "../../styles/ProfileContentFeed.module.css";
 import Content from "./Content";
 
-export interface ProfileContentFeedProps {}
+export interface ProfileContentFeedProps {
+  userImg?: string;
+  name?: string;
+  text?: string;
+  img?: string;
+  commentAmount?: number;
+  likeAmount?: number;
+}
 
-const ProfileContentFeed: React.FC<ProfileContentFeedProps> = () => {
+const ProfileContentFeed: React.FC<ProfileContentFeedProps> = ({
+  userImg,
+  name,
+  text,
+  img,
+  commentAmount,
+  likeAmount,
+}) => {
   return (
-    <div className="flex flex-col w-2/5 f-full bg-transparent rounded-3xl justify-start mt-10">
-      <Content
-        name="Gamer 3797"
-        text="ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
-        userImg="https://lh3.googleusercontent.com/a-/AOh14GgFSr2cUejuPJ3mffa6ajFGTq7DYLpIm5f7Hr7MmQ=s96-c"
-      />
-      <Content
-        name="Gamer 3797"
-        text="ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
-        userImg="https://lh3.googleusercontent.com/a-/AOh14GgFSr2cUejuPJ3mffa6ajFGTq7DYLpIm5f7Hr7MmQ=s96-c"
-      />
+    <div className="flex flex-col 2xl:w-2/5 lg:w-3/5 md:w-2/5 sm:w-3/5 f-full bg-transparent items-center justify-start mt-10">
+      <h2>Much emty here :(</h2>
     </div>
   );
 };

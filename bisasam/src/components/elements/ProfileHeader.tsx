@@ -1,5 +1,3 @@
-import React from "react";
-
 export interface ProfileCompOneProps {
   name: string;
   img: string;
@@ -14,7 +12,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   bio,
 }) => {
   return (
-    <div className="flex flex-col w-2/5 bg-primary p-5 rounded-3xl">
+    <div className="flex flex-col 2xl:w-2/5 lg:w-3/5 md:w-2/5 sm:w-3/5 bg-primary p-6 rounded-3xl ">
       <div className="flex flex-row w-full bg-transparent justify-start items-center ">
         <img
           src={img}

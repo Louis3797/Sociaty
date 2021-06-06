@@ -27,7 +27,7 @@ const SubmitPage: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full h-full bg-bg items-center">
-      <div className="block bg-primary w-2/5 h-64 rounded-3xl mt-60">
+      <div className="block bg-primary 2xl:w-2/5 lg:w-3/5 md:w-2/5 h-64 rounded-3xl mt-60">
         <div className="flex w-full h-1/6 items-start">
           <h1 className="text-2xl font-semibold font-comfortaa text-text ml-5 mt-3">
             Create a Post
