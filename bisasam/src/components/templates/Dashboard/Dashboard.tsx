@@ -43,14 +43,14 @@ export const Dashboard: React.FC = () => {
   }, [session, data]);
 
   return (
-    <div className="flex flex-col w-full h-full justify-center items-center mt-16">
-      <div className="flex flex-row w-4/5 h-full bg-bg mt-12">
-        <div className="flex w-2/3 h-full bg-gray-500 justify-center">
+    <div className="flex flex-col w-full h-full justify-center items-center mt-15 bg-primary-900">
+      <div className="flex flex-row 2xl:w-3/5 xl:w-3/4 lg:w-4/5 md:w-full sm:w-full h-full bg-primary-900 mt-12">
+        <div className="flex w-2/3 h-full bg-transparent justify-center">
           <Feed>
             <h1>Hello World</h1>
           </Feed>
         </div>
-        <div className="flex flex-grow h-full bg-gray-300">
+        <div className="flex flex-grow h-full bg-transparent-300">
           <h1>test</h1>
         </div>
       </div>

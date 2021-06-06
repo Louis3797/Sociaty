@@ -10,7 +10,7 @@ const ProfileInfoBox: React.FC<ProfileInfoBoxProps> = ({
   posts,
 }) => {
   return (
-    <div className="flex flex-row 2xl:w-2/5 lg:w-3/5 md:w-2/5 sm:w-3/5 bg-primary p-3 justify-around mt-7 rounded-3xl ">
+    <div className="flex flex-row 2xl:w-2/5 lg:w-3/5 md:w-2/5 sm:w-3/5 bg-primary-800 p-3 justify-around mt-4 rounded-8 ">
       <p className="md:text-base sm:text-sm font-medium">Beiträge: {posts}</p>
       <p className="md:text-base sm:text-sm  font-medium">
         Abonnenten: {follower}

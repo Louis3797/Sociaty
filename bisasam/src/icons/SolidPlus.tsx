@@ -8,6 +8,7 @@ function SvgSolidMessages(props: React.SVGProps<SVGSVGElement>) {
       viewBox="0 0 16 16"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
+      className="text-button"
       {...props}
     >
       <g clipPath="url(#clip12)">

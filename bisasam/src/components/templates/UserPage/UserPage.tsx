@@ -1,6 +1,6 @@
 import React from "react";
-import ProfileHeader from "../../elements/ProfileHeader";
-import ProfileInfoBox from "../../elements/ProfileInfoBox";
+import ProfileHeader from "../../modules/ProfileHeader";
+import ProfileInfoBox from "../../modules/ProfileInfoBox";
 
 export interface UserProps {
   findUser: any;
@@ -24,8 +24,8 @@ interface UserPageProps {
 
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
   return (
-    <div className="flex flex-col w-full h-screen bg-bg items-center">
-      <div className="flex flex-col w-11/12 items-center mt-40 h-auto">
+    <div className="flex flex-col w-full h-screen bg-primary-900 items-center">
+      <div className="flex flex-col w-11/12 items-center mt-15 h-auto">
         <ProfileHeader
           name={data.findUser.name}
           img={data.findUser.image}

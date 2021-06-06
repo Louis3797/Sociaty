@@ -1,4 +1,4 @@
-import Content from "./Content";
+import Content from "../elements/Content";
 
 export interface ProfileContentFeedProps {
   userImg?: string;

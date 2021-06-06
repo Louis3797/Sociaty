@@ -6,6 +6,7 @@ function SvgSolidLogOut(props: React.SVGProps<SVGSVGElement>) {
       viewBox="0 0 16 16"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
+      className="text-button"
       {...props}
     >
       <path d="M5.53845 8.82301H12.8346L11.1577 10.5422L12.3077 11.6922L16 7.99993L12.3077 4.30762L11.1154 5.45762L12.8346 7.17685H5.53845V8.82301V8.82301Z" />
