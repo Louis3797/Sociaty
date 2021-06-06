@@ -12,7 +12,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   bio,
 }) => {
   return (
-    <div className="flex  flex-col 2xl:w-2/5 lg:w-3/5 md:w-2/5 sm:w-3/5 bg-primary-800 rounded-8">
+    <div className="flex flex-col max-full bg-primary-800 rounded-8">
       <div className="h-10 w-full">
         <img
           src="https://source.unsplash.com/random"

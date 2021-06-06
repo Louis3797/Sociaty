@@ -25,7 +25,7 @@ interface UserPageProps {
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
   return (
     <div className="flex flex-col w-full h-screen bg-primary-900 items-center">
-      <div className="flex flex-col w-11/12 items-center mt-15 h-auto">
+      <div className="flex flex-col max-w-2xl items-center mt-15 h-auto">
         <ProfileHeader
           name={data.findUser.name}
           img={data.findUser.image}
@@ -33,7 +33,7 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
           bio={data.findUser.bio ? data.findUser.bio : "Hey im new here"}
         />
         <ProfileInfoBox follower={0} follows={0} posts={0} />
-        <div className="flex flex-col 2xl:w-2/5 lg:w-3/5 md:w-2/5 sm:w-3/5 f-full bg-transparent items-center justify-start mt-10">
+        <div className="flex flex-colw-full f-full bg-transparent items-center justify-start mt-10">
           <h2>Much emty here :(</h2>
         </div>
       </div>
