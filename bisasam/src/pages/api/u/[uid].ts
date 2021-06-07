@@ -7,18 +7,9 @@ export default async function handler(req, res) {
 
   const apolloClient = initializeApollo();
 
-  // const { data } = await apolloClient.query({
-  //   query: GET_USER_WITH_ID,
-  //   variables: { id: parseInt(uid) },
-  // });
-
-  const data = await prisma.content.findMany({
-    where: {
-      user_id: parseInt(uid),
-    },
-    select: {
-      User: true,
-    },
+  const { data } = await apolloClient.query({
+    query: GET_USER_WITH_ID,
+    variables: { id: parseInt(uid) },
   });
 
   res.status(200).json(JSON.stringify(data));

@@ -114,6 +114,9 @@ module.exports = {
     },
   },
   variants: {
+    backgroundColor: ["hover", "disabled"],
+    textColor: ["hover", "disabled"],
+    ringColor: ["hover", "active", "disabled"],
     extend: {},
   },
   plugins: [],

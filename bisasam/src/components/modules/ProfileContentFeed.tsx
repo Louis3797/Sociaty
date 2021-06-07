@@ -18,7 +18,7 @@ const ProfileContentFeed: React.FC<ProfileContentFeedProps> = ({
   likeAmount,
 }) => {
   return (
-    <div className="flex flex-col max-full f-full items-center justify-start mt-10">
+    <div className="flex flex-col w-full f-full items-center justify-start mt-10">
       <h2>Much emty here :(</h2>
     </div>
   );

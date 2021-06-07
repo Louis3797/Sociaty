@@ -19,6 +19,8 @@ const typeDefs = gql`
     bio: String
     content: [Content!]!
     follow: [UserFollowsUser!]!
+    likedContent: [UserLikedContent!]
+    likedComments: [UserLikedComment!]
   }
   type UserFollowsUser {
     userA: User!
@@ -30,6 +32,25 @@ const typeDefs = gql`
     content_text: String!
     userId: Int!
     image_id: Int
+    comments: [Comment]
+    liked: [UserLikedContent]
+  }
+
+  type Comment {
+    comment_id: Int!
+    content_id: Int!
+    comment_text: String!
+    userId: Int!
+  }
+
+  type UserLikedContent {
+    userId: Int!
+    content_id: Int!
+  }
+
+  type UserLikedComment {
+    userId: Int!
+    comment_id: Int!
   }
 `;
 
@@ -43,6 +64,13 @@ const resolvers = {
       return prisma.user.findUnique({
         where: {
           id: _args.id,
+        },
+        include: {
+          content: {
+            include: {
+              liked: true,
+            },
+          },
         },
       });
     },

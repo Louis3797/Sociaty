@@ -1,18 +1,6 @@
 import UserPage from "../../components/templates/UserPage/UserPage";
 interface USER {
   findUser: any;
-  id: number;
-  name: string;
-  email: string;
-  image: string;
-  bio: string;
-  follower?: number;
-  follows?: number;
-  posts?: number;
-  text?: string;
-  contentImg?: string;
-  commentAmount?: number;
-  likeAmount?: number;
 }
 
 interface ProfilePageProps {
@@ -20,7 +8,6 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
-  console.log(data);
   return <UserPage data={data} />;
 };
 

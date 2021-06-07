@@ -32,8 +32,10 @@ model content {
   created_at   DateTime             @default(now()) @db.Timestamp(0)
   userId       Int
   image_id     Int?
+  image        image?               @relation(fields: [image_id], references: [img_id])
   user         User                 @relation(fields: [userId], references: [id])
   liked        user_liked_content[]
+  comments     user_comment[]
 }
 
 model group_chat {
@@ -46,8 +48,9 @@ model group_chat {
 }
 
 model image {
-  img_id Int    @id @default(autoincrement())
-  url    String @db.VarChar(255)
+  img_id  Int      @id @default(autoincrement())
+  url     String   @db.VarChar(255)
+  content content?
 }
 
 model message {
@@ -81,6 +84,8 @@ model user_comment {
   created_at         DateTime             @default(now()) @db.Timestamp(0)
   userId             Int
   user_liked_comment user_liked_comment[]
+  content            content?             @relation(fields: [content_id], references: [content_id])
+
 }
 
 model user_in_group {
