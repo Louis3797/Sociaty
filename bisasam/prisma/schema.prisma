@@ -20,11 +20,46 @@ model Account {
   createdAt          DateTime  @default(now()) @map(name: "created_at")
   updatedAt          DateTime  @default(now()) @map(name: "updated_at")
 
-
   @@index([providerAccountId], name: "providerAccountId")
   @@index([providerId], name: "providerId")
   @@index([userId], name: "userId")
   @@map(name: "accounts")
+}
+
+model content {
+  content_id   Int                  @id @default(autoincrement())
+  content_text String?              @db.Text
+  created_at   DateTime             @default(now()) @db.Timestamp(0)
+  userId       Int
+  image_id     Int?
+  user         User                 @relation(fields: [userId], references: [id])
+  liked        user_liked_content[]
+}
+
+model group_chat {
+  group_id          Int             @id @default(autoincrement())
+  group_name        String          @db.VarChar(30)
+  group_description String?         @db.VarChar(255)
+  admin_id          Int
+  messages          message[]
+  user_in_group     user_in_group[]
+}
+
+model image {
+  img_id Int    @id @default(autoincrement())
+  url    String @db.VarChar(255)
+}
+
+model message {
+  message_id   Int      @id @default(autoincrement())
+  created_at   DateTime @default(now()) @db.Timestamp(0)
+  text_message String   @db.VarChar(255)
+  userId       Int
+  group_id     Int
+  users        User     @relation(fields: [userId], references: [id])
+
+  group_chat group_chat? @relation(fields: [group_id], references: [group_id])
+
 }
 
 model Session {
@@ -39,26 +74,62 @@ model Session {
   @@map(name: "sessions")
 }
 
+model user_comment {
+  comment_id         Int                  @id @default(autoincrement())
+  content_id         Int
+  comment_text       String               @db.VarChar(255)
+  created_at         DateTime             @default(now()) @db.Timestamp(0)
+  userId             Int
+  user_liked_comment user_liked_comment[]
+}
+
+model user_in_group {
+  user     User       @relation(fields: [userId], references: [id])
+  userId   Int
+  group    group_chat @relation(fields: [group_id], references: [group_id])
+  group_id Int
+
+  @@id([userId, group_id])
+}
+
+model user_liked_comment {
+  userId     Int
+  comment_id Int
+  user       User         @relation(fields: [userId], references: [id])
+  comment    user_comment @relation(fields: [comment_id], references: [comment_id])
+
+  @@id([userId, comment_id])
+}
+
+model user_liked_content {
+  userId     Int
+  content_id Int
+  user       User    @relation(fields: [userId], references: [id])
+  content    content @relation(fields: [content_id], references: [content_id])
+
+  @@id([userId, content_id])
+}
+
 model User {
-  id            Int       @id @default(autoincrement())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map(name: "email_verified")
-  image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @default(now()) @map(name: "updated_at")
+  id             Int                  @id @default(autoincrement())
+  name           String?              @db.VarChar(255)
+  email          String?              @unique @db.VarChar(255)
+  email_verified DateTime?            @db.Timestamp(6)
+  image          String?              @db.VarChar(255)
+  bio            String?              @db.VarChar(255)
+  created_at     DateTime             @default(now()) @db.Timestamp(0)
+  updated_at     DateTime             @default(now()) @db.Timestamp(6)
+  content        content[]
+  messages       message[]
+  liked_content  user_liked_content[]
+  in_group       user_in_group[]
+  liked_comments user_liked_comment[]
+  blockedBy      User[]               @relation("user1_blocked_user2", references: [id])
+  blocked        User[]               @relation("user1_blocked_user2", references: [id])
+  followedBy     User[]               @relation("user1_follows_user2", references: [id])
+  following      User[]               @relation("user1_follows_user2", references: [id])
 
-  bio        String? @db.VarChar(255)
-  blockedBy  User[]  @relation("user1_blocked_user2", references: [id])
-  blocked    User[]  @relation("user1_blocked_user2", references: [id])
-  followedBy User[]  @relation("user1_follows_user2", references: [id])
-  following  User[]  @relation("user1_follows_user2", references: [id])
-
-  user_creates_group user_creates_group[]
-  user_in_group      user_in_group[]
-  user_liked_comment user_liked_comment[] @ignore
-  user_liked_content user_liked_content[]
-  @@map(name: "users")
+  @@map(name: "user")
 }
 
 model VerificationRequest {
@@ -70,79 +141,4 @@ model VerificationRequest {
   updatedAt  DateTime @default(now()) @map(name: "updated_at")
 
   @@map(name: "verification_requests")
-}
-
-model content {
-  content_id         Int                  @unique @default(autoincrement())
-  content_text       String?              @db.Text
-  createdAt          DateTime             @default(now()) @map(name: "created_at")
-  user_id            Int
-  image_id           Int?
-  user_liked_content user_liked_content[]
-}
-
-model group_chat {
-  group_id           Int                  @unique @default(autoincrement())
-  group_name         String               @db.VarChar(30)
-  group_description  String?              @db.VarChar(255)
-  user_creates_group user_creates_group[]
-  user_in_group      user_in_group[]
-}
-
-model image {
-  img_id Int    @unique @default(autoincrement())
-  url    String @db.VarChar(255)
-}
-
-model message {
-  message_id   Int      @unique @default(autoincrement())
-  createdAt    DateTime @default(now()) @map(name: "created_at")
-  text_message String   @db.VarChar(255)
-  user_id      Int
-  group_id     Int
-}
-
-model user_comment {
-  comment_id         Int                  @unique @default(autoincrement())
-  content_id         Int
-  comment_text       String               @db.VarChar(255)
-  createdAt          DateTime             @default(now()) @map(name: "created_at")
-  user_id            Int
-  user_liked_comment user_liked_comment[] @ignore
-}
-
-model user_creates_group {
-  user     User       @relation(fields: [user_id], references: [id])
-  user_id  Int
-  group    group_chat @relation(fields: [group_id], references: [group_id])
-  group_id Int
-
-  @@id([user_id, group_id])
-}
-
-model user_in_group {
-  user     User       @relation(fields: [user_id], references: [id])
-  user_id  Int
-  group    group_chat @relation(fields: [group_id], references: [group_id])
-  group_id Int
-
-  @@id([user_id, group_id])
-}
-
-model user_liked_comment {
-  user_id    Int
-  comment_id Int
-  user       User         @relation(fields: [user_id], references: [id])
-  comment    user_comment @relation(fields: [comment_id], references: [comment_id])
-
-  @@id([user_id, comment_id])
-}
-
-model user_liked_content {
-  user_id    Int
-  content_id Int
-  user       User    @relation(fields: [user_id], references: [id])
-  content    content @relation(fields: [content_id], references: [content_id])
-
-  @@id([user_id, content_id])
 }

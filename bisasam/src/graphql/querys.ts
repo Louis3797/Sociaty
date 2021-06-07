@@ -19,3 +19,16 @@ export const GET_USER_WITH_ID = gql`
     }
   }
 `;
+
+// ändern
+export const GET_ALL_FROM_USER = gql`
+  query GET_ALL_USER_DATA($id: Int) {
+    getAllDataFromUser(id: $id) {
+      id
+      name
+      email
+      image
+      bio
+    }
+  }
+`;

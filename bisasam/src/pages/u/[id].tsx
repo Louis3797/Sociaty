@@ -20,6 +20,7 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
+  console.log(data);
   return <UserPage data={data} />;
 };
 

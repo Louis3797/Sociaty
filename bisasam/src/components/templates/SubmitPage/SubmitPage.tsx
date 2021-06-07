@@ -18,7 +18,7 @@ const SubmitPage: React.FC = () => {
       addTodo({
         variables: {
           content_text: text.toString(),
-          user_id: parseInt(sessionStorage.getItem("UID")),
+          userId: parseInt(sessionStorage.getItem("UID")),
         },
       });
 

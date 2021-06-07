@@ -6,7 +6,7 @@ export interface CancelButtonProps {
 const CancelButton: React.FC<CancelButtonProps> = ({ text, click }) => {
   return (
     <button
-      className="w-10 bg-transparent h-5 rounded-20 text-button text-sm font-bold font-comfortaa cursor-pointer hover:bg-error focus:outline-none"
+      className="w-10 bg-transparent h-5 rounded-5 text-button text-sm font-bold font-comfortaa cursor-pointer hover:bg-error focus:outline-none"
       onClick={click}
     >
       {text}

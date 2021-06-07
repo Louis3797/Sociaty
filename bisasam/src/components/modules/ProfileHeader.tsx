@@ -13,11 +13,11 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
 }) => {
   return (
     <div className="flex flex-col max-full bg-primary-800 rounded-8">
-      <div className="h-10 w-full">
+      <div className="h-10 w-full bg-transparent">
         <img
           src="https://source.unsplash.com/random"
           alt="banner"
-          className="object-cover h-15 w-full"
+          className="object-cover h-15 w-full rounded-t-8"
         />
       </div>
       <div className="flex flex-row w-full h-auto bg-transparent justify-start items-center ">
