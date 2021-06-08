@@ -1,5 +1,6 @@
 import { GET_USER_WITH_ID } from "../../../graphql/querys";
 import { initializeApollo } from "../../../lib/apolloClient";
+import prisma from "../../../lib/prismaClient";
 
 export default async function handler(req, res) {
   const { uid } = req.query;

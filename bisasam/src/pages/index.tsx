@@ -1,3 +1,13 @@
-import Dashboard from "../components/templates/Dashboard/Dashboard";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import Dash from "./dash";
 
-export default Dashboard;
+function Index() {
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/dash");
+  });
+  return <Dash />;
+}
+
+export default Index;

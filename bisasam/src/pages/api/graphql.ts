@@ -6,11 +6,10 @@ const typeDefs = gql`
     allUsers: [User!]!
     findUser(id: Int!): User!
     findUserWithEmail(email: String!): User!
-    getContentWithUserID(id: Int!): [Content!]
   }
 
   type Mutation {
-    postContent(content_text: String!, user_id: Int!, image_id: Int): Content
+    postContent(content_text: String!, userId: Int!, image_id: Int): Content
   }
   type User {
     id: Int!
@@ -20,6 +19,8 @@ const typeDefs = gql`
     bio: String
     content: [Content!]!
     follow: [UserFollowsUser!]!
+    likedContent: [UserLikedContent!]
+    likedComments: [UserLikedComment!]
   }
   type UserFollowsUser {
     userA: User!
@@ -29,8 +30,27 @@ const typeDefs = gql`
   type Content {
     content_id: Int!
     content_text: String!
-    user_id: Int!
+    userId: Int!
     image_id: Int
+    comments: [Comment]
+    liked: [UserLikedContent]
+  }
+
+  type Comment {
+    comment_id: Int!
+    content_id: Int!
+    comment_text: String!
+    userId: Int!
+  }
+
+  type UserLikedContent {
+    userId: Int!
+    content_id: Int!
+  }
+
+  type UserLikedComment {
+    userId: Int!
+    comment_id: Int!
   }
 `;
 
@@ -45,6 +65,13 @@ const resolvers = {
         where: {
           id: _args.id,
         },
+        include: {
+          content: {
+            include: {
+              liked: true,
+            },
+          },
+        },
       });
     },
 
@@ -55,20 +82,13 @@ const resolvers = {
         },
       });
     },
-    getContentWithUserID: (_parent, _args, ctx) => {
-      return prisma.content.findMany({
-        where: {
-          user_id: _args.id,
-        },
-      });
-    },
   },
   Mutation: {
     postContent: (_parent, _args, ctx) => {
       return prisma.content.create({
         data: {
           content_text: _args.content_text,
-          user_id: _args.user_id,
+          userId: _args.userId,
         },
       });
     },

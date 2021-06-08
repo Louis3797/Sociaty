@@ -16,6 +16,22 @@ export const GET_USER_WITH_ID = gql`
       email
       image
       bio
+      content {
+        content_id
+        content_text
+        userId
+        image_id
+        liked {
+          userId
+          content_id
+        }
+        comments {
+          comment_id
+          content_id
+          comment_text
+          userId
+        }
+      }
     }
   }
 `;
