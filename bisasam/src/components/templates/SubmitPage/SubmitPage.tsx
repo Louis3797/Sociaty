@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { POST_CONTENT } from "../../../graphql/mutations";
 import Button from "../../elements/button/Button";
 import ButtonLink from "../../elements/button/ButtonLink";
-import ButtonOutlined from "../../elements/button/ButtonOutlined";
 
 const SubmitPage: React.FC = () => {
   const router = useRouter();
@@ -14,7 +13,7 @@ const SubmitPage: React.FC = () => {
 
   const [addTodo] = useMutation(POST_CONTENT);
 
-  function handleSubmit(text: String) {
+  function handleSubmit(text: String): void {
     if (text.length <= 255 && text.length !== 0) {
       addTodo({
         variables: {

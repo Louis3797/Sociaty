@@ -2,6 +2,7 @@ import React from "react";
 import { useSession } from "next-auth/client";
 import Link from "next/link";
 import { SolidChatBubble, SolidPlus } from "../../icons";
+import SingleUserAvatar from "../elements/UserAvatar/SingleUserAvatar";
 
 const Navbar: React.FC = () => {
   const [session] = useSession();
@@ -21,11 +22,12 @@ const Navbar: React.FC = () => {
             <SolidPlus />
           </Link>
           <Link href={`/u/${sessionStorage.getItem("UID")}`}>
-            <img
-              src={session?.user.image}
-              className="w-6 h-6 rounded-full object-cover"
+            <SingleUserAvatar
+              size="small"
+              src={session.user?.image}
+              className=""
               alt="UserImg"
-            ></img>
+            />
           </Link>
         </div>
       </div>

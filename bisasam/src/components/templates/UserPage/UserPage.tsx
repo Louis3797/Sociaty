@@ -1,6 +1,6 @@
 import React from "react";
-import Content from "../../elements/Content";
-import ProfileContentFeed from "../../modules/ProfileContentFeed";
+import Content from "../../elements/content/Content";
+import ProfileFeed from "../../modules/ProfileFeed";
 import ProfileHeader from "../../modules/ProfileHeader";
 import ProfileInfoBox from "../../modules/ProfileInfoBox";
 

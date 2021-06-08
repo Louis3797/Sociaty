@@ -1,3 +1,6 @@
+import React from "react";
+import SingleUserAvatar from "../elements/UserAvatar/SingleUserAvatar";
+
 export interface ProfileCompOneProps {
   name: string;
   img: string;
@@ -21,10 +24,11 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
         />
       </div>
       <div className="flex flex-row w-full h-auto bg-transparent justify-start items-center ">
-        <img
+        <SingleUserAvatar
+          size="big"
           src={img}
-          alt="UserImg"
-          className="h-10 w-10 rounded-full object-cover mr-5 ml-5 mt-1"
+          alt="User Avatar"
+          className="mr-5 ml-5 mt-1"
         />
 
         <div className="flex flex-col w-full h-5/6 items-start text-justify mt-11">
