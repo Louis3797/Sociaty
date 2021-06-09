@@ -1,50 +1,40 @@
-import React from "react";
-import { ShareIcon, SolidChatBubble, SolidRocket } from "../../../icons";
-import SingleUserAvatar from "../UserAvatar/SingleUserAvatar";
+import ContentBody from "./ContentBody";
+import ContentHead from "./ContentHead";
+import ContentItemList from "./ContentItemList";
 
 export interface ContentProps {
+  contentId: number;
   userImg: string;
   name: string;
+  userId: string;
   text?: string;
   img?: string;
-  commentAmount?: number;
-  likeAmount?: number;
+  commentAmount: number;
+  likeAmount: number;
+  liked: boolean;
 }
 
 const Content: React.FC<ContentProps> = ({
+  contentId,
   userImg,
   name,
+  userId,
   text,
   img,
   commentAmount,
   likeAmount,
+  liked,
 }) => {
-  console.log(text);
   return (
     <div className="flex flex-col w-full h-auto bg-primary-800 mb-4 rounded-8 justify-evenly">
-      <div className="flex flex-row w-full h-7 items-center bg-transparent">
-        <SingleUserAvatar
-          size="small"
-          src={userImg}
-          className=" ml-4 mr-4"
-          alt="User Avatar"
-        />
-        <p className="text-lg font-semibold tracking-wide">{name}</p>
-      </div>
-      <div className="w-full h-auto bg-transparent mt-1">
-        <p className="break-words mr-5 ml-4 mb-4 text-secondary">{text}</p>
-      </div>
-      <div className="items-center justify-end bg-transparent flex flex-row w-full h-5.5">
-        <ShareIcon className="text-base mr-9" />
-        <div className="flex flex-row items-center mr-8">
-          <SolidChatBubble className="text-base" />
-          <p className="text-sm font-normal ml-2">{commentAmount}</p>
-        </div>
-        <div className="flex flex-row items-center mr-8">
-          <SolidRocket className="text-base" />
-          <p className="text-sm font-normal ml-2 ">{likeAmount}</p>
-        </div>
-      </div>
+      <ContentHead img={userImg} name={name} userId={userId} />
+      <ContentBody text={text} />
+      <ContentItemList
+        contentId={contentId}
+        commentAmount={commentAmount}
+        likeAmount={likeAmount}
+        liked={liked}
+      />
     </div>
   );
 };

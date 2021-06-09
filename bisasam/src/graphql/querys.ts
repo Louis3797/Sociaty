@@ -21,9 +21,13 @@ export const GET_USER_WITH_ID = gql`
         content_text
         userId
         image_id
+        user {
+          id
+          name
+          image
+        }
         liked {
           userId
-          content_id
         }
         comments {
           comment_id

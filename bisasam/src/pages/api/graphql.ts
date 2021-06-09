@@ -10,17 +10,22 @@ const typeDefs = gql`
 
   type Mutation {
     postContent(content_text: String!, userId: Int!, image_id: Int): Content
+    deleteContentLike(userId: Int!, content_id: Int!): UserLikedContent
+    createContentLike(userId: Int!, content_id: Int!): UserLikedContent
   }
   type User {
     id: Int!
     name: String!
     image: String!
-    email: String
+    email: String!
     bio: String
-    content: [Content!]!
-    follow: [UserFollowsUser!]!
-    likedContent: [UserLikedContent!]
-    likedComments: [UserLikedComment!]
+    content: [Content!]
+    followedBy: [UserFollowsUser!]
+    following: [UserFollowsUser!]
+    liked_content: [UserLikedContent!]
+    liked_comments: [UserLikedComment!]
+    blockedBy: [User]
+    blocked: [User]
   }
   type UserFollowsUser {
     userA: User!
@@ -34,6 +39,7 @@ const typeDefs = gql`
     image_id: Int
     comments: [Comment]
     liked: [UserLikedContent]
+    user: User!
   }
 
   type Comment {
@@ -44,13 +50,13 @@ const typeDefs = gql`
   }
 
   type UserLikedContent {
-    userId: Int!
-    content_id: Int!
+    userId: Int
+    content_id: Int
   }
 
   type UserLikedComment {
-    userId: Int!
-    comment_id: Int!
+    userId: Int
+    comment_id: Int
   }
 `;
 
@@ -66,9 +72,23 @@ const resolvers = {
           id: _args.id,
         },
         include: {
+          liked_content: {
+            where: {
+              userId: _args.id,
+            },
+          },
           content: {
             include: {
-              liked: true,
+              liked: {
+                where: {
+                  userId: _args.id,
+                },
+              },
+              comments: true,
+              user: true,
+            },
+            orderBy: {
+              created_at: "desc",
             },
           },
         },
@@ -89,6 +109,22 @@ const resolvers = {
         data: {
           content_text: _args.content_text,
           userId: _args.userId,
+        },
+      });
+    },
+    createContentLike: (_parent, _args, ctx) => {
+      return prisma.user_liked_content.create({
+        data: {
+          userId: _args.userId,
+          content_id: _args.content_id,
+        },
+      });
+    },
+    deleteContentLike: (_parent, _args, ctx) => {
+      return prisma.user_liked_content.deleteMany({
+        where: {
+          userId: _args.userId,
+          content_id: _args.content_id,
         },
       });
     },
