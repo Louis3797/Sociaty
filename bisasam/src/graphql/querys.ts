@@ -16,11 +16,24 @@ export const GET_USER_WITH_ID = gql`
       email
       image
       bio
+      following {
+        user {
+          id
+          name
+        }
+      }
+      followedBy {
+        user {
+          id
+          name
+        }
+      }
       content {
         content_id
         content_text
         userId
         image_id
+        created_at
         user {
           id
           name

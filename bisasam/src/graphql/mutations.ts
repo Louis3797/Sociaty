@@ -26,3 +26,21 @@ export const CREATE_LIKE = gql`
     }
   }
 `;
+
+export const POST_COMMENT = gql`
+  mutation POST_COMMENT(
+    $userId: Int!
+    $content_id: Int!
+    $comment_text: String!
+  ) {
+    postComment(
+      userId: $userId
+      content_id: $content_id
+      comment_text: $comment_text
+    ) {
+      userId
+      content_id
+      comment_text
+    }
+  }
+`;
