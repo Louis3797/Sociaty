@@ -1,5 +1,5 @@
 import React from "react";
-import SingleUserAvatar from "../elements/UserAvatar/SingleUserAvatar";
+import SingleUserAvatar from "../../elements/UserAvatar/SingleUserAvatar";
 
 export interface ProfileCompOneProps {
   name: string;
@@ -38,7 +38,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           <p className="text-base tracking-wider opacity-60">{email}</p>
         </div>
       </div>
-      <p className="text-secondary-600 text-base tracking-wider ml-5 mb-4">
+      <p className="text-secondary-600 text-base tracking-wider ml-5 mb-4  font-medium">
         Status: {bio}
       </p>
     </div>
