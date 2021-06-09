@@ -9,6 +9,8 @@ type ButtonIconProps = DetailedHTMLProps<
   bgcolor: string;
   className?: string;
   size: "big" | "small";
+  disabled?: boolean;
+  disabledColor?: string;
 };
 
 const sizeClassnames = {
@@ -26,7 +28,8 @@ const ButtonIcon: React.FC<ButtonIconProps> = ({
 }) => {
   return (
     <button
-      className={`hover:${bgcolor} rounded-full items-center flex justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out  ${className} ${sizeClassnames[size]}`}
+      disabled={disabled}
+      className={`hover:${bgcolor} disabled:opacity-30 rounded-full items-center flex justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out  ${className} ${sizeClassnames[size]}`}
       onClick={click}
     >
       {children}
