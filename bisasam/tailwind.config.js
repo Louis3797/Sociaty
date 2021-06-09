@@ -118,7 +118,9 @@ module.exports = {
     textColor: ["hover", "disabled"],
     ringColor: ["hover", "active", "disabled"],
 
-    extend: {},
+    extend: {
+      opacity: ["active", "disabled", "hover"],
+    },
   },
   plugins: [],
 };
