@@ -23,7 +23,6 @@ const Navbar: React.FC = () => {
           <Link href={"/submit"}>
             <SolidPlus />
           </Link>
-
           <SingleUserAvatar
             size="small"
             src={session.user?.image}
