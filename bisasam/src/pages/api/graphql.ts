@@ -103,7 +103,7 @@ const resolvers = {
       });
     },
     getContent: (_parent, _args, ctx) => {
-      return prisma.content.findMany({
+      return prisma.content.findFirst({
         where: {
           content_id: _args.content_id,
           userId: _args.userId,

@@ -59,7 +59,6 @@ export const GET_CONTENT = gql`
       content_text
       userId
       image_id
-      created_at
       user {
         id
         name
