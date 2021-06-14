@@ -6,3 +6,5 @@ export { default as SolidSearch } from "./SolidSearch";
 export { default as SolidSettings } from "./SolidSettings";
 export { default as SolidTrash } from "./SolidTrash";
 export { default as ShareIcon } from "./Share";
+export { default as SolidHome } from "./SolidHome";
+export { default as SolidNotification } from "./SolidNotification";

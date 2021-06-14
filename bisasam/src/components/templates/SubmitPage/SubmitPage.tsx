@@ -11,11 +11,11 @@ const SubmitPage: React.FC = () => {
   const [session] = useSession();
   const [text, settext] = useState("");
 
-  const [addTodo] = useMutation(POST_CONTENT);
+  const [createSubmit] = useMutation(POST_CONTENT);
 
   function handleSubmit(text: String): void {
     if (text.length <= 255 && text.length !== 0) {
-      addTodo({
+      createSubmit({
         variables: {
           content_text: text.toString(),
           userId: parseInt(sessionStorage.getItem("UID")),

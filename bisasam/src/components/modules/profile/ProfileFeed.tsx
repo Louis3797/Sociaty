@@ -1,4 +1,4 @@
-import Content from "../elements/content/Content";
+import Content from "../../elements/content/Content";
 
 export interface ProfileFeed {
   userImg?: string;

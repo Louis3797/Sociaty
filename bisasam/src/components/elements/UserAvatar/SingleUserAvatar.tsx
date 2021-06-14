@@ -1,4 +1,9 @@
-import { DetailedHTMLProps, ImgHTMLAttributes } from "react";
+import {
+  DetailedHTMLProps,
+  DOMAttributes,
+  ImgHTMLAttributes,
+  MouseEventHandler,
+} from "react";
 
 type SingleUserAvatarProps = DetailedHTMLProps<
   ImgHTMLAttributes<HTMLImageElement>,
@@ -8,6 +13,7 @@ type SingleUserAvatarProps = DetailedHTMLProps<
   size: "big" | "small";
   className?: string;
   alt: string;
+  click?: (event) => void;
 };
 
 const sizeClassnames = {
@@ -20,9 +26,11 @@ const SingleUserAvatar: React.FC<SingleUserAvatarProps> = ({
   size,
   className,
   alt,
+  click,
 }) => {
   return (
     <img
+      onClick={click}
       src={src}
       alt={alt}
       className={`${sizeClassnames[size]} rounded-full object-cover ${className}`}

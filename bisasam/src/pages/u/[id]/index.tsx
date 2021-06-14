@@ -1,4 +1,4 @@
-import UserPage from "../../components/templates/UserPage/UserPage";
+import UserPage from "../../../components/templates/UserPage/UserPage";
 interface USER {
   findUser: any;
 }
@@ -17,6 +17,12 @@ export async function getServerSideProps(context) {
   const res = await fetch(`http://localhost:3000/api/u/${id}`);
 
   const data = await res.json();
+
+  if (!data) {
+    return {
+      notFound: true,
+    };
+  }
   return {
     props: {
       data,
