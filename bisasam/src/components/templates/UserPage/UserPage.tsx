@@ -1,6 +1,6 @@
 import React from "react";
-import Content from "../../modules/content/Content";
-import ProfileFeed from "../../modules/profile/ProfileFeed";
+import MainLayout from "../../layouts/MainLayout";
+import ListContent from "../../modules/content/ListContent";
 import ProfileHeader from "../../modules/profile/ProfileHeader";
 import ProfileInfoBox from "../../modules/profile/ProfileInfoBox";
 
@@ -15,7 +15,7 @@ interface UserPageProps {
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
   const userContent = data.findUser.content.map((content) => {
     return (
-      <Content
+      <ListContent
         key={content.content_id.toString()}
         userId={content.user.id}
         contentId={content.content_id}
@@ -28,10 +28,9 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
       />
     );
   });
-  console.log(data.findUser);
   return (
-    <div className="flex flex-col w-full h-screen bg-primary-900 items-center">
-      <div className="flex flex-col max-w-2xl items-center bg-transparent mt-15 h-auto">
+    <MainLayout>
+      <div className="flex flex-col w-full items-center bg-transparent h-auto">
         <ProfileHeader
           name={data.findUser.name}
           img={data.findUser.image}
@@ -55,7 +54,7 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
           {userContent}
         </div>
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
