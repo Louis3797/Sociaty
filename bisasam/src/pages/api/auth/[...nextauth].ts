@@ -60,7 +60,7 @@ const options = {
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
 
-  debug: true,
+  debug: false,
 };
 
 export default (req: NextApiRequest, res: NextApiResponse) =>

@@ -23,7 +23,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           className="object-cover h-15 w-full rounded-t-8"
         />
       </div>
-      <div className="flex flex-row w-full h-auto bg-transparent justify-start items-center ">
+      <div className="flex flex-row w-full h-auto bg-transparent justify-start items-center my-6 ">
         <SingleUserAvatar
           size="big"
           src={img}
@@ -31,11 +31,11 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           className="mr-5 ml-5 mt-1"
         />
 
-        <div className="flex flex-col w-full h-5/6 items-start text-justify mt-11">
+        <div className="flex flex-col w-full h-5/6 items-start text-justify mt-4">
           <p className="text-2xl font-semibold tracking-wide mt-1 text-button">
             {name}
           </p>
-          <p className="text-base tracking-wider opacity-60">{email}</p>
+          <p className="text-primary-200 text-base tracking-wider">{email}</p>
         </div>
       </div>
       <p className="text-secondary-600 text-base tracking-wider ml-5 mb-4  font-medium">

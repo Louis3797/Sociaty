@@ -29,7 +29,13 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
     );
   });
   return (
-    <MainLayout>
+    <MainLayout
+      rightPanel={
+        <div>
+          <h1>Hallooo</h1>
+        </div>
+      }
+    >
       <div className="flex flex-col w-full items-center bg-transparent h-auto">
         <ProfileHeader
           name={data.findUser.name}
