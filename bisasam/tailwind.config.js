@@ -63,6 +63,16 @@ module.exports = {
         disabled: "var(--color-accent-disabled)",
       },
 
+      like: {
+        DEFAULT: "var(--color-like)",
+      },
+      comment: {
+        DEFAULT: "var(--color-comment)",
+      },
+      share: {
+        DEFAULT: "var(--color-share)",
+      },
+
       error: {
         DEFAULT: "var(--color-error)",
       },
