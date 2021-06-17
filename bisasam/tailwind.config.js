@@ -64,13 +64,13 @@ module.exports = {
       },
 
       like: {
-        DEFAULT: "var(--color-like)",
+        DEFAULT: colors.red[500],
       },
       comment: {
-        DEFAULT: "var(--color-comment)",
+        DEFAULT: colors.blue[400],
       },
       share: {
-        DEFAULT: "var(--color-share)",
+        DEFAULT: colors.emerald[400],
       },
 
       error: {
@@ -131,6 +131,8 @@ module.exports = {
 
     extend: {
       opacity: ["active", "disabled", "hover"],
+      backgroundOpacity: ["active", "hover"],
+      textOpacity: ["active", "hover"],
     },
   },
   plugins: [],
