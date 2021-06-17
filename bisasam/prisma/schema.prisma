@@ -8,142 +8,153 @@ datasource db {
 }
 
 model Account {
-  id                 Int       @id @default(autoincrement())
-  compoundId         String    @unique @map(name: "compound_id")
-  userId             Int       @map(name: "user_id")
-  providerType       String    @map(name: "provider_type")
-  providerId         String    @map(name: "provider_id")
-  providerAccountId  String    @map(name: "provider_account_id")
-  refreshToken       String?   @map(name: "refresh_token")
-  accessToken        String?   @map(name: "access_token")
-  accessTokenExpires DateTime? @map(name: "access_token_expires")
-  createdAt          DateTime  @default(now()) @map(name: "created_at")
-  updatedAt          DateTime  @default(now()) @map(name: "updated_at")
+  id                 String    @id @default(cuid())
+  userId             String
+  providerType       String
+  providerId         String
+  providerAccountId  String
+  refreshToken       String?
+  accessToken        String?
+  accessTokenExpires DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id])
 
-  @@index([providerAccountId], name: "providerAccountId")
-  @@index([providerId], name: "providerId")
-  @@index([userId], name: "userId")
-  @@map(name: "accounts")
+  @@unique([providerId, providerAccountId])
 }
 
-model content {
-  content_id   Int                  @id @default(autoincrement())
+model Content {
+  id           String               @id @default(cuid())
   content_text String?              @db.Text
   created_at   DateTime             @default(now()) @db.Timestamp(0)
-  userId       Int
-  image_id     Int?
-  image        image?               @relation(fields: [image_id], references: [img_id])
+  userId       String
+  image_id     String?
+  image        Image?               @relation(fields: [image_id], references: [id])
   user         User                 @relation(fields: [userId], references: [id])
-  liked        user_liked_content[]
-  comments     user_comment[]
+  liked        User_liked_content[]
+  comments     Comment[]
+  numLikes     Int                  @default(0)
+  numComments  Int                  @default(0)
+  type         String
 }
 
-model group_chat {
-  group_id          Int             @id @default(autoincrement())
+model Group {
+  id                String          @id @default(cuid())
   group_name        String          @db.VarChar(30)
   group_description String?         @db.VarChar(255)
-  admin_id          Int
-  messages          message[]
-  user_in_group     user_in_group[]
+  admin_id          String
+  messages          Message[]
+  user_in_group     User_in_group[]
 }
 
-model image {
-  img_id  Int      @id @default(autoincrement())
+model Image {
+  id      String   @id @default(cuid())
   url     String   @db.VarChar(255)
-  content content?
+  content Content?
+  message Message?
 }
 
-model message {
-  message_id   Int      @id @default(autoincrement())
+model Message {
+  id           String   @id @default(cuid())
   created_at   DateTime @default(now()) @db.Timestamp(0)
-  text_message String   @db.VarChar(255)
-  userId       Int
-  group_id     Int
+  text_message String?  @db.VarChar(255)
+  userId       String
+  group_id     String
+  image_id     String?
   users        User     @relation(fields: [userId], references: [id])
+  chat         Group    @relation(fields: [group_id], references: [id])
 
-  group_chat group_chat? @relation(fields: [group_id], references: [group_id])
+  image Image? @relation(fields: [image_id], references: [id])
 
 }
 
 model Session {
-  id           Int      @id @default(autoincrement())
-  userId       Int      @map(name: "user_id")
+  id           String   @id @default(cuid())
+  userId       String
   expires      DateTime
-  sessionToken String   @unique @map(name: "session_token")
-  accessToken  String   @unique @map(name: "access_token")
-  createdAt    DateTime @default(now()) @map(name: "created_at")
-  updatedAt    DateTime @default(now()) @map(name: "updated_at")
-
-  @@map(name: "sessions")
+  sessionToken String   @unique
+  accessToken  String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id])
 }
 
-model user_comment {
-  comment_id         Int                  @id @default(autoincrement())
-  content_id         Int
+model Comment {
+  id                 String               @id @default(cuid())
+  content_id         String
   comment_text       String               @db.VarChar(255)
   created_at         DateTime             @default(now()) @db.Timestamp(0)
-  userId             Int
-  user_liked_comment user_liked_comment[]
-  content            content?             @relation(fields: [content_id], references: [content_id])
+  userId             String
+  user_liked_comment User_liked_comment[]
+  numLikes           Int                  @default(0)
+  content            Content              @relation(fields: [content_id], references: [id])
 
 }
 
-model user_in_group {
-  user     User       @relation(fields: [userId], references: [id])
-  userId   Int
-  group    group_chat @relation(fields: [group_id], references: [group_id])
-  group_id Int
+model User_in_group {
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
+  chat     Group  @relation(fields: [group_id], references: [id])
+  group_id String
 
   @@id([userId, group_id])
 }
 
-model user_liked_comment {
-  userId     Int
-  comment_id Int
-  user       User         @relation(fields: [userId], references: [id])
-  comment    user_comment @relation(fields: [comment_id], references: [comment_id])
+model User_liked_comment {
+  userId     String
+  comment_id String
+  user       User    @relation(fields: [userId], references: [id])
+  comment    Comment @relation(fields: [comment_id], references: [id])
 
   @@id([userId, comment_id])
 }
 
-model user_liked_content {
-  userId     Int
-  content_id Int
+model User_liked_content {
+  userId     String
+  content_id String
   user       User    @relation(fields: [userId], references: [id])
-  content    content @relation(fields: [content_id], references: [content_id])
+  content    Content @relation(fields: [content_id], references: [id])
 
   @@id([userId, content_id])
 }
 
 model User {
-  id             Int                  @id @default(autoincrement())
-  name           String?              @db.VarChar(255)
-  email          String?              @unique @db.VarChar(255)
-  email_verified DateTime?            @db.Timestamp(6)
-  image          String?              @db.VarChar(255)
-  bio            String?              @db.VarChar(255)
-  created_at     DateTime             @default(now()) @db.Timestamp(0)
-  updated_at     DateTime             @default(now()) @db.Timestamp(6)
-  content        content[]
-  messages       message[]
-  liked_content  user_liked_content[]
-  in_group       user_in_group[]
-  liked_comments user_liked_comment[]
-  blockedBy      User[]               @relation("user1_blocked_user2", references: [id])
-  blocked        User[]               @relation("user1_blocked_user2", references: [id])
-  followedBy     User[]               @relation("user1_follows_user2", references: [id])
-  following      User[]               @relation("user1_follows_user2", references: [id])
+  id               String               @id @default(cuid())
+  name             String
+  displayName      String?              @default(cuid()) @db.VarChar(25)
+  email            String               @unique
+  emailVerified    DateTime?
+  created_at       DateTime             @default(now()) @db.Timestamp(0)
+  updatedAt        DateTime             @updatedAt
+  image            String               @db.VarChar(255)
+  bannerUrl        String?              @db.VarChar(255)
+  bio              String?              @db.VarChar(255)
+  numFollowing     Int                  @default(0)
+  numFollowers     Int                  @default(0)
+  online           Boolean?             @default(false)
+  numContributions Int                  @default(0)
+  content          Content[]
+  messages         Message[]
+  liked_content    User_liked_content[]
+  in_group         User_in_group[]
+  liked_comments   User_liked_comment[]
+  blockedBy        User[]               @relation("user1_blocked_user2", references: [id])
+  blocked          User[]               @relation("user1_blocked_user2", references: [id])
+  followedBy       User[]               @relation("user1_follows_user2", references: [id])
+  following        User[]               @relation("user1_follows_user2", references: [id])
+  accounts         Account[]
+  sessions         Session[]
 
-  @@map(name: "user")
+
 }
 
 model VerificationRequest {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(cuid())
   identifier String
   token      String   @unique
   expires    DateTime
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-  updatedAt  DateTime @default(now()) @map(name: "updated_at")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@map(name: "verification_requests")
+  @@unique([identifier, token])
 }
