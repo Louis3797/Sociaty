@@ -25,6 +25,8 @@ const typeDefs = gql`
     liked: [UserLikedContent]
     user: User!
     image: Image
+    gif_url: String
+    tags: [ContentOnHashtag]
   }
 
   type Group {
@@ -49,10 +51,10 @@ const typeDefs = gql`
     text_message: String
     userId: ID!
     group_id: ID!
+    gif_url: String
     user: User!
     group: Group!
     image: Image
-    type: String!
   }
 
   type Comment {
@@ -62,8 +64,10 @@ const typeDefs = gql`
     created_at: GraphQLDateTime!
     userId: ID!
     numLikes: Int!
+    gif_url: String
     liked: [UserLikedComment]
     content: Content!
+    tags: [CommentOnHashtag]
   }
 
   type UserInGroup {
@@ -90,15 +94,15 @@ const typeDefs = gql`
   type User {
     id: ID!
     name: String!
-    displayName: String
+    displayName: String!
     email: String!
-    created_at: GraphQLDateTime
+    created_at: GraphQLDateTime!
     image: String!
     bannerUrl: String
     bio: String
-    numFollowing: Int
+    numFollowing: Int!
     numFollowers: Int!
-    online: Boolean!
+    online: Boolean
     numContributions: Int!
     content: [Content]
     messages: [Message]
@@ -110,19 +114,39 @@ const typeDefs = gql`
     blockedBy: [User]
     blocked: [User]
   }
+
+  type Hashtag {
+    id: ID
+    text: String
+    comments: [CommentOnHashtag]
+    content: [ContentOnHashtag]
+  }
+
+  type CommentOnHashtag {
+    hashtagId: ID
+    hashtag: Hashtag
+    commentId: ID
+    comment: Comment
+  }
+
+  type ContentOnHashtag {
+    hashtagId: ID
+    hashtag: Hashtag
+    contentId: ID
+    content: Content
+  }
 `;
 
 const resolvers = {
   Query: {
-    getUserID: (_parent, _args, ctx) => {
+    getUserID: (_parent, _args, context) => {
       return prisma.user.findUnique({
         where: {
           email: _args.email,
         },
       });
     },
-
-    findUser: (_parent, _args, ctx) => {
+    findUser: (_parent, _args, context) => {
       return prisma.user.findUnique({
         where: {
           id: _args.id,
