@@ -28,7 +28,7 @@ const GifPicker: React.FC<GifPickerProps> = ({
       onRequestClose={handleCancel}
       className={`flex justify-center items-start focus:outline-none border-0 ${className}`}
     >
-      <div className="flex flex-col w-42 h-48 bg-primary-800 rounded-8">
+      <div className="flex flex-col w-42 sm:w-full h-48 bg-primary-800 rounded-8">
         <div className="flex items-center w-full h-7">
           <GifPickerSearchBar
             onChange={(e) => {
@@ -42,7 +42,7 @@ const GifPicker: React.FC<GifPickerProps> = ({
             Gifs by GIPHY
           </p>
         </div>
-        <div className="flex flex-col w-42 bg-transparent h-full rounded-b-8 overflow-y-scroll">
+        <div className="flex flex-col w-42 sm:w-full bg-transparent h-full rounded-b-8 overflow-y-scroll">
           <GifResults gifText={search} close={handleCancel} />
         </div>
       </div>

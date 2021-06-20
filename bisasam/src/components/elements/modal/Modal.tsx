@@ -19,7 +19,7 @@ const Modal: React.FC<ModalProps> = ({
       onBackdropClick={() => {}}
       className={`flex justify-center items-start mt-15 focus:outline-none border-0 ${className}`}
     >
-      <div className="flex flex-col w-auto rounded-8 h-auto bg-primary-800">
+      <div className="flex flex-col w-auto rounded-8 md:w-42 sm:w-full  h-auto bg-primary-800">
         {children}
       </div>
     </MaterialModal>
