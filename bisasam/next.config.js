@@ -1,5 +1,5 @@
 module.exports = {
-  future: {
-    webpack5: true,
+  env: {
+    GIPHY_API_KEY: process.env.GIPHY_API_KEY,
   },
 };
