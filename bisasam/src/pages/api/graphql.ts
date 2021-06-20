@@ -1,6 +1,7 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
+import { Content, Prisma, PrismaPromise } from ".prisma/client";
 
 const typeDefs = gql`
   scalar GraphQLDateTime
@@ -182,14 +183,27 @@ const resolvers = {
   },
 
   Mutation: {
-    postContent: (_parent, _args, ctx) => {
-      return prisma.content.create({
-        data: {
-          content_text: _args.content_text,
-          userId: _args.userId,
-          gif_url: _args.gif_url,
-        },
-      });
+    postContent: async (_parent, _args, ctx) => {
+      const [createPost, updatedContributions] = await prisma.$transaction([
+        prisma.content.create({
+          data: {
+            content_text: _args.content_text,
+            userId: _args.userId,
+            gif_url: _args.gif_url,
+          },
+        }),
+
+        prisma.user.update({
+          where: { id: _args.userId },
+          data: {
+            numContributions: {
+              increment: 1,
+            },
+          },
+        }),
+      ]);
+
+      return createPost;
     },
     //     createContentLike: (_parent, _args, ctx) => {
     //       return prisma.user_liked_content.create({
