@@ -8,10 +8,12 @@ const typeDefs = gql`
   type Query {
     getUserID(email: String!): User!
     findUser(id: String!): User!
+    getContent(content_id: String!, userId: String!): Content!
   }
-  # getContent(content_id: String!, userId: String!): Content!
-  # type Mutation {
-  # }
+
+  type Mutation {
+    postContent(content_text: String, userId: ID!, gif_url: String): Content
+  }
 
   type Content {
     id: ID!
@@ -116,8 +118,8 @@ const typeDefs = gql`
   }
 
   type Hashtag {
-    id: ID
-    text: String
+    id: ID!
+    text: String!
     comments: [CommentOnHashtag]
     content: [ContentOnHashtag]
   }
@@ -179,41 +181,42 @@ const resolvers = {
     // },
   },
 
-  // Mutation: {
-  //     postContent: (_parent, _args, ctx) => {
-  //       return prisma.content.create({
-  //         data: {
-  //           content_text: _args.content_text,
-  //           userId: _args.userId,
-  //         },
-  //       });
-  //     },
-  //     createContentLike: (_parent, _args, ctx) => {
-  //       return prisma.user_liked_content.create({
-  //         data: {
-  //           userId: _args.userId,
-  //           content_id: _args.content_id,
-  //         },
-  //       });
-  //     },
-  //     deleteContentLike: (_parent, _args, ctx) => {
-  //       return prisma.user_liked_content.deleteMany({
-  //         where: {
-  //           userId: _args.userId,
-  //           content_id: _args.content_id,
-  //         },
-  //       });
-  //     },
-  //     postComment: (_parent, _args, ctx) => {
-  //       return prisma.user_comment.create({
-  //         data: {
-  //           content_id: _args.content_id,
-  //           userId: _args.userId,
-  //           comment_text: _args.comment_text,
-  //         },
-  //       });
-  //     },
-  // },
+  Mutation: {
+    postContent: (_parent, _args, ctx) => {
+      return prisma.content.create({
+        data: {
+          content_text: _args.content_text,
+          userId: _args.userId,
+          gif_url: _args.gif_url,
+        },
+      });
+    },
+    //     createContentLike: (_parent, _args, ctx) => {
+    //       return prisma.user_liked_content.create({
+    //         data: {
+    //           userId: _args.userId,
+    //           content_id: _args.content_id,
+    //         },
+    //       });
+    //     },
+    //     deleteContentLike: (_parent, _args, ctx) => {
+    //       return prisma.user_liked_content.deleteMany({
+    //         where: {
+    //           userId: _args.userId,
+    //           content_id: _args.content_id,
+    //         },
+    //       });
+    //     },
+    //     postComment: (_parent, _args, ctx) => {
+    //       return prisma.user_comment.create({
+    //         data: {
+    //           content_id: _args.content_id,
+    //           userId: _args.userId,
+    //           comment_text: _args.comment_text,
+    //         },
+    //       });
+    //     },
+  },
 };
 
 const apolloServer = new ApolloServer({ typeDefs, resolvers });
