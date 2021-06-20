@@ -29,7 +29,7 @@ const ButtonIcon: React.FC<ButtonIconProps> = ({
   return (
     <button
       disabled={disabled}
-      className={`hover:${bgcolor} disabled:opacity-30 rounded-full items-center flex justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out  ${className} ${sizeClassnames[size]}`}
+      className={`flex hover:${bgcolor} hover:bg-opacity-25  disabled:opacity-30 rounded-full items-center justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out  ${className} ${sizeClassnames[size]}`}
       onClick={click}
     >
       {children}

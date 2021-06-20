@@ -16,7 +16,6 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
   disabled,
   className,
 }) => {
-  console.log(disabled);
   return (
     <button
       disabled={disabled}
