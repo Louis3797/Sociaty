@@ -42,7 +42,7 @@ module.exports = {
       "7xl": "5rem",
     },
     colors: {
-      button: "var(--color-button-text)",
+      button: colors.white,
       transparent: "transparent",
       primary: {
         100: "var(--color-primary-100)",
