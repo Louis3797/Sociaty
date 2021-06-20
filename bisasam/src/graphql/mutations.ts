@@ -1,10 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const POST_CONTENT = gql`
-  mutation POST_CONTENT($content_text: String!, $userId: Int!) {
-    postContent(content_text: $content_text, userId: $userId) {
-      content_text
-      userId
+  mutation POST_CONTENT($content_text: String, $userId: ID!, $gif_url: String) {
+    postContent(
+      content_text: $content_text
+      userId: $userId
+      gif_url: $gif_url
+    ) {
+      id
     }
   }
 `;

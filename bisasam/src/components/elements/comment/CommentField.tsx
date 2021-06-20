@@ -5,7 +5,7 @@ import { SolidPlus } from "../../../icons";
 import ButtonIcon from "../button/ButtonIcon";
 
 export interface CommentFieldProps {
-  contentId: number;
+  contentId: string;
 }
 
 const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
@@ -38,7 +38,7 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
         <p className="font-medium text-secondary-600 mx-2">{text.length}/255</p>
         <ButtonIcon
           size="small"
-          bgcolor="bg-accent"
+          bgcolor="bg-transparent"
           disabled={text.length > 255 || text.length === 0}
           click={() => handleSubmit(text)}
         >

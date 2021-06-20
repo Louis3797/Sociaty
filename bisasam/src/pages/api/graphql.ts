@@ -1,90 +1,161 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
+import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
 
 const typeDefs = gql`
+  scalar GraphQLDateTime
+
   type Query {
-    findUser(id: Int!): User!
-    findUserWithEmail(email: String!): User!
-    getContent(content_id: Int!, userId: Int!): Content!
+    getUserID(email: String!): User!
+    findUser(id: String!): User!
+    getContent(content_id: String!, userId: String!): Content!
   }
 
   type Mutation {
-    postContent(content_text: String!, userId: Int!, image_id: Int): Content
-    deleteContentLike(userId: Int!, content_id: Int!): UserLikedContent
-    createContentLike(userId: Int!, content_id: Int!): UserLikedContent
-    postComment(content_id: Int!, comment_text: String!, userId: Int!): Comment
+    postContent(content_text: String, userId: ID!, gif_url: String): Content
   }
+
+  type Content {
+    id: ID!
+    content_text: String!
+    created_at: GraphQLDateTime!
+    userId: ID!
+    image_id: ID
+    numLikes: Int!
+    numComments: Int!
+    comments: [Comment]
+    liked: [UserLikedContent]
+    user: User!
+    image: Image
+    gif_url: String
+    tags: [ContentOnHashtag]
+  }
+
+  type Group {
+    id: ID!
+    group_name: String!
+    description: String!
+    admin_id: ID!
+    messages: [Message]
+    members: [UserInGroup]
+  }
+
+  type Image {
+    id: ID!
+    url: String!
+    content: Content
+    message: Message
+  }
+
+  type Message {
+    id: ID!
+    created_at: GraphQLDateTime!
+    text_message: String
+    userId: ID!
+    group_id: ID!
+    gif_url: String
+    user: User!
+    group: Group!
+    image: Image
+  }
+
+  type Comment {
+    id: ID!
+    content_id: ID!
+    comment_text: String!
+    created_at: GraphQLDateTime!
+    userId: ID!
+    numLikes: Int!
+    gif_url: String
+    liked: [UserLikedComment]
+    content: Content!
+    tags: [CommentOnHashtag]
+  }
+
+  type UserInGroup {
+    userId: ID
+    user: User
+    group_id: ID
+    group: Group
+  }
+
+  type UserLikedComment {
+    userId: ID
+    user: User
+    comment_id: ID
+    comment: Comment
+  }
+
+  type UserLikedContent {
+    userId: ID
+    user: User
+    content_id: ID
+    content: Content
+  }
+
   type User {
-    id: Int!
+    id: ID!
     name: String!
-    image: String!
+    displayName: String!
     email: String!
+    created_at: GraphQLDateTime!
+    image: String!
+    bannerUrl: String
     bio: String
-    created_at: String!
-    content: [Content!]
-    followedBy: FollowedBy
-    following: Following
+    numFollowing: Int!
+    numFollowers: Int!
+    online: Boolean
+    numContributions: Int!
+    content: [Content]
+    messages: [Message]
+    inGroup: [UserInGroup]
+    followers: [User]
+    following: [User]
     liked_content: [UserLikedContent]
     liked_comments: [UserLikedComment]
     blockedBy: [User]
     blocked: [User]
   }
-  type Following {
-    user: [User]
+
+  type Hashtag {
+    id: ID!
+    text: String!
+    comments: [CommentOnHashtag]
+    content: [ContentOnHashtag]
   }
 
-  type FollowedBy {
-    user: [User]
+  type CommentOnHashtag {
+    hashtagId: ID
+    hashtag: Hashtag
+    commentId: ID
+    comment: Comment
   }
 
-  type Content {
-    content_id: Int!
-    content_text: String!
-    userId: Int!
-    image_id: Int
-    created_at: String!
-    comments: [Comment]
-    liked: [UserLikedContent]
-    user: User!
-  }
-
-  type Comment {
-    comment_id: Int!
-    content_id: Int!
-    comment_text: String!
-    userId: Int!
-  }
-
-  type UserLikedContent {
-    userId: Int
-    content_id: Int
-  }
-
-  type UserLikedComment {
-    userId: Int
-    comment_id: Int
+  type ContentOnHashtag {
+    hashtagId: ID
+    hashtag: Hashtag
+    contentId: ID
+    content: Content
   }
 `;
 
 const resolvers = {
   Query: {
-    findUser: (_parent, _args, ctx) => {
+    getUserID: (_parent, _args, context) => {
+      return prisma.user.findUnique({
+        where: {
+          email: _args.email,
+        },
+      });
+    },
+    findUser: (_parent, _args, context) => {
       return prisma.user.findUnique({
         where: {
           id: _args.id,
         },
         include: {
-          followedBy: true,
-          following: true,
-          liked_content: {
-            where: {
-              userId: _args.id,
-            },
-          },
           content: {
             include: {
-              liked: true,
-              comments: true,
               user: true,
             },
             orderBy: {
@@ -95,26 +166,19 @@ const resolvers = {
       });
     },
 
-    findUserWithEmail: (_parent, _args, ctx) => {
-      return prisma.user.findUnique({
-        where: {
-          email: _args.email,
-        },
-      });
-    },
-    getContent: (_parent, _args, ctx) => {
-      return prisma.content.findFirst({
-        where: {
-          content_id: _args.content_id,
-          userId: _args.userId,
-        },
-        include: {
-          liked: true,
-          comments: true,
-          user: true,
-        },
-      });
-    },
+    // getContent: (_parent, _args, ctx) => {
+    //   return prisma.content.findFirst({
+    //     where: {
+    //       content_id: _args.content_id,
+    //       userId: _args.userId,
+    //     },
+    //     include: {
+    //       liked: true,
+    //       comments: true,
+    //       user: true,
+    //     },
+    //   });
+    // },
   },
 
   Mutation: {
@@ -123,34 +187,35 @@ const resolvers = {
         data: {
           content_text: _args.content_text,
           userId: _args.userId,
+          gif_url: _args.gif_url,
         },
       });
     },
-    createContentLike: (_parent, _args, ctx) => {
-      return prisma.user_liked_content.create({
-        data: {
-          userId: _args.userId,
-          content_id: _args.content_id,
-        },
-      });
-    },
-    deleteContentLike: (_parent, _args, ctx) => {
-      return prisma.user_liked_content.deleteMany({
-        where: {
-          userId: _args.userId,
-          content_id: _args.content_id,
-        },
-      });
-    },
-    postComment: (_parent, _args, ctx) => {
-      return prisma.user_comment.create({
-        data: {
-          content_id: _args.content_id,
-          userId: _args.userId,
-          comment_text: _args.comment_text,
-        },
-      });
-    },
+    //     createContentLike: (_parent, _args, ctx) => {
+    //       return prisma.user_liked_content.create({
+    //         data: {
+    //           userId: _args.userId,
+    //           content_id: _args.content_id,
+    //         },
+    //       });
+    //     },
+    //     deleteContentLike: (_parent, _args, ctx) => {
+    //       return prisma.user_liked_content.deleteMany({
+    //         where: {
+    //           userId: _args.userId,
+    //           content_id: _args.content_id,
+    //         },
+    //       });
+    //     },
+    //     postComment: (_parent, _args, ctx) => {
+    //       return prisma.user_comment.create({
+    //         data: {
+    //           content_id: _args.content_id,
+    //           userId: _args.userId,
+    //           comment_text: _args.comment_text,
+    //         },
+    //       });
+    //     },
   },
 };
 

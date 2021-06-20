@@ -5,7 +5,7 @@ type ButtonProps = DetailedHTMLProps<
   HTMLButtonElement
 > & {
   text: string;
-  disabled: boolean;
+  disabled?: boolean;
   click: (event: React.MouseEvent<HTMLButtonElement>) => void;
   variant: "primary" | "secondary";
   className?: string;

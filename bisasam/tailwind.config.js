@@ -54,13 +54,23 @@ module.exports = {
         900: "var(--color-primary-900)",
       },
       secondary: {
-        DEFAULT: "var(--color-secondary)",
-        600: "var(--color-secondary-600)",
+        DEFAULT: colors.blue[300],
+        600: colors.indigo[300],
       },
       accent: {
         DEFAULT: "var(--color-accent)",
         hover: "var(--color-accent-hover)",
         disabled: "var(--color-accent-disabled)",
+      },
+
+      like: {
+        DEFAULT: colors.red[500],
+      },
+      comment: {
+        DEFAULT: colors.blue[400],
+      },
+      share: {
+        DEFAULT: colors.emerald[400],
       },
 
       error: {
@@ -96,6 +106,8 @@ module.exports = {
       "5l": "10rem",
       "n1/2": "-50%",
       24: "24rem",
+      42: "42rem",
+      48: "48rem",
       400: "400px",
     },
     borderWidth: {
@@ -120,6 +132,8 @@ module.exports = {
 
     extend: {
       opacity: ["active", "disabled", "hover"],
+      backgroundOpacity: ["active", "hover"],
+      textOpacity: ["active", "hover"],
     },
   },
   plugins: [],

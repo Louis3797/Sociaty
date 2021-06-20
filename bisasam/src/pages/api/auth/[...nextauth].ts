@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import prisma from "../../../lib/prismaClient";
-import Adapters from "next-auth/adapters";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
@@ -27,15 +27,7 @@ const options = {
   // * You must to install an appropriate node_module for your database
   // * The Email provider requires a database (OAuth providers do not)
 
-  adapter: Adapters.Prisma.Adapter({
-    prisma,
-    modelMapping: {
-      User: "user",
-      Account: "account",
-      Session: "session",
-      VerificationRequest: "verificationRequest",
-    },
-  }),
+  adapter: PrismaAdapter(prisma),
 
   // The secret should be set to a reasonably long random string.
   // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
@@ -51,15 +43,26 @@ const options = {
   },
   session: {
     jwt: true,
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
+
   callbacks: {
     // async signIn(user, account, profile) { return true },
     // async redirect(url, baseUrl) { return baseUrl },
     // async session(session, user) { return session },
     // async jwt(token, user, account, profile, isNewUser) { return token }
   },
-
+  events: {
+    // async signIn(message) { /* on successful sign in */ },
+    // async signOut(message) { /* on signout */ },
+    // async createUser(message) { /* user created */ },
+    // async updateUser(message) { /* user updated - e.g. their email was verified */ },
+    // async linkAccount(message) { /* account (e.g. Twitter) linked to a user */ },
+    // async session(message) { /* session is active */ },
+    // async error(message) { /* error in authentication flow */ }
+  },
+  //Set to false
   debug: true,
 };
 

@@ -1,51 +1,47 @@
 import { gql } from "@apollo/client";
 
 export const GET_USER_ID = gql`
-  query GET_ID($email: String!) {
-    findUserWithEmail(email: $email) {
+  query GET_USER_ID($email: String!) {
+    getUserID(email: $email) {
       id
+      name
     }
   }
 `;
 
-export const GET_USER_WITH_ID = gql`
-  query GET_USER($id: Int!) {
+export const GET_USER = gql`
+  query GET_USER($id: String!) {
     findUser(id: $id) {
       id
       name
-      email
+      displayName
       image
+      bannerUrl
       bio
-      following {
-        user {
-          id
-          name
-        }
-      }
-      followedBy {
-        user {
-          id
-          name
-        }
-      }
+      created_at
+      numFollowing
+      numFollowers
+      numContributions
+      online
       content {
-        content_id
+        id
         content_text
         userId
         image_id
         created_at
+        numLikes
+        numComments
+        gif_url
+        tags {
+          hashtag {
+            text
+          }
+        }
         user {
           id
+          displayName
           name
           image
-        }
-        liked {
-          userId
-        }
-        comments {
-          comment_id
-          content_id
-          userId
         }
       }
     }
@@ -59,8 +55,8 @@ export const GET_CONTENT = gql`
       content_text
       userId
       image_id
+      created_at
       user {
-        id
         name
         image
       }
@@ -72,6 +68,7 @@ export const GET_CONTENT = gql`
         content_id
         comment_text
         userId
+        created_at
       }
     }
   }
