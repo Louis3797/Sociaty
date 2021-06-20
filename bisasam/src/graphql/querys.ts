@@ -4,6 +4,7 @@ export const GET_USER_ID = gql`
   query GET_USER_ID($email: String!) {
     getUserID(email: $email) {
       id
+      name
     }
   }
 `;
@@ -30,6 +31,12 @@ export const GET_USER = gql`
         created_at
         numLikes
         numComments
+        gif_url
+        tags {
+          hashtag {
+            text
+          }
+        }
         user {
           id
           displayName
