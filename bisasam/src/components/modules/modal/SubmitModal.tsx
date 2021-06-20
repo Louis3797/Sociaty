@@ -29,13 +29,11 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
   const setGifUrl = usePickedGif((state) => state.setGifUrl);
 
   const [showGifModal, setshowGifModal] = useState(false);
-  const [showAlert, setshowAlert] = useState(true);
+  const [showAlert, setshowAlert] = useState(false);
 
   const [createSubmit] = useMutation(POST_CONTENT);
 
   const handleSubmit = (): void => {
-    console.log(text);
-    console.log(gif);
     createSubmit({
       variables: {
         content_text: text,
@@ -78,7 +76,7 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
           </p>
         </Alert>
       </Snackbar>
-      <div className="flex flex-col w-42 rounded-8 h-auto  bg-primary-800">
+      <div className="flex flex-col w-42 sm:w-full rounded-8 h-auto  bg-primary-800">
         <SubmitModalHead />
         <SubmitModalBody
           onTextChange={(e) => settext(e.currentTarget.value)}
