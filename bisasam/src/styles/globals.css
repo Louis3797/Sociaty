@@ -21,6 +21,10 @@
   --color-accent-hover: #a28af1;
   --color-accent-disabled: #baa7f6;
 
+  --color-like: #ef4444;
+  --color-comment: #60a5fa;
+  --color-share: #10b981;
+
   --color-error: #ef4444;
   --color-warn: #f59e0b;
   --color-success: #059669;
