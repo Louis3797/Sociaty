@@ -4,7 +4,7 @@ import RightPanel from "../modules/panels/RightPanel";
 interface MainLayoutProps {
   tabletSidebar?: React.ReactNode;
   leftPanel?: React.ReactNode;
-  rightPanel?: React.ReactNode;
+  rightPanel?: React.ReactNode | null;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children, rightPanel }) => {
@@ -18,7 +18,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, rightPanel }) => {
             <div className="flex w-full h-full bg-transparent justify-center">
               <MiddlePanel>{children}</MiddlePanel>
 
-              <RightPanel>{rightPanel}</RightPanel>
+              {rightPanel === null ? "" : <RightPanel>{rightPanel}</RightPanel>}
             </div>
           </div>
         </>
