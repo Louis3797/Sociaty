@@ -135,6 +135,7 @@ model User_liked_comment {
   comment    Comment @relation(fields: [comment_id], references: [id])
 
   @@id([userId, comment_id])
+  @@index(fields: [userId, comment_id], name: LikedCommentIndex)
 }
 
 model User_liked_content {
@@ -144,6 +145,7 @@ model User_liked_content {
   content    Content @relation(fields: [content_id], references: [id])
 
   @@id([userId, content_id])
+  @@index(fields: [userId, content_id], name: LikedContentIndex)
 }
 
 model User {
