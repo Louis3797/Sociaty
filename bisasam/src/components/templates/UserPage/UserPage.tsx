@@ -1,64 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { RootProps } from "../../../pages/u/[id]";
 import MainLayout from "../../layouts/MainLayout";
 import ListContent from "../../modules/content/ListContent";
+import ProfileContent from "../../modules/profile/ProfileContent";
 import ProfileHeader from "../../modules/profile/ProfileHeader";
 import ProfileInfoBox from "../../modules/profile/ProfileInfoBox";
 
-export interface UserProps {
-  findUser: any;
-}
-
 interface UserPageProps {
-  data?: UserProps;
+  data: RootProps;
 }
 
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
-  const userContent = data.findUser.content.map((content) => {
-    return (
-      <ListContent
-        key={content.content_id.toString()}
-        userId={content.user.id}
-        contentId={content.content_id}
-        name={content.user.name}
-        userImg={content.user.image}
-        text={content.content_text}
-        likeAmount={content.liked === null ? 0 : content.liked.length}
-        commentAmount={content.comments === null ? 0 : content.comments.length}
-        liked={content.liked.length === 1}
-      />
-    );
-  });
+  const [userdata, setuserdata] = useState(null);
+
+  useEffect(() => {
+    setuserdata(data.getUserData);
+  }, []);
+
   return (
     <MainLayout
       rightPanel={
-        <div>
+        <div className="w-full h-full">
           <h1>Hallooo</h1>
         </div>
       }
     >
       <div className="flex flex-col w-full items-center bg-transparent h-auto">
         <ProfileHeader
-          name={data.findUser.name}
-          img={data.findUser.image}
-          email={data.findUser.email}
-          bio={data.findUser.bio ? data.findUser.bio : "Hey im new here"}
+          name={userdata?.name}
+          img={userdata?.image}
+          displayName={userdata?.displayName}
+          bannerUrl={userdata?.bannerUrl}
+          bio={userdata?.bio ? userdata?.bio : "Hey im new here"}
         />
         <ProfileInfoBox
-          follower={
-            data.findUser.followedBy.user === null
-              ? 0
-              : data.findUser.followedBy.user.length
-          }
-          follows={
-            data.findUser.following.user === null
-              ? 0
-              : data.findUser.following.user.length
-          }
-          posts={data.findUser.content.length}
+          follower={userdata?.numFollowers}
+          follows={userdata?.numFollowing}
+          posts={userdata?.numContributions}
         />
-        <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-10">
-          {userContent}
-        </div>
+        <ProfileContent />
       </div>
     </MainLayout>
   );
