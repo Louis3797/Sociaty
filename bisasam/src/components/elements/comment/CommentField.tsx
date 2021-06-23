@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { POST_COMMENT } from "../../../graphql/mutations";
-import { SolidPlus } from "../../../icons";
+import AddIcon from "@material-ui/icons/Add";
 import ButtonIcon from "../button/ButtonIcon";
 
 export interface CommentFieldProps {
@@ -17,9 +17,9 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
     if (text.length <= 255 && text.length !== 0) {
       createComment({
         variables: {
-          content_id: contentId,
+          contentId: contentId.toString(),
           comment_text: text,
-          userId: parseInt(sessionStorage.getItem("UID")),
+          userId: window.sessionStorage.getItem("UID"),
         },
       });
       settext("");
@@ -38,11 +38,12 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
         <p className="font-medium text-secondary-600 mx-2">{text.length}/255</p>
         <ButtonIcon
           size="small"
-          bgcolor="bg-transparent"
+          bgcolor="bg-secondary-600"
+          className="p-2 hover:text-secondary-600"
           disabled={text.length > 255 || text.length === 0}
           click={() => handleSubmit(text)}
         >
-          <SolidPlus />
+          <AddIcon fontWeight="default" />
         </ButtonIcon>
       </form>
     </div>
