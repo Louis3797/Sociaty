@@ -13,8 +13,8 @@ export const POST_CONTENT = gql`
 `;
 
 export const DELETE_LIKE = gql`
-  mutation DELETE_LIKE($userId: Int!, $content_id: Int!) {
-    deleteContentLike(userId: $userId, content_id: $content_id) {
+  mutation DELETE_LIKE($userId: String!, $contentId: String!) {
+    deleteContentLike(userId: $userId, contentId: $contentId) {
       userId
       content_id
     }
@@ -22,8 +22,8 @@ export const DELETE_LIKE = gql`
 `;
 
 export const CREATE_LIKE = gql`
-  mutation CREATE_LIKE($userId: Int!, $content_id: Int!) {
-    createContentLike(userId: $userId, content_id: $content_id) {
+  mutation CREATE_LIKE($userId: String!, $contentId: String!) {
+    createContentLike(userId: $userId, contentId: $contentId) {
       userId
       content_id
     }
@@ -32,15 +32,16 @@ export const CREATE_LIKE = gql`
 
 export const POST_COMMENT = gql`
   mutation POST_COMMENT(
-    $userId: Int!
-    $content_id: Int!
+    $userId: String!
+    $contentId: String!
     $comment_text: String!
   ) {
     postComment(
       userId: $userId
-      content_id: $content_id
+      contentId: $contentId
       comment_text: $comment_text
     ) {
+      id
       userId
       content_id
       comment_text

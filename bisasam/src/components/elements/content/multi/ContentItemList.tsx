@@ -1,15 +1,14 @@
 import { OperationVariables, useMutation } from "@apollo/client";
 import React, { useState } from "react";
-import { CREATE_LIKE, DELETE_LIKE } from "../../../graphql/mutations";
-import { ShareIcon, SolidChatBubble, SolidRocket } from "../../../icons";
-import ButtonIcon from "../button/ButtonIcon";
-import CommentField from "../comment/CommentField";
+import { CREATE_LIKE, DELETE_LIKE } from "../../../../graphql/mutations";
+import CommentField from "../../comment/CommentField";
+import { CommentButton, LikeButton, ShareButton } from "../ContentButtons";
 
-export interface ContentItemListProps {
+interface ContentItemListProps {
   commentAmount: number;
   likeAmount: number;
   liked: boolean;
-  contentId: number;
+  contentId: string;
 }
 
 const ContentItemList: React.FC<ContentItemListProps> = ({
@@ -27,51 +26,44 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
       deleteLike({
         variables: {
           userId: userId,
-          content_id: contentId,
+          contentId: contentId,
         },
       });
     } else {
       createLike({
         variables: {
           userId: userId,
-          content_id: contentId,
+          contentId: contentId,
         },
       });
     }
   }
 
   return (
-    <div className="items-center justify-center bg-transparent flex flex-col w-full h-auto">
-      <div className="items-center justify-end bg-transparent flex flex-row w-full h-5.5">
+    <div className="items-center justify-center bg-primary-800 flex flex-col w-full h-auto rounded-8">
+      <div className="items-center justify-evenly flex flex-row w-full h-5.5">
         <div className="flex items-center mr-7">
-          <ButtonIcon size="small" click={() => {}} bgcolor="bg-secondary">
-            <ShareIcon />
-          </ButtonIcon>
+          <ShareButton size="small" click={() => {}} />
         </div>
         <div className="flex flex-row items-center mr-7">
-          <ButtonIcon
+          <CommentButton
             size="small"
             click={() => {
               setvisible(!visible);
             }}
-            bgcolor="bg-secondary"
-          >
-            <SolidChatBubble />
-          </ButtonIcon>
+          />
           <p className="text-sm font-normal ml-2">{commentAmount}</p>
         </div>
 
         <div className="flex flex-row items-center mr-7">
-          <ButtonIcon
+          <LikeButton
             size="small"
             click={() => {
-              setLike(like, parseInt(sessionStorage.getItem("UID")), contentId);
+              setLike(like, sessionStorage.getItem("UID"), contentId);
               setlike(!like);
             }}
-            bgcolor="bg-secondary"
-          >
-            <SolidRocket className={`${like ? "text-error" : ""}`} />
-          </ButtonIcon>
+            liked={like}
+          />
 
           <p className="text-sm font-normal ml-2 ">{likeAmount}</p>
         </div>

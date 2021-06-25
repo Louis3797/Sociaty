@@ -1,19 +1,11 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
+import { useCurrentUser } from "../../globals-stores/useCurrentUser";
+import { getCsrfToken, getSession } from "next-auth/client";
 
 const typeDefs = gql`
   scalar GraphQLDateTime
-
-  type Query {
-    getUserID(email: String!): User!
-    findUser(id: String!): User!
-    getContent(content_id: String!, userId: String!): Content!
-  }
-
-  type Mutation {
-    postContent(content_text: String, userId: ID!, gif_url: String): Content
-  }
 
   type Content {
     id: ID!
@@ -29,6 +21,7 @@ const typeDefs = gql`
     image: Image
     gif_url: String
     tags: [ContentOnHashtag]
+    favourite: Boolean
   }
 
   type Group {
@@ -137,27 +130,68 @@ const typeDefs = gql`
     contentId: ID
     content: Content
   }
+
+  type Query {
+    getUserID(email: String!): User!
+    getUserData(id: String!): User!
+    getUserContent(userId: String!, currentUserId: String!): User!
+    getSingleContent(content_id: String!, userId: String!): Content!
+  }
+
+  type Mutation {
+    postContent(content_text: String, userId: ID!, gif_url: String): Content
+    createContentLike(userId: String!, contentId: String!): UserLikedContent!
+    deleteContentLike(userId: String!, contentId: String!): UserLikedContent
+    postComment(
+      userId: String!
+      contentId: String!
+      comment_text: String!
+    ): Comment!
+  }
 `;
 
 const resolvers = {
+  Content: {
+    favourite: async (parent, _args, context, info) => {
+      const data = await prisma.user_liked_content.findUnique({
+        where: {
+          userId_content_id: {
+            userId: info.variableValues.currentUserId,
+            content_id: parent.id,
+          },
+        },
+      });
+
+      if (data === null) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+  },
   Query: {
-    getUserID: (_parent, _args, context) => {
+    getUserID: (parent, _args, context, info) => {
       return prisma.user.findUnique({
         where: {
           email: _args.email,
         },
       });
     },
-    findUser: (_parent, _args, context) => {
+    getUserData: (parent, _args, context, info) => {
       return prisma.user.findUnique({
         where: {
           id: _args.id,
         },
+      });
+    },
+
+    getUserContent: (parent, _args, context, info) => {
+      return prisma.user.findUnique({
+        where: {
+          id: _args.userId,
+        },
         include: {
           content: {
-            include: {
-              user: true,
-            },
             orderBy: {
               created_at: "desc",
             },
@@ -166,7 +200,7 @@ const resolvers = {
       });
     },
 
-    // getContent: (_parent, _args, ctx) => {
+    // getSingleContent: (_parent, _args, ctx) => {
     //   return prisma.content.findFirst({
     //     where: {
     //       content_id: _args.content_id,
@@ -182,44 +216,94 @@ const resolvers = {
   },
 
   Mutation: {
-    postContent: (_parent, _args, ctx) => {
-      return prisma.content.create({
-        data: {
-          content_text: _args.content_text,
-          userId: _args.userId,
-          gif_url: _args.gif_url,
-        },
-      });
+    postContent: async (parent, _args, context) => {
+      const [createPost, updatedContributions] = await prisma.$transaction([
+        prisma.content.create({
+          data: {
+            content_text: _args.content_text,
+            userId: _args.userId,
+            gif_url: _args.gif_url,
+          },
+        }),
+
+        prisma.user.update({
+          where: { id: _args.userId },
+          data: {
+            numContributions: {
+              increment: 1,
+            },
+          },
+        }),
+      ]);
+
+      return createPost;
     },
-    //     createContentLike: (_parent, _args, ctx) => {
-    //       return prisma.user_liked_content.create({
-    //         data: {
-    //           userId: _args.userId,
-    //           content_id: _args.content_id,
-    //         },
-    //       });
-    //     },
-    //     deleteContentLike: (_parent, _args, ctx) => {
-    //       return prisma.user_liked_content.deleteMany({
-    //         where: {
-    //           userId: _args.userId,
-    //           content_id: _args.content_id,
-    //         },
-    //       });
-    //     },
-    //     postComment: (_parent, _args, ctx) => {
-    //       return prisma.user_comment.create({
-    //         data: {
-    //           content_id: _args.content_id,
-    //           userId: _args.userId,
-    //           comment_text: _args.comment_text,
-    //         },
-    //       });
-    //     },
+    createContentLike: async (_parent, _args, ctx) => {
+      const [createLike, updatedContent] = await prisma.$transaction([
+        prisma.user_liked_content.create({
+          data: {
+            userId: _args.userId,
+            content_id: _args.contentId,
+          },
+        }),
+        prisma.content.update({
+          where: { id: _args.contentId },
+          data: {
+            numLikes: {
+              increment: 1,
+            },
+          },
+        }),
+      ]);
+      return createLike;
+    },
+    deleteContentLike: async (_parent, _args, ctx) => {
+      const [deleteLike, updatedContent] = await prisma.$transaction([
+        prisma.user_liked_content.deleteMany({
+          where: {
+            userId: _args.userId,
+            content_id: _args.contentId,
+          },
+        }),
+        prisma.content.update({
+          where: { id: _args.contentId },
+          data: {
+            numLikes: {
+              decrement: 1,
+            },
+          },
+        }),
+      ]);
+      return deleteLike;
+    },
+    postComment: async (_parent, _args, ctx) => {
+      const [createComment, updatedContent] = await prisma.$transaction([
+        prisma.comment.create({
+          data: {
+            content_id: _args.contentId,
+            userId: _args.userId,
+            comment_text: _args.comment_text,
+          },
+        }),
+        prisma.content.update({
+          where: { id: _args.contentId },
+          data: {
+            numComments: {
+              increment: 1,
+            },
+          },
+        }),
+      ]);
+      return createComment;
+    },
   },
 };
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers });
+const apolloServer = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req, res }) => ({ req, res }),
+});
 
 export const config = {
   api: {

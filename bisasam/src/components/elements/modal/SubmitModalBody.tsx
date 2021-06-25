@@ -41,7 +41,7 @@ const SubmitModalBody: React.FC<SubmitModalBodyProps> = ({
             <img
               src={gif}
               alt="submit-gif"
-              className="w-full h-auto rounded-8"
+              className="w-full h-auto rounded-20"
             />
             <ButtonIcon
               size="small"

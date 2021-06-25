@@ -1,10 +1,26 @@
 import UserPage from "../../../components/templates/UserPage/UserPage";
-interface USER {
-  findUser: any;
+export interface GetUserData {
+  __typename: string;
+  id: string;
+  name: string;
+  displayName: string;
+  image: string;
+  bannerUrl?: any;
+  bio?: any;
+  created_at: Date;
+  numFollowing: number;
+  numFollowers: number;
+  numContributions: number;
+  online: boolean;
+  content: [] | null;
+}
+
+export interface RootProps {
+  getUserData: GetUserData;
 }
 
 interface ProfilePageProps {
-  data?: USER;
+  data: RootProps;
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
@@ -13,7 +29,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
 
 export async function getServerSideProps(context) {
   const { id } = context.query;
-
   const res = await fetch(`http://localhost:3000/api/u/${id}`);
 
   const data = await res.json();

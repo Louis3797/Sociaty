@@ -5,6 +5,7 @@ import { GET_USER_ID } from "../graphql/querys";
 
 interface ID {
   id: string;
+  name: string;
 }
 
 interface ID_DATA {
@@ -35,8 +36,8 @@ export const useSetSessionID = () => {
     if (data == undefined) console.log("undefined uid data");
     // If the session is true than setItem UID in SessionStorage , The item is the User_ID
     else if (session) {
-      console.log(data);
       window.sessionStorage.setItem("UID", data?.getUserID.id);
+      window.sessionStorage.setItem("UNAME", data?.getUserID.name);
     }
   }, [session, data]);
 };
