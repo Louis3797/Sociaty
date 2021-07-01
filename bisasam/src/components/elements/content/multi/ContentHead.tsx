@@ -35,7 +35,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             {displayName}
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
-          <span className="text-button text-opacity-40 text-base font-extrabold mx-2">
+          <span className="text-button text-opacity-40 text-base font-extrabold mx-1">
             ·
           </span>
           <Moment className="text-button text-opacity-40 text-base" fromNow>
