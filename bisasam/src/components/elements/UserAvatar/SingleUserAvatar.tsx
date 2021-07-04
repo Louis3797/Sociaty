@@ -1,9 +1,4 @@
-import {
-  DetailedHTMLProps,
-  DOMAttributes,
-  ImgHTMLAttributes,
-  MouseEventHandler,
-} from "react";
+import { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 
 type SingleUserAvatarProps = DetailedHTMLProps<
   ImgHTMLAttributes<HTMLImageElement>,
