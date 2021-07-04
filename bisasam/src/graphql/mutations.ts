@@ -48,3 +48,19 @@ export const POST_COMMENT = gql`
     }
   }
 `;
+
+export const UPDATE_PROFILE = gql`
+  mutation UPDATE_PROFILE(
+    $userId: String!
+    $displayName: String
+    $bio: String
+    $bannerUrl: String
+  ) {
+    updateProfile(
+      userId: $userId
+      displayName: $displayName
+      bio: $bio
+      bannerUrl: $bannerUrl
+    )
+  }
+`;

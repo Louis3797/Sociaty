@@ -147,6 +147,12 @@ const typeDefs = gql`
       contentId: String!
       comment_text: String!
     ): Comment!
+    updateProfile(
+      userId: String!
+      displayName: String
+      bio: String
+      bannerUrl: String
+    ): String
   }
 `;
 
@@ -295,6 +301,18 @@ const resolvers = {
         }),
       ]);
       return createComment;
+    },
+
+    updateProfile: async (_parent, _args, ctx) => {
+      await prisma.user.update({
+        where: { id: _args.userId },
+        data: {
+          bio: _args.bio,
+          displayName: _args.displayName,
+          bannerUrl: _args.bannerUrl,
+        },
+      });
+      return "Ok";
     },
   },
 };
