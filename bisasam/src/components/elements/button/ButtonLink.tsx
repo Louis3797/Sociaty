@@ -5,22 +5,18 @@ type ButtonLinkProps = DetailedHTMLProps<
   HTMLButtonElement
 > & {
   text: string;
-  click: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  disabled: boolean;
   className?: string;
 };
 
 const ButtonLink: React.FC<ButtonLinkProps> = ({
   text,
-  click,
-  disabled,
   className,
+  ...props
 }) => {
   return (
     <button
-      disabled={disabled}
+      {...props}
       className={`focus:outline-none text-primary-100 underline text-md ${className}`}
-      onClick={click}
     >
       {text}
     </button>

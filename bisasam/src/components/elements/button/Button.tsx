@@ -5,8 +5,6 @@ type ButtonProps = DetailedHTMLProps<
   HTMLButtonElement
 > & {
   text: string;
-  disabled?: boolean;
-  click: (event: React.MouseEvent<HTMLButtonElement>) => void;
   variant: "primary" | "secondary";
   className?: string;
   size: "big" | "small";
@@ -26,17 +24,15 @@ const colorClassnames = {
 
 const Button: React.FC<ButtonProps> = ({
   text,
-  disabled,
-  click,
   variant,
   className,
   size,
+  ...props
 }) => {
   return (
     <button
-      disabled={disabled}
+      {...props}
       className={`${colorClassnames[variant]} font-bold cursor-pointer focus:outline-none  ${className} ${sizeClassnames[size]}`}
-      onClick={click}
     >
       {text}
     </button>
