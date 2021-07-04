@@ -24,7 +24,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
       <div className="h-10 w-full bg-transparent">
         <img
           src={
-            bannerUrl === null
+            bannerUrl === null || bannerUrl?.length === 0
               ? "https://source.unsplash.com/random"
               : bannerUrl
           }
@@ -51,10 +51,10 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           variant="primary"
           size="big"
           className="mr-3"
-          click={() => setvisible(true)}
+          onClick={() => setvisible(true)}
         />
       </div>
-      <p className="text-secondary-600 text-base tracking-wider ml-5 mb-4  font-medium">
+      <p className="text-secondary text-base tracking-wider ml-5 mb-4  font-medium">
         {bio}
       </p>
       <EditProfileModal
