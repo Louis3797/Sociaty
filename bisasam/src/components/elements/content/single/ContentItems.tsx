@@ -52,18 +52,18 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
         </div>
       </div>
       <div className="items-center justify-around flex flex-row w-full h-7">
-        <ShareButton size="big" click={() => {}} />
+        <ShareButton size="big" onClick={() => {}} />
 
         <CommentButton
           size="big"
-          click={() => {
+          onClick={() => {
             setvisible(!visible);
           }}
         />
 
         <LikeButton
           size="big"
-          click={() => {
+          onClick={() => {
             setLike(like, parseInt(sessionStorage.getItem("UID")), contentId);
             setlike(!like);
           }}

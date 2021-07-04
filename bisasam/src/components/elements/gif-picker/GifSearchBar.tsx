@@ -15,7 +15,7 @@ const GifPickerSearchBar: React.FC<GifPickerSearchBarProps> = ({
       <ButtonIcon
         size="big"
         bgcolor="bg-secondary-600"
-        click={close}
+        onClick={close}
         className="mx-3 p-3"
       >
         <CloseRoundedIcon fontSize="default" className="text-secondary-600" />

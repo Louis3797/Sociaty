@@ -46,7 +46,7 @@ const SubmitModalBody: React.FC<SubmitModalBodyProps> = ({
             <ButtonIcon
               size="small"
               bgcolor="bg-secondary-600"
-              click={() => setGifUrl("")}
+              onClick={() => setGifUrl("")}
               className=" top-0 m-2 absolute"
             >
               <CloseRoundedIcon fontSize="default" className="text-accent" />

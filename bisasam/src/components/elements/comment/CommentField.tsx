@@ -41,7 +41,7 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
           bgcolor="bg-secondary-600"
           className="p-2 hover:text-secondary-600"
           disabled={text.length > 255 || text.length === 0}
-          click={() => handleSubmit(text)}
+          onClick={() => handleSubmit(text)}
         >
           <AddIcon fontWeight="default" />
         </ButtonIcon>
