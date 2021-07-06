@@ -135,7 +135,7 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
       </div>
       <form
         onSubmit={handleSubmit}
-        className="flex  flex-col w-full h-full items-start justify-center bg-transparent relative"
+        className="flex  flex-col w-full h-full items-start justify-center bg-transparent relative space-y-5 mt-5"
       >
         <InputField
           name="bannerUri-input"
@@ -143,7 +143,6 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
           textarea
           label="Banner Uri"
           placeholder="Add an image url to edit your Banner"
-          className="mt-5"
           value={bUri}
           onChange={(e) => {
             setbUri(e.target.value);
@@ -154,7 +153,6 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
           name="displayName-input"
           counter={25}
           label="Username"
-          className="mt-5"
           value={dName}
           onChange={(e) => {
             setdName(e.target.value);
@@ -165,14 +163,13 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
           counter={160}
           textarea
           label="Status"
-          className="mt-5"
           value={newBio}
           onChange={(e) => {
             setNewBio(e.target.value);
           }}
           rows={3}
         />
-        <div className="flex w-full h-full justify-end flex-row mt-5">
+        <div className="flex w-full h-full justify-end flex-row">
           <Button
             size="big"
             onClick={() => {}}
