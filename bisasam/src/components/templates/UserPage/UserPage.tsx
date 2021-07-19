@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { RootProps } from "../../../pages/u/[id]";
 import MainLayout from "../../layouts/MainLayout";
-import ListContent from "../../modules/content/ListContent";
 import ProfileContent from "../../modules/profile/ProfileContent";
 import ProfileHeader from "../../modules/profile/ProfileHeader";
 import ProfileInfoBox from "../../modules/profile/ProfileInfoBox";

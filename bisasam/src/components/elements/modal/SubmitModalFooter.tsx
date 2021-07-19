@@ -29,7 +29,7 @@ const SubmitModalFooter: React.FC<SubmitModalFooterProps> = ({
         <ButtonIcon
           size="big"
           bgcolor="bg-secondary-600"
-          click={() => {}}
+          onClick={() => {}}
           disabled={img.length > 0 || gif.length != 0}
           className="mx-1"
         >
@@ -38,7 +38,7 @@ const SubmitModalFooter: React.FC<SubmitModalFooterProps> = ({
         <ButtonIcon
           size="big"
           bgcolor="bg-secondary-600"
-          click={showGifModal}
+          onClick={showGifModal}
           disabled={gif.length > 0 || img.length != 0}
           className="mx-1"
         >
@@ -50,7 +50,7 @@ const SubmitModalFooter: React.FC<SubmitModalFooterProps> = ({
           {text.length}/255
         </p>
         <div className="mr-2 ml-4">
-          <ButtonLink disabled={false} text="Cancel" click={cancel} />
+          <ButtonLink disabled={false} text="Cancel" onClick={cancel} />
         </div>
         <div className="ml-2">
           <Button
@@ -58,7 +58,7 @@ const SubmitModalFooter: React.FC<SubmitModalFooterProps> = ({
             disabled={
               text.length > 255 || (text.length === 0 && gif.length === 0)
             }
-            click={submit}
+            onClick={submit}
             variant="primary"
             size="big"
           />

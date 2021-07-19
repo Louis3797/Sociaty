@@ -10,7 +10,6 @@ type ContentButtonProps = DetailedHTMLProps<
 > & {
   className?: string;
   size: "big" | "small";
-  click: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 type LikeButtonProps = ContentButtonProps & {
@@ -24,13 +23,13 @@ const sizeClassnames = {
 
 export const LikeButton: React.FC<LikeButtonProps> = ({
   size,
-  click,
   liked,
+  ...props
 }) => {
   return (
     <button
       className={`flex hover:bg-like hover:bg-opacity-25 hover:text-like rounded-full items-center  justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out ${sizeClassnames[size]}`}
-      onClick={click}
+      {...props}
     >
       {liked ? (
         <FavoriteRoundedIcon fontSize="small" className="text-like" />
@@ -43,23 +42,26 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
 
 export const CommentButton: React.FC<ContentButtonProps> = ({
   size,
-  click,
+  ...props
 }) => {
   return (
     <button
       className={`flex hover:bg-comment hover:bg-opacity-25 hover:text-comment text-button rounded-full items-center  justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out ${sizeClassnames[size]}`}
-      onClick={click}
+      {...props}
     >
       {<ChatBubbleOutlineRoundedIcon fontSize="small" />}
     </button>
   );
 };
 
-export const ShareButton: React.FC<ContentButtonProps> = ({ size, click }) => {
+export const ShareButton: React.FC<ContentButtonProps> = ({
+  size,
+  ...props
+}) => {
   return (
     <button
       className={`flex hover:bg-share hover:bg-opacity-25 hover:text-share text-button rounded-full items-center  justify-center cursor-pointer focus:outline-none transition duration-200 ease-in-out ${sizeClassnames[size]}`}
-      onClick={click}
+      {...props}
     >
       {<ShareRoundedIcon fontSize="small" />}
     </button>

@@ -3,11 +3,15 @@ import React from "react";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
 import SingleUserAvatar from "../../UserAvatar/SingleUserAvatar";
 import Moment from "react-moment";
-
+import ButtonDropdown from "../../button/ButtonDropdown";
+import DropdownItem from "../../dropdown/DropdownItem";
+import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
+import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
 interface ContentHeadProps {
   img: string;
   name: string;
   userId: string;
+  contentId: string;
   time: string;
   displayName: string;
 }
@@ -16,6 +20,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
   img,
   name,
   userId,
+  contentId,
   time,
   displayName,
 }) => {
@@ -35,7 +40,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             {displayName}
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
-          <span className="text-button text-opacity-40 text-base font-extrabold mx-2">
+          <span className="text-button text-opacity-40 text-base font-extrabold mx-1">
             ·
           </span>
           <Moment className="text-button text-opacity-40 text-base" fromNow>
@@ -43,7 +48,29 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           </Moment>
         </div>
 
-        <MoreHorizRoundedIcon fontSize="default" className="text-button mx-5" />
+        <ButtonDropdown
+          icon={
+            <MoreHorizRoundedIcon fontSize="default" className="text-button" />
+          }
+          variant="transparent"
+          size="small"
+          className="mx-5"
+        >
+          <DropdownItem
+            icon={<DeleteForeverRoundedIcon fontSize="default" />}
+            text="Delete"
+            textColor="text-like"
+            onClick={() => {}}
+          />
+          {userId === window.sessionStorage.getItem("UID") && (
+            <DropdownItem
+              icon={<BlockRoundedIcon fontSize="default" />}
+              text="Block User"
+              textColor="text-primary-200"
+              onClick={() => {}}
+            />
+          )}
+        </ButtonDropdown>
       </div>
     </div>
   );

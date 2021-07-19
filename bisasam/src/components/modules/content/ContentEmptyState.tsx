@@ -19,7 +19,7 @@ const ContentEmptyState: React.FC<ContentEmptyStateProps> = () => {
         variant="primary"
         size="big"
         className="mt-5"
-        click={() => setshowSubmitModal(true)}
+        onClick={() => setshowSubmitModal(true)}
       />
       <SubmitModal
         isOpen={showSubmitModal}

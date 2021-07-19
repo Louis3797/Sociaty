@@ -43,12 +43,12 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
     <div className="items-center justify-center bg-primary-800 flex flex-col w-full h-auto rounded-8">
       <div className="items-center justify-evenly flex flex-row w-full h-5.5">
         <div className="flex items-center mr-7">
-          <ShareButton size="small" click={() => {}} />
+          <ShareButton size="small" onClick={() => {}} />
         </div>
         <div className="flex flex-row items-center mr-7">
           <CommentButton
             size="small"
-            click={() => {
+            onClick={() => {
               setvisible(!visible);
             }}
           />
@@ -58,7 +58,7 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
         <div className="flex flex-row items-center mr-7">
           <LikeButton
             size="small"
-            click={() => {
+            onClick={() => {
               setLike(like, sessionStorage.getItem("UID"), contentId);
               setlike(!like);
             }}

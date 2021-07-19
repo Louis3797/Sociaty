@@ -18,7 +18,7 @@ const ContentBody: React.FC<ContentBodyProps> = ({
     <>
       <Link href={`/u/${userId}/contribution/${contentId}`}>
         <div className="w-full h-auto bg-primary-800 mt-1 rounded-8">
-          <p className="break-words mr-5 ml-4 mb-4 text-secondary-600 text-opacity-80 font-medium">
+          <p className="break-words mr-5 ml-4 mb-4 text-secondary text-opacity-80 font-medium">
             {text}
           </p>
           {gifUrl.length > 0 && (
