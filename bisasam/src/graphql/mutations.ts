@@ -64,3 +64,9 @@ export const UPDATE_PROFILE = gql`
     )
   }
 `;
+
+export const DELETE_POST = gql`
+  mutation DELETE_POST($userId: String!, $contentId: String!) {
+    deletePost(userId: $userId, contentId: $contentId)
+  }
+`;

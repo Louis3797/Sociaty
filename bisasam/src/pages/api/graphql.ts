@@ -153,6 +153,7 @@ const typeDefs = gql`
       bio: String
       bannerUrl: String
     ): String
+    deletePost(userId: String!, contentId: String!): String!
   }
 `;
 
@@ -312,6 +313,29 @@ const resolvers = {
           bannerUrl: _args.bannerUrl,
         },
       });
+      return "Ok";
+    },
+
+    //!! Delete Comments, Comment likes, Likes and than the Post <-- needs to be updated cannot delete Comment and the Likes of it.
+    deletePost: async (_parent, _args, ctx) => {
+      const [deletePostLikes, deletePost, updateUser] =
+        await prisma.$transaction([
+          prisma.user_liked_content.deleteMany({
+            where: {
+              content_id: _args.contentId,
+            },
+          }),
+          prisma.content.delete({
+            where: { id: _args.contentId },
+          }),
+          prisma.user.update({
+            where: { id: _args.userId },
+            data: {
+              numContributions: { decrement: 1 },
+            },
+          }),
+        ]);
+
       return "Ok";
     },
   },
