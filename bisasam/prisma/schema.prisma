@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -30,7 +31,7 @@ model Content {
   userId           String
   image_id         String?
   image            Image?               @relation(fields: [image_id], references: [id])
-  user             User                 @relation(fields: [userId], references: [id])
+  user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   liked            User_liked_content[]
   comments         Comment[]
   numLikes         Int                  @default(0)
@@ -91,8 +92,8 @@ model Hashtag {
 model CommentOnHashtag {
   hashtagId String
   commentId String
-  hashtag   Hashtag @relation(fields: [hashtagId], references: [id])
-  comment   Comment @relation(fields: [commentId], references: [id])
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@id([hashtagId, commentId])
 }
@@ -100,8 +101,8 @@ model CommentOnHashtag {
 model ContentOnHashtag {
   hashtagId String
   contentId String
-  hashtag   Hashtag @relation(fields: [hashtagId], references: [id])
-  content   Content @relation(fields: [contentId], references: [id])
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   @@id([hashtagId, contentId])
 }
@@ -114,7 +115,7 @@ model Comment {
   userId             String
   user_liked_comment User_liked_comment[]
   numLikes           Int                  @default(0)
-  content            Content              @relation(fields: [content_id], references: [id])
+  content            Content              @relation(fields: [content_id], references: [id], onDelete: Cascade)
   gif_url            String?
   CommentOnHashtag   CommentOnHashtag[]
 }
@@ -131,8 +132,8 @@ model User_in_group {
 model User_liked_comment {
   userId     String
   comment_id String
-  user       User    @relation(fields: [userId], references: [id])
-  comment    Comment @relation(fields: [comment_id], references: [id])
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment    Comment @relation(fields: [comment_id], references: [id], onDelete: Cascade)
 
   @@id([userId, comment_id])
   @@index(fields: [userId, comment_id], name: "LikedCommentIndex")
@@ -141,8 +142,8 @@ model User_liked_comment {
 model User_liked_content {
   userId     String
   content_id String
-  user       User    @relation(fields: [userId], references: [id])
-  content    Content @relation(fields: [content_id], references: [id])
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content    Content @relation(fields: [content_id], references: [id], onDelete: Cascade)
 
   @@id([userId, content_id])
   @@index(fields: [userId, content_id], name: "LikedContentIndex")
