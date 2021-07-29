@@ -7,6 +7,8 @@ import ButtonDropdown from "../../button/ButtonDropdown";
 import DropdownItem from "../../dropdown/DropdownItem";
 import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
 import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
+import { OperationVariables, useMutation } from "@apollo/client";
+import { DELETE_POST } from "../../../../graphql/mutations";
 interface ContentHeadProps {
   img: string;
   name: string;
@@ -25,6 +27,18 @@ const ContentHead: React.FC<ContentHeadProps> = ({
   displayName,
 }) => {
   const router = useRouter();
+
+  const [deletePost] = useMutation<any, OperationVariables>(DELETE_POST);
+
+  const handleDeletePost = (userId: string, contentId: string): void => {
+    deletePost({
+      variables: {
+        userId: userId,
+        contentId: contentId,
+      },
+    });
+  };
+
   return (
     <div className="flex flex-row w-full h-7 items-center bg-primary-800 rounded-8">
       <SingleUserAvatar
@@ -60,7 +74,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             icon={<DeleteForeverRoundedIcon fontSize="default" />}
             text="Delete"
             textColor="text-like"
-            onClick={() => {}}
+            onClick={() => handleDeletePost(userId, contentId)}
           />
           {userId === window.sessionStorage.getItem("UID") && (
             <DropdownItem

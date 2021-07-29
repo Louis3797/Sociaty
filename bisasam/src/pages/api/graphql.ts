@@ -316,25 +316,19 @@ const resolvers = {
       return "Ok";
     },
 
-    //!! Delete Comments, Comment likes, Likes and than the Post <-- needs to be updated cannot delete Comment and the Likes of it.
+    //!! Delete Comment likes or check / test if already deleted
     deletePost: async (_parent, _args, ctx) => {
-      const [deletePostLikes, deletePost, updateUser] =
-        await prisma.$transaction([
-          prisma.user_liked_content.deleteMany({
-            where: {
-              content_id: _args.contentId,
-            },
-          }),
-          prisma.content.delete({
-            where: { id: _args.contentId },
-          }),
-          prisma.user.update({
-            where: { id: _args.userId },
-            data: {
-              numContributions: { decrement: 1 },
-            },
-          }),
-        ]);
+      const [deletePost, updateUser] = await prisma.$transaction([
+        prisma.content.delete({
+          where: { id: _args.contentId },
+        }),
+        prisma.user.update({
+          where: { id: _args.userId },
+          data: {
+            numContributions: { decrement: 1 },
+          },
+        }),
+      ]);
 
       return "Ok";
     },
