@@ -10,6 +10,7 @@ import { usePickedGif } from "../../../globals-stores/usePickedGif";
 import { Snackbar } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import Router from "next/router";
 
 interface SubmitModalProps {
   className?: string;
@@ -45,6 +46,7 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
     setshowAlert(true);
     settext("");
     setGifUrl("");
+    Router.reload();
   };
 
   function handleCancel() {
