@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import React from "react";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
 import SingleUserAvatar from "../../UserAvatar/SingleUserAvatar";
@@ -74,7 +74,10 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             icon={<DeleteForeverRoundedIcon fontSize="default" />}
             text="Delete"
             textColor="text-like"
-            onClick={() => handleDeletePost(userId, contentId)}
+            onClick={() => {
+              handleDeletePost(userId, contentId);
+              Router.reload();
+            }}
           />
           {userId === window.sessionStorage.getItem("UID") && (
             <DropdownItem
