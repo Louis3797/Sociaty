@@ -70,15 +70,17 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           size="small"
           className="mx-5"
         >
-          <DropdownItem
-            icon={<DeleteForeverRoundedIcon fontSize="default" />}
-            text="Delete"
-            textColor="text-like"
-            onClick={() => {
-              handleDeletePost(userId, contentId);
-              Router.reload();
-            }}
-          />
+          {userId === window.sessionStorage.getItem("UID") && (
+            <DropdownItem
+              icon={<DeleteForeverRoundedIcon fontSize="default" />}
+              text="Delete"
+              textColor="text-like"
+              onClick={() => {
+                handleDeletePost(userId, contentId);
+                Router.reload();
+              }}
+            />
+          )}
           {userId === window.sessionStorage.getItem("UID") && (
             <DropdownItem
               icon={<BlockRoundedIcon fontSize="default" />}
