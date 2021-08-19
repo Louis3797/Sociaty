@@ -1,6 +1,7 @@
 import { OperationVariables, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { CREATE_LIKE, DELETE_LIKE } from "../../../../graphql/mutations";
+import { useHandleContentLike } from "../../../../hooks/useHandleContentLike";
 import CommentField from "../../comment/CommentField";
 import { CommentButton, LikeButton, ShareButton } from "../ContentButtons";
 
@@ -19,25 +20,8 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
 }) => {
   const [visible, setvisible] = useState(false);
   const [like, setlike] = useState(liked);
-  const [deleteLike] = useMutation<any, OperationVariables>(DELETE_LIKE);
-  const [createLike] = useMutation<any, OperationVariables>(CREATE_LIKE);
-  function setLike(isLiked: boolean, userId, contentId): void {
-    if (isLiked) {
-      deleteLike({
-        variables: {
-          userId: userId,
-          contentId: contentId,
-        },
-      });
-    } else {
-      createLike({
-        variables: {
-          userId: userId,
-          contentId: contentId,
-        },
-      });
-    }
-  }
+  const [likeHandler] = useHandleContentLike();
+  const [numLikes, setnumLikes] = useState(likeAmount);
 
   return (
     <div className="items-center justify-center bg-primary-800 flex flex-col w-full h-auto rounded-8">
@@ -59,13 +43,18 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
           <LikeButton
             size="small"
             onClick={() => {
-              setLike(like, sessionStorage.getItem("UID"), contentId);
+              likeHandler(like, sessionStorage.getItem("UID"), contentId);
+              if (like) {
+                setnumLikes(numLikes - 1);
+              } else {
+                setnumLikes(numLikes + 1);
+              }
               setlike(!like);
             }}
             liked={like}
           />
 
-          <p className="text-sm font-normal ml-2 ">{likeAmount}</p>
+          <p className="text-sm font-normal ml-2 ">{numLikes}</p>
         </div>
       </div>
       {visible && <CommentField contentId={contentId} />}
