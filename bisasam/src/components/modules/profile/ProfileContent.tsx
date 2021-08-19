@@ -8,6 +8,7 @@ import ContentEmptyState from "../content/ContentEmptyState";
 import ListContent from "../content/ListContent";
 
 export interface Hashtags {
+  id?: string;
   text: string;
 }
 
@@ -71,7 +72,7 @@ const ProfileContent: React.FC<ProfileContentProps> = () => {
     setuserContent(data?.getUserContent);
   }, [data]);
 
-  const content = userContent?.content.map((content, i) => {
+  const content = userContent?.content.map((content) => {
     return (
       <ListContent
         key={content.id}
@@ -95,7 +96,7 @@ const ProfileContent: React.FC<ProfileContentProps> = () => {
         <h1>Error</h1>
       ) : loading ? (
         <LoadingState />
-      ) : userContent === null ? (
+      ) : userContent?.content?.length === 0 ? (
         <ContentEmptyState />
       ) : (
         content
