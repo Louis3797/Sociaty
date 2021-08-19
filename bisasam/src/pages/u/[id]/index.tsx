@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import UserPage from "../../../components/templates/UserPage/UserPage";
 export interface GetUserData {
   __typename: string;
@@ -16,6 +17,7 @@ export interface GetUserData {
 }
 
 export interface RootProps {
+  User: any;
   getUserData: GetUserData;
 }
 
@@ -27,7 +29,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
   return <UserPage data={data} />;
 };
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const { id } = context.query;
   const res = await fetch(`http://localhost:3000/api/u/${id}`);
 
@@ -43,6 +45,6 @@ export async function getServerSideProps(context) {
       data,
     },
   };
-}
+};
 
 export default ProfilePage;
