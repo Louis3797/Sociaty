@@ -113,6 +113,7 @@ model Comment {
   comment_text       String               @db.VarChar(255)
   created_at         DateTime             @default(now()) @db.Timestamp(0)
   userId             String
+  user               User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   user_liked_comment User_liked_comment[]
   numLikes           Int                  @default(0)
   content            Content              @relation(fields: [content_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -165,6 +166,7 @@ model User {
   online           Boolean?             @default(false)
   numContributions Int                  @default(0)
   content          Content[]
+  comments         Comment[]
   messages         Message[]
   liked_content    User_liked_content[]
   in_group         User_in_group[]
