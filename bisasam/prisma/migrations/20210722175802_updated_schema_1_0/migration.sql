@@ -1,21 +1,17 @@
 -- CreateTable
-CREATE TABLE `Accounts` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `compound_id` VARCHAR(191) NOT NULL,
-    `user_id` VARCHAR(191) NOT NULL,
-    `provider_type` VARCHAR(191) NOT NULL,
-    `provider_id` VARCHAR(191) NOT NULL,
-    `provider_account_id` VARCHAR(191) NOT NULL,
-    `refresh_token` VARCHAR(191),
-    `access_token` VARCHAR(191),
-    `access_token_expires` DATETIME(3),
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+CREATE TABLE `Account` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `providerType` VARCHAR(191) NOT NULL,
+    `providerId` VARCHAR(191) NOT NULL,
+    `providerAccountId` VARCHAR(191) NOT NULL,
+    `refreshToken` VARCHAR(191),
+    `accessToken` VARCHAR(191),
+    `accessTokenExpires` DATETIME(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Accounts.compound_id_unique`(`compound_id`),
-    INDEX `providerAccountId`(`provider_account_id`),
-    INDEX `providerId`(`provider_id`),
-    INDEX `userId`(`user_id`),
+    UNIQUE INDEX `Account.providerId_providerAccountId_unique`(`providerId`, `providerAccountId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -28,6 +24,7 @@ CREATE TABLE `Content` (
     `image_id` VARCHAR(191),
     `numLikes` INTEGER NOT NULL DEFAULT 0,
     `numComments` INTEGER NOT NULL DEFAULT 0,
+    `gif_url` VARCHAR(191),
 
     UNIQUE INDEX `Content_image_id_unique`(`image_id`),
     PRIMARY KEY (`id`)
@@ -44,7 +41,7 @@ CREATE TABLE `Group` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `image` (
+CREATE TABLE `Image` (
     `id` VARCHAR(191) NOT NULL,
     `url` VARCHAR(255) NOT NULL,
 
@@ -55,26 +52,53 @@ CREATE TABLE `image` (
 CREATE TABLE `Message` (
     `id` VARCHAR(191) NOT NULL,
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `text_message` VARCHAR(255) NOT NULL,
+    `text_message` VARCHAR(255),
     `userId` VARCHAR(191) NOT NULL,
     `group_id` VARCHAR(191) NOT NULL,
+    `image_id` VARCHAR(191),
+    `gif_url` VARCHAR(191),
+
+    UNIQUE INDEX `Message_image_id_unique`(`image_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Session` (
+    `id` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `expires` DATETIME(3) NOT NULL,
+    `sessionToken` VARCHAR(191) NOT NULL,
+    `accessToken` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    UNIQUE INDEX `Session.sessionToken_unique`(`sessionToken`),
+    UNIQUE INDEX `Session.accessToken_unique`(`accessToken`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Hashtag` (
+    `id` VARCHAR(191) NOT NULL,
+    `text` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Sessions` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `user_id` VARCHAR(191) NOT NULL,
-    `expires` DATETIME(3) NOT NULL,
-    `session_token` VARCHAR(191) NOT NULL,
-    `access_token` VARCHAR(191) NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+CREATE TABLE `CommentOnHashtag` (
+    `hashtagId` VARCHAR(191) NOT NULL,
+    `commentId` VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX `Sessions.session_token_unique`(`session_token`),
-    UNIQUE INDEX `Sessions.access_token_unique`(`access_token`),
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`hashtagId`, `commentId`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `ContentOnHashtag` (
+    `hashtagId` VARCHAR(191) NOT NULL,
+    `contentId` VARCHAR(191) NOT NULL,
+
+    PRIMARY KEY (`hashtagId`, `contentId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -85,6 +109,7 @@ CREATE TABLE `Comment` (
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `userId` VARCHAR(191) NOT NULL,
     `numLikes` INTEGER NOT NULL DEFAULT 0,
+    `gif_url` VARCHAR(191),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -102,6 +127,7 @@ CREATE TABLE `User_liked_comment` (
     `userId` VARCHAR(191) NOT NULL,
     `comment_id` VARCHAR(191) NOT NULL,
 
+    INDEX `LikedCommentIndex`(`userId`, `comment_id`),
     PRIMARY KEY (`userId`, `comment_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -110,24 +136,25 @@ CREATE TABLE `User_liked_content` (
     `userId` VARCHAR(191) NOT NULL,
     `content_id` VARCHAR(191) NOT NULL,
 
+    INDEX `LikedContentIndex`(`userId`, `content_id`),
     PRIMARY KEY (`userId`, `content_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `User` (
     `id` VARCHAR(191) NOT NULL,
-    `username` VARCHAR(255) NOT NULL,
-    `displayName` VARCHAR(25) NOT NULL,
-    `email` VARCHAR(255) NOT NULL,
-    `email_verified` TIMESTAMP(6),
+    `name` VARCHAR(191) NOT NULL,
+    `displayName` VARCHAR(25),
+    `email` VARCHAR(191) NOT NULL,
+    `emailVerified` DATETIME(3),
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updated_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updatedAt` DATETIME(3) NOT NULL,
     `image` VARCHAR(255) NOT NULL,
-    `bannerUrl` VARCHAR(255) NOT NULL,
+    `bannerUrl` VARCHAR(255),
     `bio` VARCHAR(255),
     `numFollowing` INTEGER NOT NULL DEFAULT 0,
     `numFollowers` INTEGER NOT NULL DEFAULT 0,
-    `online` BOOLEAN NOT NULL,
+    `online` BOOLEAN DEFAULT false,
     `numContributions` INTEGER NOT NULL DEFAULT 0,
 
     UNIQUE INDEX `User.email_unique`(`email`),
@@ -135,15 +162,16 @@ CREATE TABLE `User` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Verification_requests` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
+CREATE TABLE `VerificationRequest` (
+    `id` VARCHAR(191) NOT NULL,
     `identifier` VARCHAR(191) NOT NULL,
     `token` VARCHAR(191) NOT NULL,
     `expires` DATETIME(3) NOT NULL,
-    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
-    UNIQUE INDEX `Verification_requests.token_unique`(`token`),
+    UNIQUE INDEX `VerificationRequest.token_unique`(`token`),
+    UNIQUE INDEX `VerificationRequest.identifier_token_unique`(`identifier`, `token`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -166,25 +194,46 @@ CREATE TABLE `_user1_follows_user2` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Content` ADD FOREIGN KEY (`image_id`) REFERENCES `image`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `Account` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Content` ADD FOREIGN KEY (`image_id`) REFERENCES `Image`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Content` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Message` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Message` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Message` ADD FOREIGN KEY (`group_id`) REFERENCES `Group`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Message` ADD FOREIGN KEY (`group_id`) REFERENCES `Group`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Message` ADD FOREIGN KEY (`image_id`) REFERENCES `Image`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Session` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CommentOnHashtag` ADD FOREIGN KEY (`hashtagId`) REFERENCES `Hashtag`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CommentOnHashtag` ADD FOREIGN KEY (`commentId`) REFERENCES `Comment`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ContentOnHashtag` ADD FOREIGN KEY (`hashtagId`) REFERENCES `Hashtag`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `ContentOnHashtag` ADD FOREIGN KEY (`contentId`) REFERENCES `Content`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Comment` ADD FOREIGN KEY (`content_id`) REFERENCES `Content`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `User_in_group` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `User_in_group` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `User_in_group` ADD FOREIGN KEY (`group_id`) REFERENCES `Group`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `User_in_group` ADD FOREIGN KEY (`group_id`) REFERENCES `Group`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `User_liked_comment` ADD FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

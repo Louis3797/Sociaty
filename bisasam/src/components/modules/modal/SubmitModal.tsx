@@ -7,9 +7,8 @@ import SubmitModalFooter from "../../elements/modal/SubmitModalFooter";
 import SubmitModalBody from "../../elements/modal/SubmitModalBody";
 import GifPicker from "../picker/GifPicker";
 import { usePickedGif } from "../../../globals-stores/usePickedGif";
-import { Snackbar } from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
-import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import Router from "next/router";
+import { useSnackbar, VariantType } from "notistack";
 
 interface SubmitModalProps {
   className?: string;
@@ -29,7 +28,11 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
   const setGifUrl = usePickedGif((state) => state.setGifUrl);
 
   const [showGifModal, setshowGifModal] = useState(false);
-  const [showAlert, setshowAlert] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const handleAlert = (variant: VariantType): void => {
+    enqueueSnackbar("Your Post was successfully created", { variant: variant });
+  };
 
   const [createSubmit] = useMutation(POST_CONTENT);
 
@@ -42,9 +45,10 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
       },
     });
 
-    setshowAlert(true);
+    handleAlert("success");
     settext("");
     setGifUrl("");
+    Router.reload();
   };
 
   function handleCancel() {
@@ -57,7 +61,7 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
       onRequestClose={handleCancel}
       className={`flex justify-center items-start focus:outline-none border-0 ${className}`}
     >
-      <Snackbar
+      {/* <Snackbar
         open={showAlert}
         autoHideDuration={4000}
         onClose={() => setshowAlert(false)}
@@ -75,7 +79,7 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
             Your Post was successfully created
           </p>
         </Alert>
-      </Snackbar>
+      </Snackbar> */}
       <div className="flex flex-col w-42 sm:w-full rounded-8 h-auto  bg-primary-800">
         <SubmitModalHead />
         <SubmitModalBody

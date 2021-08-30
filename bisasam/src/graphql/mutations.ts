@@ -11,7 +11,7 @@ export const POST_CONTENT = gql`
     }
   }
 `;
-
+//For Posts
 export const DELETE_LIKE = gql`
   mutation DELETE_LIKE($userId: String!, $contentId: String!) {
     deleteContentLike(userId: $userId, contentId: $contentId) {
@@ -34,17 +34,20 @@ export const POST_COMMENT = gql`
   mutation POST_COMMENT(
     $userId: String!
     $contentId: String!
-    $comment_text: String!
+    $comment_text: String
+    $gif_url: String
   ) {
     postComment(
       userId: $userId
       contentId: $contentId
       comment_text: $comment_text
+      gif_url: $gif_url
     ) {
       id
       userId
       content_id
       comment_text
+      gif_url
     }
   }
 `;
@@ -62,5 +65,29 @@ export const UPDATE_PROFILE = gql`
       bio: $bio
       bannerUrl: $bannerUrl
     )
+  }
+`;
+
+export const DELETE_POST = gql`
+  mutation DELETE_POST($userId: String!, $contentId: String!) {
+    deletePost(userId: $userId, contentId: $contentId)
+  }
+`;
+
+export const DELETE_COMMENT = gql`
+  mutation DELETE_COMMENT($contentId: String!, $commentId: String!) {
+    deleteComment(contentId: $contentId, commentId: $commentId)
+  }
+`;
+
+export const DELETE_COMMENT_LIKE = gql`
+  mutation DELETE_LIKE($userId: String!, $commentId: String!) {
+    deleteCommentLike(userId: $userId, commentId: $commentId)
+  }
+`;
+
+export const CREATE_COMMENT_LIKE = gql`
+  mutation CREATE_LIKE($userId: String!, $commentId: String!) {
+    createCommentLike(userId: $userId, commentId: $commentId)
   }
 `;

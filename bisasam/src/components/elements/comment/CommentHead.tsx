@@ -1,39 +1,38 @@
 import Router, { useRouter } from "next/router";
 import React from "react";
 import MoreHorizRoundedIcon from "@material-ui/icons/MoreHorizRounded";
-import SingleUserAvatar from "../../UserAvatar/SingleUserAvatar";
-import Moment from "react-moment";
-import ButtonDropdown from "../../button/ButtonDropdown";
-import DropdownItem from "../../dropdown/DropdownItem";
 import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
 import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
+import SingleUserAvatar from "../UserAvatar/SingleUserAvatar";
+import ButtonDropdown from "../button/ButtonDropdown";
+import DropdownItem from "../dropdown/DropdownItem";
+import { DELETE_COMMENT } from "../../../graphql/mutations";
 import { OperationVariables, useMutation } from "@apollo/client";
-import { DELETE_POST } from "../../../../graphql/mutations";
-interface ContentHeadProps {
+
+interface CommentHeadProps {
   img: string;
   name: string;
   userId: string;
-  contentId: string;
-  time: string;
   displayName: string;
+  commentId: string;
+  contentId: string;
 }
 
-const ContentHead: React.FC<ContentHeadProps> = ({
+const CommentHead: React.FC<CommentHeadProps> = ({
   img,
   name,
   userId,
-  contentId,
-  time,
   displayName,
+  commentId,
+  contentId,
 }) => {
   const router = useRouter();
+  const [deleteComment] = useMutation<any, OperationVariables>(DELETE_COMMENT);
 
-  const [deletePost] = useMutation<any, OperationVariables>(DELETE_POST);
-
-  const handleDeletePost = (userId: string, contentId: string): void => {
-    deletePost({
+  const handleDeleteComment = (commentId: string): void => {
+    deleteComment({
       variables: {
-        userId: userId,
+        commentId: commentId,
         contentId: contentId,
       },
     });
@@ -54,12 +53,6 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             {displayName}
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
-          <span className="text-button text-opacity-40 text-base font-extrabold mx-1">
-            ·
-          </span>
-          <Moment className="text-button text-opacity-40 text-base" fromNow>
-            {time}
-          </Moment>
         </div>
 
         <ButtonDropdown
@@ -76,7 +69,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
               text="Delete"
               textColor="text-like"
               onClick={() => {
-                handleDeletePost(userId, contentId);
+                handleDeleteComment(commentId);
                 Router.reload();
               }}
             />
@@ -95,4 +88,4 @@ const ContentHead: React.FC<ContentHeadProps> = ({
   );
 };
 
-export default ContentHead;
+export default CommentHead;

@@ -22,6 +22,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   return (
     <div className="flex flex-col w-full bg-primary-800 rounded-8">
       <div className="h-10 w-full bg-transparent">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={
             bannerUrl === null || bannerUrl?.length === 0

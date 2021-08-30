@@ -15,23 +15,25 @@ const Navbar: React.FC = () => {
   const [showSubmitModal, setshowSubmitModal] = useState(false);
 
   if (session) {
+    // !! Bearbeiten
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useSetSessionID();
   }
 
   return (
-    <div className="flex flex-row min-w-full h-8 items-center justify-center bg-primary-900 top-0 sticky">
+    <div className="flex flex-row min-w-full h-8 items-center justify-center bg-primary-900 top-0 sticky z-50">
       <SubmitModal
         isOpen={showSubmitModal}
         onRequestClose={() => setshowSubmitModal(false)}
       />
       <div className="flex flex-row 2xl:p-0 p-4 2xl:w-3/5 xl:w-full lg:w-full md:w-full sm:w-full w-full h-8 items-center justify-between bg-primary-900 top-0 relative ">
-        <Link href={"/"}>
+        <Link href={"/"} passHref>
           <p className="text-2xl font-bold font-comfortaa text-accent">
-            Sociaty
+            sociaty
           </p>
         </Link>
         <div className="flex flex-row w-15 h-8 items-center justify-between bg-primary-900 top-0 relative">
-          <Link href={"/chats"}>
+          <Link href={"/chats"} passHref>
             <ForumRoundedIcon fontSize="small" />
           </Link>
 

@@ -14,7 +14,7 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
 
   useEffect(() => {
     setuserdata(data.getUserData);
-  }, []);
+  }, [data]);
 
   return (
     <MainLayout

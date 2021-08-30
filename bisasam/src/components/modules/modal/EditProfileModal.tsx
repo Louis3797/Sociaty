@@ -9,6 +9,7 @@ import SingleUserAvatar from "../../elements/UserAvatar/SingleUserAvatar";
 import { useSession } from "next-auth/client";
 import { UPDATE_PROFILE } from "../../../graphql/mutations";
 import { OperationVariables, useMutation } from "@apollo/client";
+import { useSnackbar, VariantType } from "notistack";
 
 export interface EditProfileModalProps {
   className?: string;
@@ -95,6 +96,12 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
   const [dName, setdName] = useState<string>(displayedName);
   const [newBio, setNewBio] = useState<string>(bio);
 
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const handleAlert = (variant: VariantType): void => {
+    enqueueSnackbar("Your changes has benn saved", { variant: variant });
+  };
+
   const [updateProfile] = useMutation<string, OperationVariables>(
     UPDATE_PROFILE
   );
@@ -112,6 +119,7 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
         bannerUrl: bUri,
       },
     });
+    handleAlert("success");
     event.preventDefault();
   };
 

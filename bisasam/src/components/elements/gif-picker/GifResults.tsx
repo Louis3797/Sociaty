@@ -56,6 +56,7 @@ const GifResults: React.FC<GifResultsProps> = ({ gifText, close }) => {
 
   const gifResults = gifObj.map((gif, i) => {
     return (
+      // eslint-disable-next-line @next/next/no-img-element
       <img
         src={gif.images.fixed_height_downsampled.webp}
         className="w-2/6 h-15"

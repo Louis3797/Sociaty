@@ -55,28 +55,55 @@ export const GET_USER_CONTENT = gql`
   }
 `;
 
-// export const GET_CONTENT = gql`
-//   query GET_CONTENT($userId: String!, $content_id: String!) {
-//     getSingleContent(userId: $userId, content_id: $content_id) {
-//       content_id
-//       content_text
-//       userId
-//       image_id
-//       created_at
-//       user {
-//         name
-//         image
-//       }
-//       liked {
-//         userId
-//       }
-//       comments {
-//         comment_id
-//         content_id
-//         comment_text
-//         userId
-//         created_at
-//       }
-//     }
-//   }
-// `;
+export const GET_SINGLE_CONTENT = gql`
+  query GET_SINGLE_CONTENT($userId: String!, $contentId: String!) {
+    getSingleUserContent(userId: $userId, contentId: $contentId) {
+      id
+      content_text
+      userId
+      image_id
+      created_at
+      numLikes
+      numComments
+      gif_url
+      tags {
+        hashtag {
+          id
+          text
+        }
+      }
+      user {
+        name
+        displayName
+        image
+      }
+    }
+  }
+`;
+
+export const GET_COMMENTS_OF_CONTENT = gql`
+  query GET_COMMENTS_OF_CONTENT($contentId: String!, $currentUserId: String!) {
+    getCommentsOfContent(contentId: $contentId, currentUserId: $currentUserId) {
+      id
+      comment_text
+      userId
+      created_at
+      numLikes
+      gif_url
+      favourite
+      user {
+        name
+        displayName
+        image
+      }
+    }
+  }
+`;
+
+export const GET_CONTENT_LIKE_STATUS = gql`
+  query GET_CONTENT_LIKE_STATUS($contentId: String!, $currentUserId: String!) {
+    getContentLikeStatus(contentId: $contentId, currentUserId: $currentUserId) {
+      favourite
+    }
+  }
+`;
