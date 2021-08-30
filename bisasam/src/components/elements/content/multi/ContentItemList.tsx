@@ -1,9 +1,8 @@
-import { OperationVariables, useMutation } from "@apollo/client";
-import React, { useState } from "react";
-import { CREATE_LIKE, DELETE_LIKE } from "../../../../graphql/mutations";
+import React, { useEffect, useState } from "react";
 import { useHandleContentLike } from "../../../../hooks/useHandleContentLike";
 import CommentField from "../../comment/CommentField";
 import { CommentButton, LikeButton, ShareButton } from "../ContentButtons";
+import { useSnackbar, VariantType } from "notistack";
 
 interface ContentItemListProps {
   commentAmount: number;
@@ -22,12 +21,27 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
   const [like, setlike] = useState(liked);
   const [likeHandler] = useHandleContentLike();
   const [numLikes, setnumLikes] = useState(likeAmount);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const handleAlert = (variant: VariantType): void => {
+    enqueueSnackbar("Copied Link", { variant: variant });
+  };
+
+  useEffect(() => {
+    setlike(liked);
+  }, [liked]);
 
   return (
     <div className="items-center justify-center bg-primary-800 flex flex-col w-full h-auto rounded-8">
       <div className="items-center justify-evenly flex flex-row w-full h-5.5">
         <div className="flex items-center mr-7">
-          <ShareButton size="small" onClick={() => {}} />
+          <ShareButton
+            size="small"
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              handleAlert("info");
+            }}
+          />
         </div>
         <div className="flex flex-row items-center mr-7">
           <CommentButton
