@@ -1,7 +1,11 @@
-module.exports = {
+/**
+ * @type {import('next').NextConfig}
+ */
+const nextConfig = {
   env: {
     GIPHY_API_KEY: process.env.GIPHY_API_KEY,
   },
+  reactStrictMode: true,
   images: {
     domains: [
       "source.unsplash.com",
@@ -10,3 +14,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports = nextConfig;

@@ -37,6 +37,7 @@ const ListContent: React.FC<ListContentProps> = ({
         img={userImg}
         name={name}
         userId={userId}
+        contentId={contentId}
         displayName={displayName}
         time={createdAt}
       />
