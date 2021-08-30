@@ -6,11 +6,12 @@ import "../styles/globals.css";
 import SessionLayout from "../components/layouts/SessionLayout";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "../lib/apolloClient";
-
 import NavLayout from "../components/layouts/NavLayout";
+import { SnackbarProvider } from "notistack";
 
 function App({ Component, pageProps }: AppProps) {
   const apolloClient = useApollo(pageProps.initialApolloState);
+
   return (
     <>
       <Head>
@@ -56,9 +57,17 @@ function App({ Component, pageProps }: AppProps) {
       >
         <SessionLayout>
           <ApolloProvider client={apolloClient}>
-            <NavLayout>
-              <Component {...pageProps} />
-            </NavLayout>
+            <SnackbarProvider
+              maxSnack={3}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+            >
+              <NavLayout>
+                <Component {...pageProps} />
+              </NavLayout>
+            </SnackbarProvider>
           </ApolloProvider>
         </SessionLayout>
       </Provider>
