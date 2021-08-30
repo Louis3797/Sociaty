@@ -60,9 +60,11 @@ const typeDefs = gql`
     userId: ID!
     numLikes: Int!
     gif_url: String
+    user: User!
     liked: [UserLikedComment]
     content: Content!
     tags: [CommentOnHashtag]
+    favourite: Boolean
   }
 
   type UserInGroup {
@@ -100,6 +102,7 @@ const typeDefs = gql`
     online: Boolean
     numContributions: Int!
     content: [Content]
+    comments: [Comment]
     messages: [Message]
     inGroup: [UserInGroup]
     followers: [User]
@@ -135,7 +138,9 @@ const typeDefs = gql`
     getUserID(email: String!): User!
     getUserData(id: String!): User!
     getUserContent(userId: String!, currentUserId: String!): User!
-    getSingleContent(content_id: String!, userId: String!): Content!
+    getSingleUserContent(userId: String!, contentId: String!): Content
+    getCommentsOfContent(contentId: String!, currentUserId: String!): [Comment]
+    getContentLikeStatus(contentId: String!, currentUserId: String!): Content!
   }
 
   type Mutation {
@@ -145,7 +150,8 @@ const typeDefs = gql`
     postComment(
       userId: String!
       contentId: String!
-      comment_text: String!
+      comment_text: String
+      gif_url: String
     ): Comment!
     updateProfile(
       userId: String!
@@ -154,6 +160,9 @@ const typeDefs = gql`
       bannerUrl: String
     ): String
     deletePost(userId: String!, contentId: String!): String!
+    deleteComment(contentId: String!, commentId: String!): String!
+    createCommentLike(userId: String!, commentId: String!): String!
+    deleteCommentLike(userId: String!, commentId: String!): String!
   }
 `;
 
@@ -165,6 +174,24 @@ const resolvers = {
           userId_content_id: {
             userId: info.variableValues.currentUserId,
             content_id: parent.id,
+          },
+        },
+      });
+
+      if (data === null) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+  },
+  Comment: {
+    favourite: async (parent, _args, context, info) => {
+      const data = await prisma.user_liked_comment.findUnique({
+        where: {
+          userId_comment_id: {
+            userId: info.variableValues.currentUserId,
+            comment_id: parent.id,
           },
         },
       });
@@ -206,24 +233,41 @@ const resolvers = {
         },
       });
     },
-
-    // getSingleContent: (_parent, _args, ctx) => {
-    //   return prisma.content.findFirst({
-    //     where: {
-    //       content_id: _args.content_id,
-    //       userId: _args.userId,
-    //     },
-    //     include: {
-    //       liked: true,
-    //       comments: true,
-    //       user: true,
-    //     },
-    //   });
-    // },
+    getSingleUserContent: (parent, _args, context, info) => {
+      return prisma.content.findUnique({
+        where: {
+          id: _args.contentId,
+        },
+        include: {
+          user: true,
+        },
+      });
+    },
+    getCommentsOfContent: (parent, _args, context, info) => {
+      return prisma.comment.findMany({
+        where: {
+          content_id: _args.contentId,
+        },
+        include: {
+          user: true,
+        },
+        orderBy: {
+          created_at: "desc",
+        },
+      });
+    },
+    getContentLikeStatus: (parent, _args, context, info) => {
+      console.log(parent);
+      return prisma.content.findUnique({
+        where: {
+          id: _args.contentId,
+        },
+      });
+    },
   },
 
   Mutation: {
-    postContent: async (parent, _args, context) => {
+    postContent: async (parent, _args, context, info) => {
       const [createPost, updatedContributions] = await prisma.$transaction([
         prisma.content.create({
           data: {
@@ -245,7 +289,7 @@ const resolvers = {
 
       return createPost;
     },
-    createContentLike: async (_parent, _args, ctx) => {
+    createContentLike: async (parent, _args, context, info) => {
       const [createLike, updatedContent] = await prisma.$transaction([
         prisma.user_liked_content.create({
           data: {
@@ -264,7 +308,7 @@ const resolvers = {
       ]);
       return createLike;
     },
-    deleteContentLike: async (_parent, _args, ctx) => {
+    deleteContentLike: async (parent, _args, context, info) => {
       const [deleteLike, updatedContent] = await prisma.$transaction([
         prisma.user_liked_content.deleteMany({
           where: {
@@ -283,13 +327,14 @@ const resolvers = {
       ]);
       return deleteLike;
     },
-    postComment: async (_parent, _args, ctx) => {
+    postComment: async (parent, _args, context, info) => {
       const [createComment, updatedContent] = await prisma.$transaction([
         prisma.comment.create({
           data: {
             content_id: _args.contentId,
             userId: _args.userId,
             comment_text: _args.comment_text,
+            gif_url: _args.gif_url,
           },
         }),
         prisma.content.update({
@@ -304,7 +349,7 @@ const resolvers = {
       return createComment;
     },
 
-    updateProfile: async (_parent, _args, ctx) => {
+    updateProfile: async (parent, _args, context, info) => {
       await prisma.user.update({
         where: { id: _args.userId },
         data: {
@@ -316,8 +361,7 @@ const resolvers = {
       return "Ok";
     },
 
-    //!! Delete Comment likes or check / test if already deleted
-    deletePost: async (_parent, _args, ctx) => {
+    deletePost: async (parent, _args, context, info) => {
       const [deletePost, updateUser] = await prisma.$transaction([
         prisma.content.delete({
           where: { id: _args.contentId },
@@ -330,6 +374,59 @@ const resolvers = {
         }),
       ]);
 
+      return "Ok";
+    },
+    deleteComment: async (parent, _args, context, info) => {
+      const [deleteComment, updatePost] = await prisma.$transaction([
+        prisma.comment.delete({
+          where: { id: _args.commentId },
+        }),
+        prisma.content.update({
+          where: { id: _args.contentId },
+          data: {
+            numComments: { decrement: 1 },
+          },
+        }),
+      ]);
+
+      return "Ok";
+    },
+    createCommentLike: async (parent, _args, context, info) => {
+      const [createLike, updatedComment] = await prisma.$transaction([
+        prisma.user_liked_comment.create({
+          data: {
+            userId: _args.userId,
+            comment_id: _args.commentId,
+          },
+        }),
+        prisma.comment.update({
+          where: { id: _args.commentId },
+          data: {
+            numLikes: {
+              increment: 1,
+            },
+          },
+        }),
+      ]);
+      return "Ok";
+    },
+    deleteCommentLike: async (parent, _args, context, info) => {
+      const [deleteLike, updatedComment] = await prisma.$transaction([
+        prisma.user_liked_comment.deleteMany({
+          where: {
+            userId: _args.userId,
+            comment_id: _args.commentId,
+          },
+        }),
+        prisma.comment.update({
+          where: { id: _args.commentId },
+          data: {
+            numLikes: {
+              decrement: 1,
+            },
+          },
+        }),
+      ]);
       return "Ok";
     },
   },
