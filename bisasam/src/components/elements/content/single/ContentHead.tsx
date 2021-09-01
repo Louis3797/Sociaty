@@ -43,7 +43,15 @@ const ContentHead: React.FC<ContentHeadProps> = ({
         src={img}
         className=" ml-4 mr-4"
         alt="User Avatar"
-        click={() => router.push(`/u/${userId}`)}
+        click={() =>
+          router.push(
+            `/u/${encodeURIComponent(
+              decodeURIComponent(
+                window.sessionStorage.getItem("UNAME")
+              ).replace(/\s+/g, "")
+            )}`
+          )
+        }
       />
       <div className="flex flex-row w-full h-full items-center justify-evenly">
         <div className="flex flex-col w-full h-auto items-start text-justify">

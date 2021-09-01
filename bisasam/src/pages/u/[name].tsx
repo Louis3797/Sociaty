@@ -1,5 +1,8 @@
-import { GetServerSideProps } from "next";
-import UserPage from "../../../components/templates/UserPage/UserPage";
+import UserPage from "../../components/templates/UserPage/UserPage";
+import jwt from "next-auth/jwt";
+import { GET_USER } from "../../graphql/querys";
+import { initializeApollo } from "../../lib/apolloClient";
+
 export interface GetUserData {
   __typename: string;
   id: string;
@@ -29,22 +32,28 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ data }) => {
   return <UserPage data={data} />;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.query;
-  const res = await fetch(`http://localhost:3000/api/u/${id}`);
+export async function getServerSideProps(context) {
+  const { name } = context.query;
+  const apolloClient = initializeApollo();
 
-  const data = await res.json();
+  const { data } = await apolloClient.query({
+    query: GET_USER,
+    variables: { displayName: name },
+  });
 
-  if (!data) {
+  // res.status(200).json(JSON.stringify(apolloClient.cache.extract()));
+
+  if (data.getUserData === null) {
     return {
       notFound: true,
     };
   }
+
   return {
     props: {
       data,
     },
   };
-};
+}
 
 export default ProfilePage;

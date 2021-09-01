@@ -1,6 +1,8 @@
 import Dashboard from "../components/templates/Dashboard/Dashboard";
 
-const Dash: React.FC = () => {
+interface DashProps {}
+
+const Dash: React.FC<DashProps> = () => {
   return <Dashboard />;
 };
 

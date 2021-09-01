@@ -10,8 +10,8 @@ export const GET_USER_ID = gql`
 `;
 
 export const GET_USER = gql`
-  query GET_USER($id: String!) {
-    getUserData(id: $id) {
+  query GET_USER($displayName: String!) {
+    getUserData(displayName: $displayName) {
       id
       name
       displayName
@@ -28,8 +28,8 @@ export const GET_USER = gql`
 `;
 
 export const GET_USER_CONTENT = gql`
-  query GET_USER_CONTENT($userId: String!, $currentUserId: String!) {
-    getUserContent(userId: $userId, currentUserId: $currentUserId) {
+  query GET_USER_CONTENT($displayName: String!, $currentUserId: String!) {
+    getUserContent(displayName: $displayName, currentUserId: $currentUserId) {
       id
       name
       displayName
@@ -105,5 +105,11 @@ export const GET_CONTENT_LIKE_STATUS = gql`
     getContentLikeStatus(contentId: $contentId, currentUserId: $currentUserId) {
       favourite
     }
+  }
+`;
+
+export const CHECK_FOR_AVAILABLE_USERNAME = gql`
+  query CHECK_FOR_AVAILABLE_USERNAME($displayName: String!) {
+    checkForAvailableUsername(displayName: $displayName)
   }
 `;

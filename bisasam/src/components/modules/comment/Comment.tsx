@@ -40,7 +40,7 @@ const Comment: React.FC<CommentProps> = ({
         commentId={id}
         contentId={contentId}
       />
-      <CommentBody text={comment_text} userId={userId} gifUrl={gif_url} />
+      <CommentBody text={comment_text} gifUrl={gif_url} />
       <CommentItems
         likeAmount={numLikes}
         liked={liked}

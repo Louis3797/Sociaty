@@ -1,8 +1,7 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
-import { useCurrentUser } from "../../globals-stores/useCurrentUser";
-import { getCsrfToken, getSession } from "next-auth/client";
+import { Content, Prisma, PrismaPromise, User } from "@prisma/client";
 
 const typeDefs = gql`
   scalar GraphQLDateTime
@@ -136,11 +135,12 @@ const typeDefs = gql`
 
   type Query {
     getUserID(email: String!): User!
-    getUserData(id: String!): User!
-    getUserContent(userId: String!, currentUserId: String!): User!
+    getUserData(displayName: String!): User
+    getUserContent(displayName: String!, currentUserId: String!): User!
     getSingleUserContent(userId: String!, contentId: String!): Content
     getCommentsOfContent(contentId: String!, currentUserId: String!): [Comment]
     getContentLikeStatus(contentId: String!, currentUserId: String!): Content!
+    checkForAvailableUsername(displayName: String!): Int!
   }
 
   type Mutation {
@@ -211,18 +211,32 @@ const resolvers = {
         },
       });
     },
-    getUserData: (parent, _args, context, info) => {
-      return prisma.user.findUnique({
+    getUserData: (
+      parent,
+      _args,
+      context,
+      info
+    ): Prisma.Prisma__UserClient<User> => {
+      return prisma.user.findFirst({
         where: {
-          id: _args.id,
+          displayName: _args.displayName,
         },
       });
     },
 
-    getUserContent: (parent, _args, context, info) => {
-      return prisma.user.findUnique({
+    getUserContent: (
+      parent,
+      _args,
+      context,
+      info
+    ): Prisma.Prisma__UserClient<
+      User & {
+        content: Content[];
+      }
+    > => {
+      return prisma.user.findFirst({
         where: {
-          id: _args.userId,
+          displayName: _args.displayName,
         },
         include: {
           content: {
@@ -233,7 +247,16 @@ const resolvers = {
         },
       });
     },
-    getSingleUserContent: (parent, _args, context, info) => {
+    getSingleUserContent: (
+      parent,
+      _args,
+      context,
+      info
+    ): Prisma.Prisma__ContentClient<
+      Content & {
+        user: User;
+      }
+    > => {
       return prisma.content.findUnique({
         where: {
           id: _args.contentId,
@@ -257,17 +280,28 @@ const resolvers = {
       });
     },
     getContentLikeStatus: (parent, _args, context, info) => {
-      console.log(parent);
       return prisma.content.findUnique({
         where: {
           id: _args.contentId,
         },
       });
     },
+    checkForAvailableUsername: (
+      parent,
+      _args,
+      context,
+      info
+    ): PrismaPromise<number> => {
+      return prisma.user.count({
+        where: {
+          displayName: _args.displayName,
+        },
+      });
+    },
   },
 
   Mutation: {
-    postContent: async (parent, _args, context, info) => {
+    postContent: async (parent, _args, context, info): Promise<Content> => {
       const [createPost, updatedContributions] = await prisma.$transaction([
         prisma.content.create({
           data: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { RootProps } from "../../../pages/u/[id]";
+import { RootProps } from "../../../pages/u/[name]";
 import MainLayout from "../../layouts/MainLayout";
 import ProfileContent from "../../modules/profile/ProfileContent";
 import ProfileHeader from "../../modules/profile/ProfileHeader";

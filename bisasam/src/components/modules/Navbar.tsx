@@ -5,20 +5,14 @@ import SingleUserAvatar from "../elements/UserAvatar/SingleUserAvatar";
 import { useRouter } from "next/router";
 import ForumRoundedIcon from "@material-ui/icons/ForumRounded";
 import AddIcon from "@material-ui/icons/Add";
-import { useSetSessionID } from "../../hooks/useSetSessionID";
 import { SubmitModal } from "./modal/SubmitModal";
+import { Session } from "next-auth";
 
 const Navbar: React.FC = () => {
   const [session] = useSession();
   const router = useRouter();
 
   const [showSubmitModal, setshowSubmitModal] = useState(false);
-
-  if (session) {
-    // !! Bearbeiten
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useSetSessionID();
-  }
 
   return (
     <div className="flex flex-row min-w-full h-8 items-center justify-center bg-primary-900 top-0 sticky z-50">
@@ -47,7 +41,15 @@ const Navbar: React.FC = () => {
             src={session.user?.image}
             className=""
             alt="UserImg"
-            click={() => router.push(`/u/${sessionStorage.getItem("UID")}`)}
+            click={() =>
+              router.push(
+                `/u/${encodeURIComponent(
+                  decodeURIComponent(
+                    window.sessionStorage.getItem("UNAME")
+                  ).replace(/\s+/g, "")
+                )}`
+              )
+            }
           />
         </div>
       </div>

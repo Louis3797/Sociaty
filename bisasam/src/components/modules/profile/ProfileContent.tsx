@@ -58,12 +58,12 @@ const LoadingState: React.FC = () => {
 const ProfileContent: React.FC<ProfileContentProps> = () => {
   const router = useRouter();
 
+  const { name } = router.query;
   const [userContent, setuserContent] = useState(null);
-  const { id } = router.query;
 
   const { loading, error, data } = useQuery<QueryProps>(GET_USER_CONTENT, {
     variables: {
-      userId: id,
+      displayName: name,
       currentUserId: window.sessionStorage.getItem("UID"),
     },
   });

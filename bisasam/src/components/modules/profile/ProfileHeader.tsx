@@ -47,13 +47,15 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
         </div>
-        <ButtonOutlined
-          text="Bearbeiten"
-          variant="primary"
-          size="big"
-          className="mr-3"
-          onClick={() => setvisible(true)}
-        />
+        {displayName === window.sessionStorage.getItem("UNAME") && (
+          <ButtonOutlined
+            text="Bearbeiten"
+            variant="primary"
+            size="big"
+            className="mr-3"
+            onClick={() => setvisible(true)}
+          />
+        )}
       </div>
       <p className="text-secondary text-base tracking-wider ml-5 mb-4  font-medium">
         {bio}
