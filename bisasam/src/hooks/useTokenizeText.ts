@@ -21,7 +21,11 @@ export const useTokenizeText = (untransformedText: string) => {
   }
 
   function isHashtag(text: string): boolean {
-    if (text.substr(0, 1) === "#") {
+    if (
+      text.substr(0, 1) === "#" &&
+      text.length > 1 &&
+      text.slice(1).includes("#") === false
+    ) {
       return true;
     }
     return false;
