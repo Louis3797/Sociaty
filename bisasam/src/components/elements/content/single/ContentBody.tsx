@@ -15,7 +15,7 @@ const ContentBody: React.FC<ContentBodyProps> = ({ text, gifUrl }) => {
 
   return (
     <div className="w-full h-auto bg-primary-800 mt-1 rounded-8">
-      <p className="break-words mr-5 ml-4 mb-4 text-secondary font-medium">
+      <p className="break-words mr-5 ml-4 mb-4 text-button font-medium">
         <div dangerouslySetInnerHTML={{ __html: newText }} />
       </p>
       {gifUrl.length > 0 && (
