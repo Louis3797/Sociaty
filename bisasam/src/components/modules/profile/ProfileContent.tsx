@@ -66,6 +66,7 @@ const ProfileContent: React.FC<ProfileContentProps> = () => {
       displayName: name,
       currentUserId: window.sessionStorage.getItem("UID"),
     },
+    fetchPolicy: "cache-and-network",
   });
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const ProfileContent: React.FC<ProfileContentProps> = () => {
     );
   });
   return (
-    <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-10">
+    <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-5">
       {error ? (
         <h1>Error</h1>
       ) : loading ? (

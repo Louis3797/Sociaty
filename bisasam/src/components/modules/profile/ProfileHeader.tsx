@@ -9,6 +9,7 @@ export interface ProfileCompOneProps {
   img: string;
   bannerUrl: string | null;
   bio: string;
+  userId: string;
 }
 
 const ProfileHeader: React.FC<ProfileCompOneProps> = ({
@@ -17,6 +18,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   img,
   bannerUrl,
   bio,
+  userId,
 }) => {
   const [visible, setvisible] = useState(false);
   return (
@@ -47,7 +49,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
         </div>
-        {displayName === window.sessionStorage.getItem("UNAME") && (
+        {userId === window.sessionStorage.getItem("UID") && (
           <ButtonOutlined
             text="Bearbeiten"
             variant="primary"
