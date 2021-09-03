@@ -31,6 +31,7 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
           displayName={userdata?.displayName}
           bannerUrl={userdata?.bannerUrl}
           bio={userdata?.bio ? userdata?.bio : "Hey im new here"}
+          userId={userdata?.id}
         />
         <ProfileInfoBox
           follower={userdata?.numFollowers}
