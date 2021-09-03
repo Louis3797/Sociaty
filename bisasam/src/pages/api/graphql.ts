@@ -1,10 +1,21 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
-import { Content, Prisma, PrismaPromise, User } from "@prisma/client";
+import {
+  CommentOnHashtag,
+  Content,
+  ContentOnHashtag,
+  Hashtag,
+  Prisma,
+  PrismaPromise,
+  User,
+  User_liked_content,
+} from "@prisma/client";
+import { GraphQLScalarType } from "graphql";
 
 const typeDefs = gql`
   scalar GraphQLDateTime
+  scalar Void
 
   type Content {
     id: ID!
@@ -166,17 +177,37 @@ const typeDefs = gql`
   }
 `;
 
+const voidScalar = new GraphQLScalarType({
+  name: "Void",
+
+  description: "Represents NULL values",
+
+  serialize() {
+    return null;
+  },
+
+  parseValue() {
+    return null;
+  },
+
+  parseLiteral() {
+    return null;
+  },
+});
+
 const resolvers = {
+  Void: voidScalar,
   Content: {
     favourite: async (parent, _args, context, info) => {
-      const data = await prisma.user_liked_content.findUnique({
-        where: {
-          userId_content_id: {
-            userId: info.variableValues.currentUserId,
-            content_id: parent.id,
+      const data: User_liked_content =
+        await prisma.user_liked_content.findUnique({
+          where: {
+            userId_content_id: {
+              userId: info.variableValues.currentUserId,
+              content_id: parent.id,
+            },
           },
-        },
-      });
+        });
 
       if (data === null) {
         return false;
@@ -321,6 +352,49 @@ const resolvers = {
         }),
       ]);
 
+      // Split Text in Words an safe in Array
+      let temp: string[] = _args.content_text.split(" ");
+
+      // Check if item is an Hashtag
+      function isHashtag(text: string): boolean {
+        if (
+          text.substr(0, 1) === "#" &&
+          text.length > 1 &&
+          text.slice(1).includes("#") === false
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      // Check if item exists
+      async function checkForExistence(text: string): Promise<boolean> {
+        let temp: Hashtag = await prisma.hashtag.findUnique({
+          where: {
+            text: text,
+          },
+        });
+        return temp === null ? false : true;
+      }
+
+      temp.forEach(async (item) => {
+        if (isHashtag(item)) {
+          if ((await checkForExistence(item)) === false) {
+            await prisma.hashtag.create({
+              data: {
+                text: item,
+              },
+            });
+          }
+          await prisma.contentOnHashtag.create({
+            data: {
+              hashtagText: item,
+              contentId: createPost?.id,
+            },
+          });
+        }
+      });
+
       return createPost;
     },
     createContentLike: async (parent, _args, context, info) => {
@@ -362,6 +436,7 @@ const resolvers = {
       return deleteLike;
     },
     postComment: async (parent, _args, context, info) => {
+      // Create Comment and update the number of Comments of the Content
       const [createComment, updatedContent] = await prisma.$transaction([
         prisma.comment.create({
           data: {
@@ -380,6 +455,50 @@ const resolvers = {
           },
         }),
       ]);
+
+      // Split Text in Words an safe in Array
+      let temp: string[] = _args.comment_text.split(" ");
+
+      // Check if item is an Hashtag
+      function isHashtag(text: string): boolean {
+        if (
+          text.substr(0, 1) === "#" &&
+          text.length > 1 &&
+          text.slice(1).includes("#") === false
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      // Check if item exists
+      async function checkForExistence(text: string): Promise<boolean> {
+        let temp: Hashtag = await prisma.hashtag.findUnique({
+          where: {
+            text: text,
+          },
+        });
+        return temp === null ? false : true;
+      }
+
+      temp.forEach(async (item) => {
+        if (isHashtag(item)) {
+          if ((await checkForExistence(item)) === false) {
+            await prisma.hashtag.create({
+              data: {
+                text: item,
+              },
+            });
+          }
+          await prisma.commentOnHashtag.create({
+            data: {
+              hashtagText: item,
+              commentId: createComment?.id,
+            },
+          });
+        }
+      });
+
       return createComment;
     },
 
