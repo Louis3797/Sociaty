@@ -83,28 +83,27 @@ model Session {
 }
 
 model Hashtag {
-  id               String             @id @default(cuid())
-  text             String
+  text             String             @unique
   CommentOnHashtag CommentOnHashtag[]
   ContentOnHashtag ContentOnHashtag[]
 }
 
 model CommentOnHashtag {
-  hashtagId String
-  commentId String
-  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onUpdate: Cascade)
-  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hashtagText String
+  commentId   String
+  hashtag     Hashtag @relation(fields: [hashtagText], references: [text], onUpdate: Cascade)
+  comment     Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([hashtagId, commentId])
+  @@id([hashtagText, commentId])
 }
 
 model ContentOnHashtag {
-  hashtagId String
-  contentId String
-  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onUpdate: Cascade)
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hashtagText String
+  contentId   String
+  hashtag     Hashtag @relation(fields: [hashtagText], references: [text], onUpdate: Cascade)
+  content     Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([hashtagId, contentId])
+  @@id([hashtagText, contentId])
 }
 
 model Comment {
