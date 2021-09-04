@@ -42,6 +42,7 @@ export default async function handler(req, res) {
     },
     session: {
       jwt: true,
+      maxAge: 1 * 24 * 60 * 60,
     },
 
     jwt: {
@@ -53,10 +54,16 @@ export default async function handler(req, res) {
       // async redirect(url, baseUrl) { return baseUrl },
       async session(session, token) {
         session.user = token.user;
+        session.accessToken = token.accessToken;
         return session;
       },
-      async jwt(token, user) {
+      async jwt(token, user, account, profile, isNewUser) {
+        if (account?.accessToken) {
+          token.accessToken = account.accessToken;
+        }
+
         if (user) token.user = user;
+
         return token;
       },
     },
