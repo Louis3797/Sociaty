@@ -1,3 +1,5 @@
+import { NextApiRequest, NextApiResponse } from "next";
+import { Session } from "next-auth";
 import { getSession, useSession } from "next-auth/client";
 import React, { ReactNode } from "react";
 import AccessDenied from "../templates/AccessDenied/AccessDenied";
@@ -12,19 +14,22 @@ const SessionLayout: React.FC<SessionLayoutProps> = ({
 }: SessionLayoutProps) => {
   const [session, loading] = useSession();
 
-  if (typeof window !== "undefined" && loading) return <Loading />;
+  if (typeof window !== "undefined" && loading) return null;
 
   if (session) {
-    return <div>{children}</div>;
+    return <>{children}</>;
   }
   return <AccessDenied />;
 };
 
 export default SessionLayout;
 
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
+export const getServerSideProps = async (context: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+  query: { name: string };
+}) => {
   return {
-    props: { session },
+    props: { session: await getSession(context) },
   };
-}
+};
