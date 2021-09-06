@@ -2,10 +2,15 @@ import NextAuth from "next-auth";
 import Providers from "next-auth/providers";
 import prisma from "../../../lib/prismaClient";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { NextApiRequest, NextApiResponse } from "next-auth/internals/utils";
+import useSWR from "swr";
 
 // For more information on each option (and a full list of options) go to
 // https://next-auth.js.org/configuration/options
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
   NextAuth(req, res, {
     // https://next-auth.js.org/configuration/providers
     providers: [
@@ -47,24 +52,28 @@ export default async function handler(req, res) {
 
     jwt: {
       secret: process.env.SECRET,
-      encryption: true,
     },
     callbacks: {
       // async signIn(user, account, profile) { return true },
       // async redirect(url, baseUrl) { return baseUrl },
       async session(session, token) {
+        // @ts-ignore
         session.user = token.user;
-        session.accessToken = token.accessToken;
+        // session.accessToken = token.accessToken;
         return session;
       },
       async jwt(token, user, account, profile, isNewUser) {
-        if (account?.accessToken) {
-          token.accessToken = account.accessToken;
+        const isUserSignedIn = user ? true : false;
+        // if (account?.accessToken) {
+        //   token.accessToken = account.accessToken;
+        // }
+
+        if (isUserSignedIn && typeof user !== "undefined") {
+          // @ts-ignore
+          token.user = user;
         }
-
-        if (user) token.user = user;
-
-        return token;
+        console.log(Promise.resolve(token));
+        return Promise.resolve(token);
       },
     },
     events: {

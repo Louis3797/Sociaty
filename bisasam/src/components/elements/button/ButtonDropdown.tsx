@@ -69,7 +69,8 @@ export const DropdownItemWrapper: React.FC<DropdownWrapperProps> = ({
 }) => {
   const wrapperRef = useRef(null);
   useEffect(() => {
-    function handleClickOutside(event) {
+    function handleClickOutside(event: { target: any }) {
+      // @ts-ignore
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         close();
       }

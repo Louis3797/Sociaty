@@ -1,13 +1,12 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
+// @ts-ignore
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
 import {
-  CommentOnHashtag,
   Content,
-  ContentOnHashtag,
+  Comment,
   Hashtag,
   Prisma,
-  PrismaPromise,
   User,
   User_liked_content,
 } from "@prisma/client";
@@ -145,7 +144,6 @@ const typeDefs = gql`
   }
 
   type Query {
-    getUserID(email: String!): User!
     getUserData(displayName: String!): User
     getUserContent(displayName: String!, currentUserId: String!): User!
     getSingleUserContent(userId: String!, contentId: String!): Content
@@ -198,8 +196,13 @@ const voidScalar = new GraphQLScalarType({
 const resolvers = {
   Void: voidScalar,
   Content: {
-    favourite: async (parent, _args, context, info) => {
-      const data: User_liked_content =
+    favourite: async (
+      parent: { id: string },
+      _args: any,
+      context: any,
+      info: { variableValues: { currentUserId: string } }
+    ) => {
+      const data: User_liked_content | null =
         await prisma.user_liked_content.findUnique({
           where: {
             userId_content_id: {
@@ -217,7 +220,12 @@ const resolvers = {
     },
   },
   Comment: {
-    favourite: async (parent, _args, context, info) => {
+    favourite: async (
+      parent: { id: string },
+      _args: any,
+      context: any,
+      info: { variableValues: { currentUserId: string } }
+    ) => {
       const data = await prisma.user_liked_comment.findUnique({
         where: {
           userId_comment_id: {
@@ -235,37 +243,31 @@ const resolvers = {
     },
   },
   Query: {
-    getUserID: (parent, _args, context, info) => {
-      return prisma.user.findUnique({
-        where: {
-          email: _args.email,
-        },
-      });
-    },
-    getUserData: (
-      parent,
-      _args,
-      context,
-      info
-    ): Prisma.Prisma__UserClient<User> => {
-      return prisma.user.findFirst({
+    getUserData: async (
+      parent: any,
+      _args: { displayName: string },
+      context: any,
+      info: any
+    ): Promise<User | null> => {
+      return await prisma.user.findFirst({
         where: {
           displayName: _args.displayName,
         },
       });
     },
 
-    getUserContent: (
-      parent,
-      _args,
-      context,
-      info
-    ): Prisma.Prisma__UserClient<
-      User & {
-        content: Content[];
-      }
+    getUserContent: async (
+      parent: any,
+      _args: { displayName: string },
+      context: any,
+      info: any
+    ): Promise<
+      | (User & {
+          content: Content[];
+        })
+      | null
     > => {
-      return prisma.user.findFirst({
+      return await prisma.user.findFirst({
         where: {
           displayName: _args.displayName,
         },
@@ -278,17 +280,18 @@ const resolvers = {
         },
       });
     },
-    getSingleUserContent: (
-      parent,
-      _args,
-      context,
-      info
-    ): Prisma.Prisma__ContentClient<
-      Content & {
-        user: User;
-      }
+    getSingleUserContent: async (
+      parent: any,
+      _args: { contentId: string },
+      context: any,
+      info: any
+    ): Promise<
+      | (Content & {
+          user: User;
+        })
+      | null
     > => {
-      return prisma.content.findUnique({
+      return await prisma.content.findUnique({
         where: {
           id: _args.contentId,
         },
@@ -297,8 +300,18 @@ const resolvers = {
         },
       });
     },
-    getCommentsOfContent: (parent, _args, context, info) => {
-      return prisma.comment.findMany({
+    getCommentsOfContent: async (
+      parent: any,
+      _args: { contentId: string },
+      context: any,
+      info: any
+    ): Promise<
+      | (Comment & {
+          user: User;
+        })[]
+      | null
+    > => {
+      return await prisma.comment.findMany({
         where: {
           content_id: _args.contentId,
         },
@@ -310,20 +323,25 @@ const resolvers = {
         },
       });
     },
-    getContentLikeStatus: (parent, _args, context, info) => {
-      return prisma.content.findUnique({
+    getContentLikeStatus: async (
+      parent: any,
+      _args: { contentId: string },
+      context: any,
+      info: any
+    ): Promise<Content | null> => {
+      return await prisma.content.findUnique({
         where: {
           id: _args.contentId,
         },
       });
     },
-    checkForAvailableUsername: (
-      parent,
-      _args,
-      context,
-      info
-    ): PrismaPromise<number> => {
-      return prisma.user.count({
+    checkForAvailableUsername: async (
+      parent: any,
+      _args: { displayName: string },
+      context: any,
+      info: any
+    ): Promise<number> => {
+      return await prisma.user.count({
         where: {
           displayName: _args.displayName,
         },
@@ -332,7 +350,16 @@ const resolvers = {
   },
 
   Mutation: {
-    postContent: async (parent, _args, context, info): Promise<Content> => {
+    postContent: async (
+      parent: any,
+      _args: {
+        content_text: string;
+        userId: string;
+        gif_url: string;
+      },
+      context: any,
+      info: any
+    ): Promise<Content> => {
       const [createPost, updatedContributions] = await prisma.$transaction([
         prisma.content.create({
           data: {
@@ -369,7 +396,7 @@ const resolvers = {
 
       // Check if item exists
       async function checkForExistence(text: string): Promise<boolean> {
-        let temp: Hashtag = await prisma.hashtag.findUnique({
+        let temp: Hashtag | null = await prisma.hashtag.findUnique({
           where: {
             text: text,
           },
@@ -397,7 +424,12 @@ const resolvers = {
 
       return createPost;
     },
-    createContentLike: async (parent, _args, context, info) => {
+    createContentLike: async (
+      parent: any,
+      _args: { userId: string; contentId: string },
+      context: any,
+      info: any
+    ): Promise<User_liked_content> => {
       const [createLike, updatedContent] = await prisma.$transaction([
         prisma.user_liked_content.create({
           data: {
@@ -416,7 +448,12 @@ const resolvers = {
       ]);
       return createLike;
     },
-    deleteContentLike: async (parent, _args, context, info) => {
+    deleteContentLike: async (
+      parent: any,
+      _args: { userId: string; contentId: string },
+      context: any,
+      info: any
+    ): Promise<Prisma.BatchPayload> => {
       const [deleteLike, updatedContent] = await prisma.$transaction([
         prisma.user_liked_content.deleteMany({
           where: {
@@ -435,7 +472,17 @@ const resolvers = {
       ]);
       return deleteLike;
     },
-    postComment: async (parent, _args, context, info) => {
+    postComment: async (
+      parent: any,
+      _args: {
+        contentId: string;
+        userId: string;
+        comment_text: string;
+        gif_url: string;
+      },
+      context: any,
+      info: any
+    ) => {
       // Create Comment and update the number of Comments of the Content
       const [createComment, updatedContent] = await prisma.$transaction([
         prisma.comment.create({
@@ -473,7 +520,7 @@ const resolvers = {
 
       // Check if item exists
       async function checkForExistence(text: string): Promise<boolean> {
-        let temp: Hashtag = await prisma.hashtag.findUnique({
+        let temp: Hashtag | null = await prisma.hashtag.findUnique({
           where: {
             text: text,
           },
@@ -502,7 +549,17 @@ const resolvers = {
       return createComment;
     },
 
-    updateProfile: async (parent, _args, context, info) => {
+    updateProfile: async (
+      parent: any,
+      _args: {
+        userId: string;
+        bio: string;
+        displayName: string;
+        bannerUrl: string;
+      },
+      context: any,
+      info: any
+    ): Promise<string> => {
       await prisma.user.update({
         where: { id: _args.userId },
         data: {
@@ -514,7 +571,12 @@ const resolvers = {
       return "Ok";
     },
 
-    deletePost: async (parent, _args, context, info) => {
+    deletePost: async (
+      parent: any,
+      _args: { contentId: string; userId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
       const [deletePost, updateUser] = await prisma.$transaction([
         prisma.content.delete({
           where: { id: _args.contentId },
@@ -529,7 +591,12 @@ const resolvers = {
 
       return "Ok";
     },
-    deleteComment: async (parent, _args, context, info) => {
+    deleteComment: async (
+      parent: any,
+      _args: { commentId: string; contentId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
       const [deleteComment, updatePost] = await prisma.$transaction([
         prisma.comment.delete({
           where: { id: _args.commentId },
@@ -544,7 +611,12 @@ const resolvers = {
 
       return "Ok";
     },
-    createCommentLike: async (parent, _args, context, info) => {
+    createCommentLike: async (
+      parent: any,
+      _args: { userId: string; commentId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
       const [createLike, updatedComment] = await prisma.$transaction([
         prisma.user_liked_comment.create({
           data: {
@@ -563,7 +635,12 @@ const resolvers = {
       ]);
       return "Ok";
     },
-    deleteCommentLike: async (parent, _args, context, info) => {
+    deleteCommentLike: async (
+      parent: any,
+      _args: { userId: string; commentId: string },
+      context: any,
+      info: any
+    ) => {
       const [deleteLike, updatedComment] = await prisma.$transaction([
         prisma.user_liked_comment.deleteMany({
           where: {
@@ -587,6 +664,7 @@ const resolvers = {
 
 const apolloServer = new ApolloServer({
   typeDefs,
+  // @ts-ignore
   resolvers,
   context: ({ req, res }) => ({ req, res }),
 });

@@ -3,7 +3,7 @@ import { SingleContentProps } from "SingleContent";
 import MainLayout from "../../layouts/MainLayout";
 import SingleContent from "../../modules/content/SingleContent";
 
-export const SCContext = React.createContext(null);
+export const SCContext = React.createContext({});
 
 const ContentPage: React.FC<SingleContentProps> = ({ data }) => {
   return (

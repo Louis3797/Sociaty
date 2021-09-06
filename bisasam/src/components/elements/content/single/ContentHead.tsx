@@ -47,6 +47,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           router.push(
             `/u/${encodeURIComponent(
               decodeURIComponent(
+                // @ts-ignore
                 window.sessionStorage.getItem("UNAME")
               ).replace(/\s+/g, "")
             )}`

@@ -43,10 +43,10 @@ const ListContent: React.FC<ListContentProps> = ({
       />
 
       <ContentBody
-        text={text}
+        text={text ? text : ""}
         contentId={contentId}
         userId={userId}
-        gifUrl={gifUrl}
+        gifUrl={gifUrl ? gifUrl : ""}
       />
 
       <ContentItemList

@@ -33,24 +33,38 @@ const CommentsBox: React.FC<CommentsBoxProps> = ({ contentId }) => {
       },
     }
   );
-  const comments = data?.getCommentsOfContent.map((comment, i) => {
-    return (
-      <Comment
-        key={i}
-        id={comment.id}
-        contentId={contentId}
-        comment_text={comment.comment_text}
-        userId={comment.userId}
-        created_at={comment.created_at}
-        numLikes={comment.numLikes}
-        liked={comment.favourite}
-        gif_url={comment.gif_url}
-        name={comment.user.name}
-        displayName={comment.user.displayName}
-        userImg={comment.user.image}
-      />
-    );
-  });
+  const comments = data?.getCommentsOfContent.map(
+    (
+      comment: {
+        id: string;
+        comment_text: string;
+        userId: string;
+        created_at: string;
+        numLikes: number;
+        favourite: boolean;
+        gif_url: string | null | undefined;
+        user: { name: string; displayName: string; image: string };
+      },
+      i: React.Key | null | undefined
+    ) => {
+      return (
+        <Comment
+          key={i}
+          id={comment.id}
+          contentId={contentId}
+          comment_text={comment.comment_text}
+          userId={comment.userId}
+          created_at={comment.created_at}
+          numLikes={comment.numLikes}
+          liked={comment.favourite}
+          gif_url={comment.gif_url}
+          name={comment.user.name}
+          displayName={comment.user.displayName}
+          userImg={comment.user.image}
+        />
+      );
+    }
+  );
   return (
     <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-2">
       {error ? (

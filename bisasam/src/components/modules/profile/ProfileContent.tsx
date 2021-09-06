@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
 import { ApolloError } from "apollo-server-micro";
@@ -70,27 +71,37 @@ const ProfileContent: React.FC<ProfileContentProps> = () => {
   });
 
   useEffect(() => {
-    setuserContent(data?.getUserContent);
+    return setuserContent(data?.getUserContent);
   }, [data]);
 
-  const content = userContent?.content.map((content) => {
-    return (
-      <ListContent
-        key={content.id}
-        userId={userContent?.id}
-        contentId={content.id}
-        displayName={userContent?.displayName}
-        name={userContent?.name}
-        userImg={userContent?.image}
-        text={content.content_text}
-        likeAmount={content.numLikes}
-        commentAmount={content.numComments}
-        liked={content.favourite}
-        createdAt={content.created_at}
-        gifUrl={content.gif_url}
-      />
-    );
-  });
+  const content = userContent?.content.map(
+    (content: {
+      id: React.Key | null | undefined;
+      content_text: string | undefined;
+      numLikes: number;
+      numComments: number;
+      favourite: boolean;
+      created_at: string;
+      gif_url: string | undefined;
+    }) => {
+      return (
+        <ListContent
+          key={content.id}
+          userId={userContent?.id}
+          contentId={content.id}
+          displayName={userContent?.displayName}
+          name={userContent?.name}
+          userImg={userContent?.image}
+          text={content.content_text}
+          likeAmount={content.numLikes}
+          commentAmount={content.numComments}
+          liked={content.favourite}
+          createdAt={content.created_at}
+          gifUrl={content.gif_url}
+        />
+      );
+    }
+  );
   return (
     <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-5">
       {error ? (

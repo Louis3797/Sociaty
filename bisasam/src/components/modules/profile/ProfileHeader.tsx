@@ -1,3 +1,4 @@
+import { getSession, useSession } from "next-auth/client";
 import React, { useState } from "react";
 import ButtonOutlined from "../../elements/button/ButtonOutlined";
 import SingleUserAvatar from "../../elements/UserAvatar/SingleUserAvatar";
@@ -20,6 +21,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   bio,
   userId,
 }) => {
+  const [session] = useSession();
   const [visible, setvisible] = useState(false);
   return (
     <div className="flex flex-col w-full bg-primary-800 rounded-8">
@@ -49,7 +51,7 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
         </div>
-        {userId === window.sessionStorage.getItem("UID") && (
+        {userId === session?.user?.id && (
           <ButtonOutlined
             text="Bearbeiten"
             variant="primary"

@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
   const router = useRouter();
 
   const [showSubmitModal, setshowSubmitModal] = useState(false);
-
+  console.log(session);
   return (
     <div className="flex flex-row min-w-full h-8 items-center justify-center bg-primary-900 top-0 sticky z-50">
       <SubmitModal
@@ -38,13 +38,14 @@ const Navbar: React.FC = () => {
 
           <SingleUserAvatar
             size="small"
-            src={session.user?.image}
+            src={!!session ? session.user.image : ""}
             className=""
             alt="UserImg"
             click={() =>
               router.push(
                 `/u/${encodeURIComponent(
                   decodeURIComponent(
+                    // @ts-ignore
                     window.sessionStorage.getItem("UNAME")
                   ).replace(/\s+/g, "")
                 )}`

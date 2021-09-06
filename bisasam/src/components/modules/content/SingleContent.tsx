@@ -10,6 +10,7 @@ import { SCContext } from "../../templates/ContentPage/ContentPage";
 
 const SingleContent: React.FC = () => {
   const tempData = React.useContext(SCContext);
+  // @ts-ignore
   const contentData = tempData.getSingleUserContent;
 
   const { loading, error, data } = useQuery(GET_CONTENT_LIKE_STATUS, {

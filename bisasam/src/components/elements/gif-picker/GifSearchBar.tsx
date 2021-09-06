@@ -1,8 +1,8 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import ButtonIcon from "../button/ButtonIcon";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 interface GifPickerSearchBarProps {
-  onChange: (e) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   close: () => void;
 }
 

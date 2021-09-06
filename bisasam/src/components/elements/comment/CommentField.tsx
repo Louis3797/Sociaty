@@ -51,7 +51,7 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
   return (
     <div className="flex flex-row h-auto items-center justify-center w-full bg-primary-800 p-2 rounded-5">
       <SingleUserAvatar
-        src={session.user?.image}
+        src={!!session ? session.user?.image : ""}
         size="small"
         alt="User Image"
       />

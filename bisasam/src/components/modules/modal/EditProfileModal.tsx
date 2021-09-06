@@ -104,7 +104,7 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
   const [session] = useSession();
   const [bUri, setbUri] = useState<string>(bannerUri === null ? "" : bannerUri);
   const [dName, setdName] = useState<string>(displayedName);
-  const [newBio, setNewBio] = useState<string>(bio);
+  const [newBio, setNewBio] = useState<string>(bio ? bio : "");
   const [error, setError] = useState<boolean>(false);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -139,6 +139,7 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
       setError(false);
       handleSubmit();
     } else if (
+      // @ts-ignore
       data?.checkForAvailableUsername >= 1 &&
       dName != window.sessionStorage.getItem("UNAME")
     ) {
@@ -163,17 +164,17 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
     <div className="flex flex-col items-start justify-center w-full h-full py-4 px-3">
       <div className="flex flex-row w-full items-center justify-start">
         <SingleUserAvatar
-          src={session.user.image}
+          src={session ? session.user.image : ""}
           size="big"
           alt="Current User Avatar"
           className="mr-4"
         />
         <div className="flex flex-col w-full items-start justify-start">
           <p className="text-xl font-semibold text-primary-200">
-            @{session.user.name}
+            @{session ? session.user.name : ""}
           </p>
           <p className="text-base font-semibold text-primary-200">
-            {session.user.email}
+            {session ? session.user.email : ""}
           </p>
         </div>
       </div>

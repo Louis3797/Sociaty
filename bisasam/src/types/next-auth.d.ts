@@ -13,6 +13,13 @@ declare module "next-auth" {
       displayName: string;
       email: string;
       image: string;
+      bannerUrl?: string | null;
+      bio?: string | null;
+      created_at: Date;
+      numFollowing: number;
+      numFollowers: number;
+      numContributions: number;
+      online: boolean;
     };
   }
 }
@@ -23,12 +30,26 @@ declare module "next-auth/jwt" {
     /** OpenID ID Token */
     idToken?: string;
 
+    // user: {
+    //   id: string | null | unknown;
+    //   name: string | null | unknown;
+    //   displayName: string | null | unknown;
+    //   email: string | null | unknown;
+    //   image: string | null | unknown;
+    // };
     user: {
       id: string;
       name: string;
       displayName: string;
       email: string;
       image: string;
+      bannerUrl?: string | null;
+      bio?: string | null;
+      created_at: Date;
+      numFollowing: number;
+      numFollowers: number;
+      numContributions: number;
+      online: boolean;
     };
   }
 }

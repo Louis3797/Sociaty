@@ -49,6 +49,7 @@ const CommentHead: React.FC<CommentHeadProps> = ({
           router.push(
             `/u/${encodeURIComponent(
               decodeURIComponent(
+                // @ts-ignore
                 window.sessionStorage.getItem("UNAME")
               ).replace(/\s+/g, "")
             )}`
