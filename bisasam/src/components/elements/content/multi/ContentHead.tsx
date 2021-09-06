@@ -9,6 +9,7 @@ import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
 import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
 import { OperationVariables, useMutation } from "@apollo/client";
 import { DELETE_POST } from "../../../../graphql/mutations";
+import { useSession } from "next-auth/client";
 interface ContentHeadProps {
   img: string;
   name: string;
@@ -26,6 +27,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
   time,
   displayName,
 }) => {
+  const [session] = useSession();
   const router = useRouter();
 
   const [deletePost] = useMutation<any, OperationVariables>(DELETE_POST);
@@ -79,7 +81,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           size="small"
           className="mx-5"
         >
-          {userId === window.sessionStorage.getItem("UID") && (
+          {userId === session?.user?.id && (
             <DropdownItem
               icon={<DeleteForeverRoundedIcon fontSize="default" />}
               text="Delete"
@@ -90,7 +92,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
               }}
             />
           )}
-          {userId === window.sessionStorage.getItem("UID") && (
+          {userId !== session?.user?.id && (
             <DropdownItem
               icon={<BlockRoundedIcon fontSize="default" />}
               text="Block User"
