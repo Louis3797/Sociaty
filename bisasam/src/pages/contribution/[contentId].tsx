@@ -3,18 +3,34 @@ import ContentPage from "../../components/templates/ContentPage/ContentPage";
 import { initializeApollo } from "../../lib/apolloClient";
 import jwt from "next-auth/jwt";
 import { GET_SINGLE_CONTENT } from "../../graphql/querys";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const secret = process.env.SECRET;
 
 const Contribution: React.FC<SingleContentProps> = ({ data }) => {
   return <ContentPage data={data} />;
 };
-export async function getServerSideProps(context) {
-  const { contentId: contentId } = context.query;
+export const getServerSideProps = async (context: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+  query: { contentId: string };
+}): Promise<
+  | {
+      notFound: boolean;
+      props?: undefined;
+    }
+  | {
+      props: {
+        data: any;
+      };
+      notFound?: undefined;
+    }
+> => {
+  const { contentId } = context.query;
 
   const req = context.req;
 
-  const token = await jwt.getToken({ req, secret, encryption: true });
+  const token = await jwt.getToken({ req, secret: process.env.SECRET });
 
   const apolloClient = initializeApollo();
 
@@ -34,5 +50,5 @@ export async function getServerSideProps(context) {
       data,
     },
   };
-}
+};
 export default Contribution;
