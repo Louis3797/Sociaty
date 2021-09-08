@@ -9,6 +9,9 @@ import {
   Prisma,
   User,
   User_liked_content,
+  UserFollows,
+  PrismaPromise,
+  User_liked_comment,
 } from "@prisma/client";
 import { GraphQLScalarType } from "graphql";
 
@@ -110,6 +113,7 @@ const typeDefs = gql`
     numFollowers: Int!
     online: Boolean
     numContributions: Int!
+    subscribed: String!
     content: [Content]
     comments: [Comment]
     messages: [Message]
@@ -144,9 +148,13 @@ const typeDefs = gql`
   }
 
   type Query {
-    getUserData(displayName: String!): User
+    getUserData(displayName: String!, currentUserId: String!): User
     getUserContent(displayName: String!, currentUserId: String!): User!
-    getSingleUserContent(userId: String!, contentId: String!): Content
+    getSingleUserContent(
+      userId: String!
+      contentId: String!
+      currentUserId: String!
+    ): Content
     getCommentsOfContent(contentId: String!, currentUserId: String!): [Comment]
     getContentLikeStatus(contentId: String!, currentUserId: String!): Content!
     checkForAvailableUsername(displayName: String!): Int!
@@ -172,6 +180,11 @@ const typeDefs = gql`
     deleteComment(contentId: String!, commentId: String!): String!
     createCommentLike(userId: String!, commentId: String!): String!
     deleteCommentLike(userId: String!, commentId: String!): String!
+    handleSubscription(
+      userId: String!
+      currentUserId: String!
+      currentStatus: Boolean!
+    ): String!
   }
 `;
 
@@ -239,6 +252,32 @@ const resolvers = {
         return false;
       } else {
         return true;
+      }
+    },
+  },
+  User: {
+    subscribed: async (
+      parent: { id: string },
+      _args: any,
+      context: any,
+      info: { variableValues: { currentUserId: string } }
+    ): Promise<string> => {
+      if (parent.id === info.variableValues.currentUserId) {
+        return "isCurrentUser";
+      } else {
+        const data = await prisma.userFollows.findUnique({
+          where: {
+            followerId_followingId: {
+              followerId: info.variableValues.currentUserId,
+              followingId: parent.id,
+            },
+          },
+        });
+        if (data === null) {
+          return "false";
+        } else {
+          return "true";
+        }
       }
     },
   },
@@ -360,7 +399,9 @@ const resolvers = {
       context: any,
       info: any
     ): Promise<Content> => {
-      const [createPost, updatedContributions] = await prisma.$transaction([
+      const [createPost, updatedContributions] = await prisma.$transaction<
+        [Prisma.Prisma__ContentClient<Content>, Prisma.Prisma__UserClient<User>]
+      >([
         prisma.content.create({
           data: {
             content_text: _args.content_text,
@@ -430,7 +471,12 @@ const resolvers = {
       context: any,
       info: any
     ): Promise<User_liked_content> => {
-      const [createLike, updatedContent] = await prisma.$transaction([
+      const [createLike, updatedContent] = await prisma.$transaction<
+        [
+          Prisma.Prisma__User_liked_contentClient<User_liked_content>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.user_liked_content.create({
           data: {
             userId: _args.userId,
@@ -454,7 +500,12 @@ const resolvers = {
       context: any,
       info: any
     ): Promise<Prisma.BatchPayload> => {
-      const [deleteLike, updatedContent] = await prisma.$transaction([
+      const [deleteLike, updatedContent] = await prisma.$transaction<
+        [
+          PrismaPromise<Prisma.BatchPayload>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.user_liked_content.deleteMany({
           where: {
             userId: _args.userId,
@@ -484,7 +535,12 @@ const resolvers = {
       info: any
     ) => {
       // Create Comment and update the number of Comments of the Content
-      const [createComment, updatedContent] = await prisma.$transaction([
+      const [createComment, updatedContent] = await prisma.$transaction<
+        [
+          Prisma.Prisma__CommentClient<Comment>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.comment.create({
           data: {
             content_id: _args.contentId,
@@ -577,7 +633,9 @@ const resolvers = {
       context: any,
       info: any
     ): Promise<string> => {
-      const [deletePost, updateUser] = await prisma.$transaction([
+      const [deletePost, updateUser] = await prisma.$transaction<
+        [Prisma.Prisma__ContentClient<Content>, Prisma.Prisma__UserClient<User>]
+      >([
         prisma.content.delete({
           where: { id: _args.contentId },
         }),
@@ -597,7 +655,12 @@ const resolvers = {
       context: any,
       info: any
     ): Promise<string> => {
-      const [deleteComment, updatePost] = await prisma.$transaction([
+      const [deleteComment, updatePost] = await prisma.$transaction<
+        [
+          Prisma.Prisma__CommentClient<Comment>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.comment.delete({
           where: { id: _args.commentId },
         }),
@@ -617,7 +680,12 @@ const resolvers = {
       context: any,
       info: any
     ): Promise<string> => {
-      const [createLike, updatedComment] = await prisma.$transaction([
+      const [createLike, updatedComment] = await prisma.$transaction<
+        [
+          Prisma.Prisma__User_liked_commentClient<User_liked_comment>,
+          Prisma.Prisma__CommentClient<Comment>
+        ]
+      >([
         prisma.user_liked_comment.create({
           data: {
             userId: _args.userId,
@@ -640,8 +708,13 @@ const resolvers = {
       _args: { userId: string; commentId: string },
       context: any,
       info: any
-    ) => {
-      const [deleteLike, updatedComment] = await prisma.$transaction([
+    ): Promise<string> => {
+      const [deleteLike, updatedComment] = await prisma.$transaction<
+        [
+          PrismaPromise<Prisma.BatchPayload>,
+          Prisma.Prisma__CommentClient<Comment>
+        ]
+      >([
         prisma.user_liked_comment.deleteMany({
           where: {
             userId: _args.userId,
@@ -659,10 +732,86 @@ const resolvers = {
       ]);
       return "Ok";
     },
+    handleSubscription: async (
+      parent: any,
+      _args: { currentStatus: boolean; currentUserId: string; userId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
+      if (_args.currentStatus) {
+        const [handleSub, updateCurrentUser, updateFollowedUser] =
+          await prisma.$transaction<
+            [
+              Prisma.Prisma__UserFollowsClient<UserFollows>,
+              Prisma.Prisma__UserClient<User>,
+              Prisma.Prisma__UserClient<User>
+            ]
+          >([
+            prisma.userFollows.delete({
+              where: {
+                followerId_followingId: {
+                  followerId: _args.currentUserId,
+                  followingId: _args.userId,
+                },
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.currentUserId,
+              },
+              data: {
+                numFollowing: { decrement: 1 },
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.userId,
+              },
+              data: {
+                numFollowers: { decrement: 1 },
+              },
+            }),
+          ]);
+        return "Unfollowed";
+      } else {
+        const [handleSub, updateCurrentUser, updateFollowedUser] =
+          await prisma.$transaction<
+            [
+              Prisma.Prisma__UserFollowsClient<UserFollows>,
+              Prisma.Prisma__UserClient<User>,
+              Prisma.Prisma__UserClient<User>
+            ]
+          >([
+            prisma.userFollows.create({
+              data: {
+                followerId: _args.currentUserId,
+                followingId: _args.userId,
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.currentUserId,
+              },
+              data: {
+                numFollowing: { increment: 1 },
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.userId,
+              },
+              data: {
+                numFollowers: { increment: 1 },
+              },
+            }),
+          ]);
+        return "Followed";
+      }
+    },
   },
 };
 
-const apolloServer = new ApolloServer({
+const apolloServer: ApolloServer = new ApolloServer({
   typeDefs,
   // @ts-ignore
   resolvers,

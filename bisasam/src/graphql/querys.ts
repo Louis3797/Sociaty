@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_USER = gql`
-  query GET_USER($displayName: String!) {
-    getUserData(displayName: $displayName) {
+  query GET_USER($displayName: String!, $currentUserId: String!) {
+    getUserData(displayName: $displayName, currentUserId: $currentUserId) {
       id
       name
       displayName
@@ -14,6 +14,7 @@ export const GET_USER = gql`
       numFollowers
       numContributions
       online
+      subscribed
     }
   }
 `;
@@ -25,6 +26,7 @@ export const GET_USER_CONTENT = gql`
       name
       displayName
       image
+      subscribed
       content {
         id
         content_text
@@ -47,8 +49,16 @@ export const GET_USER_CONTENT = gql`
 `;
 
 export const GET_SINGLE_CONTENT = gql`
-  query GET_SINGLE_CONTENT($userId: String!, $contentId: String!) {
-    getSingleUserContent(userId: $userId, contentId: $contentId) {
+  query GET_SINGLE_CONTENT(
+    $userId: String!
+    $contentId: String!
+    $currentUserId: String!
+  ) {
+    getSingleUserContent(
+      userId: $userId
+      contentId: $contentId
+      currentUserId: $currentUserId
+    ) {
       id
       content_text
       userId
@@ -67,6 +77,7 @@ export const GET_SINGLE_CONTENT = gql`
         name
         displayName
         image
+        subscribed
       }
     }
   }

@@ -91,3 +91,17 @@ export const CREATE_COMMENT_LIKE = gql`
     createCommentLike(userId: $userId, commentId: $commentId)
   }
 `;
+
+export const HANDLE_SUB = gql`
+  mutation HANDLE_SUB(
+    $userId: String!
+    $currentUserId: String!
+    $currentStatus: Boolean!
+  ) {
+    handleSubscription(
+      userId: $userId
+      currentUserId: $currentUserId
+      currentStatus: $currentStatus
+    )
+  }
+`;
