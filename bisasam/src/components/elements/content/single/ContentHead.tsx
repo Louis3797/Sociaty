@@ -9,12 +9,15 @@ import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
 import { OperationVariables, useMutation } from "@apollo/client";
 import { DELETE_POST } from "../../../../graphql/mutations";
 import { useSession } from "next-auth/client";
+import Moment from "react-moment";
+import { Stringifier } from "postcss";
 interface ContentHeadProps {
   img: string;
   name: string;
   userId: string;
   contentId: string;
   displayName: string;
+  time: string;
 }
 
 const ContentHead: React.FC<ContentHeadProps> = ({
@@ -23,6 +26,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
   userId,
   contentId,
   displayName,
+  time,
 }) => {
   const [session] = useSession();
   const router = useRouter();
@@ -61,7 +65,10 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           <p className="text-lg font-semibold text-button mr-1">
             {displayName}
           </p>
-          <p className="text-button text-opacity-40 text-base">@{name}</p>
+
+          <Moment className="text-button text-opacity-40 text-base" fromNow>
+            {time}
+          </Moment>
         </div>
 
         <ButtonDropdown
