@@ -1,9 +1,5 @@
 const Loading: React.FC = () => {
-  return (
-    <div>
-      <p>Loading</p>
-    </div>
-  );
+  return <p>Loading</p>;
 };
 
 export default Loading;

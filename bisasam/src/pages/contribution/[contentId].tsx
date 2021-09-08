@@ -5,8 +5,6 @@ import jwt from "next-auth/jwt";
 import { GET_SINGLE_CONTENT } from "../../graphql/querys";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const secret = process.env.SECRET;
-
 const Contribution: React.FC<SingleContentProps> = ({ data }) => {
   return <ContentPage data={data} />;
 };
@@ -36,7 +34,11 @@ export const getServerSideProps = async (context: {
 
   const { data } = await apolloClient.query({
     query: GET_SINGLE_CONTENT,
-    variables: { userId: token?.sub, contentId: contentId },
+    variables: {
+      userId: token?.sub,
+      contentId: contentId,
+      currentUserId: token?.sub,
+    },
   });
 
   if (data.getSingleUserContent === null) {

@@ -71,6 +71,7 @@ const ProfileContent: React.FC<ProfileContentProps> = () => {
   });
 
   useEffect(() => {
+    console.log(data);
     return setuserContent(data?.getUserContent);
   }, [data]);
 
