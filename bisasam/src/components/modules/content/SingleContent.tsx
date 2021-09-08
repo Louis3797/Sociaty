@@ -29,6 +29,7 @@ const SingleContent: React.FC = () => {
           userId={contentData.userId}
           contentId={contentData.id}
           displayName={contentData.user.displayName}
+          time={contentData.created_at}
         />
         <ContentBody
           text={contentData.content_text}
@@ -40,7 +41,6 @@ const SingleContent: React.FC = () => {
           userId={contentData.userId}
           commentAmount={contentData.numComments}
           likeAmount={contentData.numLikes}
-          time={contentData.created_at}
           liked={data?.getContentLikeStatus?.favourite}
         />
       </div>
