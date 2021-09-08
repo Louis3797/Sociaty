@@ -5,7 +5,7 @@ export const useTokenToText = (
       v: string;
     }
   ]
-) => {
+): readonly [string] => {
   let text: string = "";
 
   let tempArray: string[] = [];

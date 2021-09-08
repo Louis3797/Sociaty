@@ -1,4 +1,13 @@
-export const useTokenizeText = (untransformedText: string) => {
+export const useTokenizeText = (
+  untransformedText: string
+): readonly [
+  [
+    {
+      t: string;
+      v: string;
+    }
+  ]
+] => {
   const tokens = [] as unknown as [
     {
       t: string;
