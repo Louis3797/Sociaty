@@ -72,7 +72,7 @@ export default async function handler(
           // @ts-ignore
           token.user = user;
         }
-        console.log(Promise.resolve(token));
+
         return Promise.resolve(token);
       },
     },
