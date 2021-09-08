@@ -13,7 +13,7 @@ interface UserPageProps {
 
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
   const [userdata, setuserdata] = useState(null);
-
+  console.log(data);
   useEffect(() => {
     return setuserdata(data.getUserData);
   }, [data]);
@@ -34,6 +34,7 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
           bannerUrl={userdata?.bannerUrl}
           bio={userdata?.bio ? userdata?.bio : "Hey im new here"}
           userId={userdata?.id}
+          subscribed={userdata?.subscribed}
         />
         <ProfileInfoBox
           follower={userdata?.numFollowers}
