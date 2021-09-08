@@ -1,6 +1,8 @@
-import { getSession, useSession } from "next-auth/client";
-import React, { useState } from "react";
+import { useSession } from "next-auth/client";
+import React, { useEffect, useState } from "react";
+import useHandleSubscription from "../../../hooks/useHandleSubscribtion";
 import ButtonOutlined from "../../elements/button/ButtonOutlined";
+import SubscriptionButton from "../../elements/profile/SubscribtionButton";
 import SingleUserAvatar from "../../elements/UserAvatar/SingleUserAvatar";
 import EditProfileModal from "../modal/EditProfileModal";
 
@@ -11,6 +13,7 @@ export interface ProfileCompOneProps {
   bannerUrl: string | null;
   bio: string;
   userId: string;
+  subscribed: string;
 }
 
 const ProfileHeader: React.FC<ProfileCompOneProps> = ({
@@ -20,9 +23,25 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
   bannerUrl,
   bio,
   userId,
+  subscribed,
 }) => {
   const [session] = useSession();
   const [visible, setvisible] = useState(false);
+  const [sub, setSub] = useState<boolean>(
+    subscribed === "true" ? true : subscribed === "false" ? false : false
+  );
+
+  const [handleSub] = useHandleSubscription();
+
+  useEffect(() => {
+    setSub(
+      subscribed === "true" ? true : subscribed === "false" ? false : false
+    );
+    return () => {
+      sub;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [subscribed]);
   return (
     <div className="flex flex-col w-full bg-primary-800 rounded-8">
       <div className="h-10 w-full bg-transparent">
@@ -51,13 +70,22 @@ const ProfileHeader: React.FC<ProfileCompOneProps> = ({
           </p>
           <p className="text-button text-opacity-40 text-base">@{name}</p>
         </div>
-        {userId === session?.user?.id && (
+        {subscribed === "isCurrentUser" && userId === session?.user?.id ? (
           <ButtonOutlined
             text="Bearbeiten"
             variant="primary"
             size="big"
             className="mr-3"
             onClick={() => setvisible(true)}
+          />
+        ) : (
+          <SubscriptionButton
+            className="mr-3"
+            status={sub}
+            onClick={() => {
+              handleSub(sub, !!session ? session?.user.id : "", userId);
+              setSub(!sub);
+            }}
           />
         )}
       </div>
