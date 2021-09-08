@@ -149,10 +149,19 @@ model User_liked_content {
   @@index(fields: [userId, content_id], name: "LikedContentIndex")
 }
 
+model UserFollows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+}
+
 model User {
   id               String               @id @default(cuid())
   name             String
-  displayName      String?              @default(cuid()) @db.VarChar(25)
+  displayName      String               @unique @default(cuid()) @db.VarChar(25)
   email            String               @unique
   emailVerified    DateTime?
   created_at       DateTime             @default(now()) @db.Timestamp(0)
@@ -170,10 +179,10 @@ model User {
   liked_content    User_liked_content[]
   in_group         User_in_group[]
   liked_comments   User_liked_comment[]
-  blockedBy        User[]               @relation("user1_blocked_user2", references: [id])
-  blocked          User[]               @relation("user1_blocked_user2", references: [id])
-  followedBy       User[]               @relation("user1_follows_user2", references: [id])
-  following        User[]               @relation("user1_follows_user2", references: [id])
+  blockedBy        User[]               @relation("UserBlocked", references: [id])
+  blocked          User[]               @relation("UserBlocked", references: [id])
+  followedBy       UserFollows[]        @relation("follower")
+  following        UserFollows[]        @relation("following")
   accounts         Account[]
   sessions         Session[]
 
