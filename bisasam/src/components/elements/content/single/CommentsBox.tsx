@@ -43,7 +43,11 @@ const CommentsBox: React.FC<CommentsBoxProps> = ({ contentId }) => {
         numLikes: number;
         favourite: boolean;
         gif_url: string | null | undefined;
-        user: { name: string; displayName: string; image: string };
+        user: {
+          name: string;
+          displayName: string;
+          image: string;
+        };
       },
       i: React.Key | null | undefined
     ) => {

@@ -10,6 +10,7 @@ import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
 import { OperationVariables, useMutation } from "@apollo/client";
 import { DELETE_POST } from "../../../../graphql/mutations";
 import { useSession } from "next-auth/client";
+import { SubscriptionButtonLink } from "../../profile/SubscribtionButton";
 interface ContentHeadProps {
   img: string;
   name: string;
@@ -53,7 +54,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             `/u/${encodeURIComponent(
               decodeURIComponent(
                 // @ts-ignore
-                window.sessionStorage.getItem("UNAME")
+                displayName
               ).replace(/\s+/g, "")
             )}`
           )
@@ -72,7 +73,6 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             {time}
           </Moment>
         </div>
-
         <ButtonDropdown
           icon={
             <MoreHorizRoundedIcon fontSize="default" className="text-button" />

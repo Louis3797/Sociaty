@@ -52,7 +52,7 @@ const CommentHead: React.FC<CommentHeadProps> = ({
             `/u/${encodeURIComponent(
               decodeURIComponent(
                 // @ts-ignore
-                window.sessionStorage.getItem("UNAME")
+                displayName
               ).replace(/\s+/g, "")
             )}`
           )
