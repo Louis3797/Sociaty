@@ -5,7 +5,7 @@ type ButtonProps = DetailedHTMLProps<
   HTMLButtonElement
 > & {
   text: string;
-  variant: "primary" | "secondary";
+  variant: "primary" | "secondary" | "white";
   className?: string;
   size: "big" | "small";
 };
@@ -20,6 +20,9 @@ const colorClassnames = {
     "text-button bg-accent transition duration-200 ease-in-out hover:bg-accent-hover disabled:bg-accent-disabled",
   secondary:
     "text-button bg-primary-600 transition duration-200 ease-in-out hover:bg-primary-300 disabled:bg-primary-200",
+
+  white:
+    "text-primary-800 bg-button transition duration-200 ease-in-out hover:bg-primary-200 disabled:bg-primary-100",
 };
 
 const Button: React.FC<ButtonProps> = ({
