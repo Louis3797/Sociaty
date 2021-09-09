@@ -26,7 +26,6 @@ export const GET_USER_CONTENT = gql`
       name
       displayName
       image
-      subscribed
       content {
         id
         content_text
