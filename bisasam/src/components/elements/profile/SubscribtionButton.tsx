@@ -1,40 +1,105 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import useHandleSubscription from "../../../hooks/useHandleSubscribtion";
 import Button from "../button/Button";
-import ButtonOutlined from "../button/ButtonOutlined";
+import ButtonLink from "../button/ButtonLink";
 
 interface SubscriptionButtonProps {
-  status: boolean;
-  onClick: () => void;
+  status: string;
+  currentUserId: string;
+  userId: string;
   className?: string;
 }
 
-const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
+export const SubscriptionButton: React.FC<SubscriptionButtonProps> = ({
   status,
-  onClick,
+  currentUserId,
+  userId,
   className,
 }) => {
-  if (status === false) {
+  const [sub, setSub] = useState<boolean>(
+    status === "true" ? true : status === "false" ? false : false
+  );
+
+  const [handleSub] = useHandleSubscription();
+
+  useEffect(() => {
+    setSub(status === "true" ? true : status === "false" ? false : false);
+    return () => {
+      sub;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
+  if (!sub) {
     return (
-      <ButtonOutlined
+      <Button
         text="Follow"
         variant="primary"
         size="big"
         className={className}
-        onClick={onClick}
+        onClick={() => {
+          handleSub(sub, currentUserId, userId);
+          setSub(!sub);
+        }}
       />
     );
-  } else if (status === true) {
+  } else {
     return (
       <Button
         text="Unfollow"
-        variant="primary"
+        variant="white"
         size="big"
         className={className}
-        onClick={onClick}
+        onClick={() => {
+          handleSub(sub, currentUserId, userId);
+          setSub(!sub);
+        }}
       />
     );
   }
-  return <div></div>;
 };
 
-export default SubscriptionButton;
+export const SubscriptionButtonLink: React.FC<SubscriptionButtonProps> = ({
+  status,
+  currentUserId,
+  userId,
+  className,
+}) => {
+  const [sub, setSub] = useState<boolean>(
+    status === "true" ? true : status === "false" ? false : false
+  );
+
+  const [handleSub] = useHandleSubscription();
+
+  useEffect(() => {
+    setSub(status === "true" ? true : status === "false" ? false : false);
+    return () => {
+      sub;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
+  if (!sub) {
+    return (
+      <ButtonLink
+        text="Follow"
+        className={`text-accent font-semibold ${className}`}
+        onClick={() => {
+          handleSub(sub, currentUserId, userId);
+          setSub(!sub);
+        }}
+      />
+    );
+  } else {
+    return (
+      <ButtonLink
+        text="Unollow"
+        className={`text-button font-semibold ${className}`}
+        onClick={() => {
+          handleSub(sub, currentUserId, userId);
+          setSub(!sub);
+        }}
+      />
+    );
+  }
+};
