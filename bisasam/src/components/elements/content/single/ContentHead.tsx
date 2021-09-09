@@ -11,22 +11,23 @@ import { DELETE_POST } from "../../../../graphql/mutations";
 import { useSession } from "next-auth/client";
 import Moment from "react-moment";
 import { Stringifier } from "postcss";
+import { SubscriptionButtonLink } from "../../profile/SubscribtionButton";
 interface ContentHeadProps {
   img: string;
-  name: string;
   userId: string;
   contentId: string;
   displayName: string;
   time: string;
+  subscribed: string;
 }
 
 const ContentHead: React.FC<ContentHeadProps> = ({
   img,
-  name,
   userId,
   contentId,
   displayName,
   time,
+  subscribed,
 }) => {
   const [session] = useSession();
   const router = useRouter();
@@ -54,7 +55,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
             `/u/${encodeURIComponent(
               decodeURIComponent(
                 // @ts-ignore
-                window.sessionStorage.getItem("UNAME")
+                displayName
               ).replace(/\s+/g, "")
             )}`
           )
@@ -71,6 +72,14 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           </Moment>
         </div>
 
+        {subscribed !== "isCurrentUser" && userId !== session?.user?.id && (
+          <SubscriptionButtonLink
+            className=""
+            status={subscribed}
+            currentUserId={!!session ? session?.user?.id : ""}
+            userId={userId}
+          />
+        )}
         <ButtonDropdown
           icon={
             <MoreHorizRoundedIcon fontSize="default" className="text-button" />
