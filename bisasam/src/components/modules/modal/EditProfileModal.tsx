@@ -6,7 +6,7 @@ import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 import Button from "../../elements/button/Button";
 import { InputField } from "../../elements/input/InputField";
 import SingleUserAvatar from "../../elements/UserAvatar/SingleUserAvatar";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import { UPDATE_PROFILE } from "../../../graphql/mutations";
 import {
   OperationVariables,
@@ -101,7 +101,7 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
   displayedName,
   bio,
 }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
   const [bUri, setbUri] = useState<string>(bannerUri === null ? "" : bannerUri);
   const [dName, setdName] = useState<string>(displayedName);
   const [newBio, setNewBio] = useState<string>(bio ? bio : "");

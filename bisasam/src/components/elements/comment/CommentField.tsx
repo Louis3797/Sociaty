@@ -6,7 +6,7 @@ import ButtonIcon from "../button/ButtonIcon";
 import { Input } from "../input/Input";
 import SingleUserAvatar from "../UserAvatar/SingleUserAvatar";
 import GifIcon from "@material-ui/icons/Gif";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import GifPicker from "../../modules/picker/GifPicker";
 import { usePickedGif } from "../../../globals-stores/usePickedGif";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
@@ -17,7 +17,7 @@ export interface CommentFieldProps {
 }
 
 const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
 
   const [text, settext] = useState("");
   const [gif, setgif] = useState("");

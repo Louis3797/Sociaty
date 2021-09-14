@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import jwt, { JWT } from "next-auth/jwt";
+import { getToken, JWT } from "next-auth/jwt";
 import { useEffect } from "react";
 import Dash from "./dash";
 import {
@@ -8,8 +8,6 @@ import {
   NextApiRequest,
   NextApiResponse,
 } from "next";
-
-const secret = process.env.SECRET;
 interface IndexProps {
   token: {
     sub: string;
@@ -45,15 +43,12 @@ export const getServerSideProps = async (context: {
   res: NextApiResponse<Data>;
 }): Promise<{
   props: {
-    token: jwt.JWT | null;
+    token: JWT | null;
   };
 }> => {
   const req: NextApiRequest = context.req;
 
-  const token: jwt.JWT | null = await jwt.getToken({
-    req,
-    secret,
-  });
+  const token = await getToken({ req, secret: process.env.SECRET });
 
   console.log(token);
   return {

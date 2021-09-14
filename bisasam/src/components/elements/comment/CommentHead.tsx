@@ -8,7 +8,7 @@ import ButtonDropdown from "../button/ButtonDropdown";
 import DropdownItem from "../dropdown/DropdownItem";
 import { DELETE_COMMENT } from "../../../graphql/mutations";
 import { OperationVariables, useMutation } from "@apollo/client";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 
 interface CommentHeadProps {
   img: string;
@@ -27,7 +27,7 @@ const CommentHead: React.FC<CommentHeadProps> = ({
   commentId,
   contentId,
 }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const [deleteComment] = useMutation<any, OperationVariables>(DELETE_COMMENT);
 

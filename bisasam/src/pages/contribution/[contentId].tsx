@@ -1,7 +1,7 @@
 import { SingleContentProps } from "SingleContent";
 import ContentPage from "../../components/templates/ContentPage/ContentPage";
 import { initializeApollo } from "../../lib/apolloClient";
-import jwt from "next-auth/jwt";
+import { getToken } from "next-auth/jwt";
 import { GET_SINGLE_CONTENT } from "../../graphql/querys";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -26,9 +26,8 @@ export const getServerSideProps = async (context: {
 > => {
   const { contentId } = context.query;
 
-  const req = context.req;
-
-  const token = await jwt.getToken({ req, secret: process.env.SECRET });
+  const req: NextApiRequest = context.req;
+  const token = await getToken({ req, secret: process.env.SECRET });
 
   const apolloClient = initializeApollo();
 

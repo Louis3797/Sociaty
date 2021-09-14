@@ -1,5 +1,5 @@
 import React from "react";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import ButtonIcon from "../button/ButtonIcon";
 import SingleUserAvatar from "../UserAvatar/SingleUserAvatar";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
@@ -18,7 +18,7 @@ const SubmitModalBody: React.FC<SubmitModalBodyProps> = ({
   gif,
   textValue,
 }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
 
   const setGifUrl = usePickedGif((state) => state.setGifUrl);
   return (

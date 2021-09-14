@@ -25,11 +25,11 @@ const SingleContent: React.FC = () => {
       <div className="flex flex-col w-full h-full bg-primary-800 pt-1 rounded-8">
         <ContentHead
           img={contentData.user.image}
-          name={contentData.user.name}
           userId={contentData.userId}
           contentId={contentData.id}
           displayName={contentData.user.displayName}
           time={contentData.created_at}
+          subscribed={contentData.user.subscribed}
         />
         <ContentBody
           text={contentData.content_text}

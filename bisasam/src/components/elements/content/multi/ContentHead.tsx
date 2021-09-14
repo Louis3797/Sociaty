@@ -9,7 +9,7 @@ import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
 import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
 import { OperationVariables, useMutation } from "@apollo/client";
 import { DELETE_POST } from "../../../../graphql/mutations";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import { SubscriptionButtonLink } from "../../profile/SubscribtionButton";
 interface ContentHeadProps {
   img: string;
@@ -28,7 +28,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
   time,
   displayName,
 }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const [deletePost] = useMutation<any, OperationVariables>(DELETE_POST);

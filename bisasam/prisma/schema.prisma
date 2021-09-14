@@ -4,22 +4,21 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialActions"]
+  provider = "prisma-client-js"
 }
 
 model Account {
   id                 String  @id @default(cuid())
   userId             String
-  type               String?
-  provider           String?
+  type               String
+  provider           String
   providerAccountId  String
   refresh_token      String?
   access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?
+  id_token           String? @db.Text
   session_state      String?
   oauth_token_secret String?
   oauth_token        String?
@@ -162,13 +161,13 @@ model UserFollows {
 
 model User {
   id               String               @id @default(cuid())
-  name             String
+  name             String?
   displayName      String               @unique @default(cuid()) @db.VarChar(25)
-  email            String               @unique
+  email            String?              @unique
   emailVerified    DateTime?
   created_at       DateTime             @default(now()) @db.Timestamp(0)
   updatedAt        DateTime             @updatedAt
-  image            String               @db.VarChar(255)
+  image            String?              @db.VarChar(255)
   bannerUrl        String?              @db.VarChar(255)
   bio              String?              @db.VarChar(255)
   numFollowing     Int                  @default(0)
