@@ -8,7 +8,7 @@ import {
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
-function createApolloClient() {
+function createApolloClient(): ApolloClient<NormalizedCacheObject> {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
     link: new HttpLink({
@@ -21,7 +21,7 @@ function createApolloClient() {
 
 export function initializeApollo(
   initialState: NormalizedCacheObject | null | undefined = null
-) {
+): ApolloClient<NormalizedCacheObject> {
   const _apolloClient = apolloClient ?? createApolloClient();
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
@@ -40,6 +40,9 @@ export function initializeApollo(
 export function useApollo(
   initialState: NormalizedCacheObject | null | undefined
 ) {
-  const store = useMemo(() => initializeApollo(initialState), [initialState]);
+  const store: ApolloClient<NormalizedCacheObject> = useMemo(
+    () => initializeApollo(initialState),
+    [initialState]
+  );
   return store;
 }
