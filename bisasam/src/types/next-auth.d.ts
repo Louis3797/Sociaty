@@ -7,20 +7,12 @@ declare module "next-auth" {
 
   interface Session {
     user: {
-      /** The user's postal address. */
       id: string;
-      name: string;
+      name: string | null;
+      email: string | null;
+      image: string | null;
       displayName: string;
-      email: string;
-      image: string;
-      bannerUrl?: string | null;
-      bio?: string | null;
-      created_at: Date;
-      numFollowing: number;
-      numFollowers: number;
-      numContributions: number;
-      online: boolean;
-    };
+    } | null;
   }
 }
 
@@ -39,17 +31,10 @@ declare module "next-auth/jwt" {
     // };
     user: {
       id: string;
-      name: string;
+      name: string | null;
+      email: string | null;
+      image: string | null;
       displayName: string;
-      email: string;
-      image: string;
-      bannerUrl?: string | null;
-      bio?: string | null;
-      created_at: Date;
-      numFollowing: number;
-      numFollowers: number;
-      numContributions: number;
-      online: boolean;
-    };
+    } | null;
   }
 }
