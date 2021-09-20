@@ -8,11 +8,6 @@ import { GET_USER_CONTENT } from "../../../graphql/querys";
 import ContentEmptyState from "../content/ContentEmptyState";
 import ListContent from "../content/ListContent";
 
-export interface Hashtags {
-  id?: string;
-  text: string;
-}
-
 export interface Content {
   id: string;
   content_text: string;
@@ -23,7 +18,6 @@ export interface Content {
   numComments: number;
   gif_url: string;
   favourite?: boolean;
-  tags?: Hashtags;
   __typename: string;
 }
 
@@ -46,8 +40,6 @@ interface QueryProps {
   error: ApolloError;
 }
 
-export interface ProfileContentProps {}
-
 const LoadingState: React.FC = () => {
   return (
     <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-10">
@@ -56,24 +48,25 @@ const LoadingState: React.FC = () => {
   );
 };
 
+export interface ProfileContentProps {}
+
 const ProfileContent: React.FC<ProfileContentProps> = () => {
   const router = useRouter();
 
   const { name } = router.query;
-  const [userContent, setuserContent] = useState(null);
 
   const { loading, error, data } = useQuery<QueryProps>(GET_USER_CONTENT, {
     variables: {
       displayName: name,
       currentUserId: window.sessionStorage.getItem("UID"),
     },
-    fetchPolicy: "cache-and-network",
   });
+  const [userContent, setuserContent] = useState(data?.getUserContent);
 
   useEffect(() => {
-    console.log(data);
-    return setuserContent(data?.getUserContent);
-  }, [data]);
+    setuserContent(data?.getUserContent);
+    return userContent;
+  }, [data, userContent]);
 
   const content = userContent?.content.map(
     (content: {

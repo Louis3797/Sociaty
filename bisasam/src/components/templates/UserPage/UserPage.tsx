@@ -1,6 +1,5 @@
-// @ts-nocheck
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { UserpageContext } from "../../../context/userpageContext";
 import { RootProps } from "../../../pages/u/[name]";
 import MainLayout from "../../layouts/MainLayout";
 import ProfileContent from "../../modules/profile/ProfileContent";
@@ -12,12 +11,7 @@ interface UserPageProps {
 }
 
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
-  const [userdata, setuserdata] = useState(null);
-  console.log(data);
-  useEffect(() => {
-    return setuserdata(data.getUserData);
-  }, [data]);
-
+  const [userdata, setUserdata] = useState<Object>(data.getUserData);
   return (
     <MainLayout
       rightPanel={
@@ -27,47 +21,14 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
       }
     >
       <div className="flex flex-col w-full items-center bg-transparent h-auto">
-        <ProfileHeader
-          name={userdata?.name}
-          img={userdata?.image}
-          displayName={userdata?.displayName}
-          bannerUrl={userdata?.bannerUrl}
-          bio={userdata?.bio ? userdata?.bio : "Hey im new here"}
-          userId={userdata?.id}
-          subscribed={userdata?.subscribed}
-        />
-        <ProfileInfoBox
-          follower={userdata?.numFollowers}
-          follows={userdata?.numFollowing}
-          posts={userdata?.numContributions}
-        />
-        <ProfileContent />
+        <UserpageContext.Provider value={[userdata, setUserdata]}>
+          <ProfileHeader />
+          <ProfileInfoBox />
+          <ProfileContent />
+        </UserpageContext.Provider>
       </div>
     </MainLayout>
   );
 };
 
 export default UserPage;
-
-// {
-//   "User:ckrf7xswh0008b4ttmdodw4sf": {
-//       "id": "ckrf7xswh0008b4ttmdodw4sf",
-//       "__typename": "User",
-//       "name": "Gamer 3797",
-//       "displayName": "Louis2002",
-//       "image": "https://lh3.googleusercontent.com/a-/AOh14GgFSr2cUejuPJ3mffa6ajFGTq7DYLpIm5f7Hr7MmQ=s96-c",
-//       "bannerUrl": "https://pbs.twimg.com/media/EtXfpgGWYAEIa7y.jpg:large",
-//       "bio": "Hey im new here",
-//       "created_at": "2021-07-22T17:58:52.000Z",
-//       "numFollowing": 0,
-//       "numFollowers": 0,
-//       "numContributions": 17,
-//       "online": false
-//   },
-//   "ROOT_QUERY": {
-//       "__typename": "Query",
-//       "getUserData({\"displayName\":\"Louis2002\"})": {
-//           "__ref": "User:ckrf7xswh0008b4ttmdodw4sf"
-//       }
-//   }
-// }
