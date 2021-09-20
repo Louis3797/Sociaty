@@ -25,7 +25,7 @@ export default NextAuth({
 
   session: {
     jwt: true,
-    maxAge: 1 * 24 * 60 * 60,
+    maxAge: 30 * 24 * 60 * 60,
   },
 
   jwt: {
@@ -37,22 +37,35 @@ export default NextAuth({
     // },
     // async redirect({ url, baseUrl }) { return baseUrl },
     async session({ session, user, token }) {
-      // @ts-ignore
       session.user = token.user;
       // session.accessToken = token.accessToken;
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      const isUserSignedIn = user ? true : false;
+      if (user ? true : false && typeof user !== "undefined") {
+        const getUser: {
+          id: string;
+          name: string | null;
+          email: string | null;
+          image: string | null;
+          displayName: string;
+        } | null = await prisma.user.findUnique({
+          where: { id: user?.id },
+          select: {
+            id: true,
+            name: true,
+            displayName: true,
+            email: true,
+            image: true,
+          },
+        });
 
-      if (isUserSignedIn && typeof user !== "undefined") {
-        // @ts-ignore
-        token.user = user;
+        token.user = getUser;
       }
       // if (account?.accessToken) {
       //   token.accessToken = account.accessToken;
       // }
-      return Promise.resolve(token);
+      return token;
     },
   },
   events: {
