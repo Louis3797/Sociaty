@@ -76,7 +76,11 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           <SubscriptionButtonLink
             className=""
             status={subscribed}
-            currentUserId={!!session ? session?.user?.id : ""}
+            currentUserId={
+              !!session && typeof session.user?.id === "string"
+                ? session?.user?.id
+                : ""
+            }
             userId={userId}
           />
         )}

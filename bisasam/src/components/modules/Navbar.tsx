@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import SingleUserAvatar from "../elements/UserAvatar/SingleUserAvatar";
 import { useRouter } from "next/router";
@@ -9,7 +9,7 @@ import { SubmitModal } from "./modal/SubmitModal";
 import { Session } from "next-auth";
 
 const Navbar: React.FC = () => {
-  const [session] = useSession();
+  const { data: session } = useSession();
   const router = useRouter();
 
   const [showSubmitModal, setshowSubmitModal] = useState(false);
@@ -37,7 +37,11 @@ const Navbar: React.FC = () => {
 
           <SingleUserAvatar
             size="small"
-            src={!!session ? session.user?.image : ""}
+            src={
+              !!session && typeof session.user?.image === "string"
+                ? session.user?.image
+                : ""
+            }
             className=""
             alt="UserImg"
             click={() =>

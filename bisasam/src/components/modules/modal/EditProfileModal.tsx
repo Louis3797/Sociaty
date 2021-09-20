@@ -164,17 +164,26 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
     <div className="flex flex-col items-start justify-center w-full h-full py-4 px-3">
       <div className="flex flex-row w-full items-center justify-start">
         <SingleUserAvatar
-          src={session ? session.user.image : ""}
+          src={
+            session && typeof session.user?.image === "string"
+              ? session.user.image
+              : ""
+          }
           size="big"
           alt="Current User Avatar"
           className="mr-4"
         />
         <div className="flex flex-col w-full items-start justify-start">
           <p className="text-xl font-semibold text-primary-200">
-            @{session ? session.user.name : ""}
+            @
+            {session && typeof session.user?.name === "string"
+              ? session.user.name
+              : ""}
           </p>
           <p className="text-base font-semibold text-primary-200">
-            {session ? session.user.email : ""}
+            {session && typeof session.user?.email === "string"
+              ? session.user.email
+              : ""}
           </p>
         </div>
       </div>

@@ -25,7 +25,11 @@ const SubmitModalBody: React.FC<SubmitModalBodyProps> = ({
     <div className="flex flex-row justify-start p-3 border-b border-primary-300 h-auto">
       <SingleUserAvatar
         size="small"
-        src={session ? session.user?.image : ""}
+        src={
+          !!session && typeof session.user?.image === "string"
+            ? session.user?.image
+            : ""
+        }
         className="mrs-4"
         alt="UserImg"
       />
