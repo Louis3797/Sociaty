@@ -7,8 +7,8 @@ import SubmitModalFooter from "../../elements/modal/SubmitModalFooter";
 import SubmitModalBody from "../../elements/modal/SubmitModalBody";
 import GifPicker from "../picker/GifPicker";
 import { usePickedGif } from "../../../globals-stores/usePickedGif";
-import Router from "next/router";
 import { useSnackbar, VariantType } from "notistack";
+import { GET_USER_CONTENT } from "../../../graphql/querys";
 
 interface SubmitModalProps {
   className?: string;
@@ -34,7 +34,17 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
     enqueueSnackbar("Your Post was successfully created", { variant: variant });
   };
 
-  const [createSubmit] = useMutation(POST_CONTENT);
+  const [createSubmit] = useMutation(POST_CONTENT, {
+    refetchQueries: [
+      {
+        query: GET_USER_CONTENT,
+        variables: {
+          displayName: window.sessionStorage.getItem("UNAME"),
+          currentUserId: window.sessionStorage.getItem("UID"),
+        },
+      },
+    ],
+  });
 
   const handleSubmit = (): void => {
     createSubmit({
@@ -48,7 +58,6 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
     handleAlert("success");
     settext("");
     setGifUrl("");
-    Router.reload();
   };
 
   function handleCancel() {
@@ -61,25 +70,6 @@ export const SubmitModal: React.FC<SubmitModalProps> = ({
       onRequestClose={handleCancel}
       className={`flex justify-center items-start focus:outline-none border-0 ${className}`}
     >
-      {/* <Snackbar
-        open={showAlert}
-        autoHideDuration={4000}
-        onClose={() => setshowAlert(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          iconMapping={{
-            success: <CheckCircleOutlineIcon fontSize="default" />,
-          }}
-          className="text-success"
-          onClose={() => setshowAlert(false)}
-          severity="success"
-        >
-          <p className="text-primary-900 font-medium">
-            Your Post was successfully created
-          </p>
-        </Alert>
-      </Snackbar> */}
       <div className="flex flex-col w-42 sm:w-full rounded-8 h-auto  bg-primary-800">
         <SubmitModalHead />
         <SubmitModalBody
