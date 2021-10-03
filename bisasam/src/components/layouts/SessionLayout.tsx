@@ -1,4 +1,6 @@
-import { getSession, useSession } from "next-auth/client";
+import { NextApiRequest, NextApiResponse } from "next";
+import { Session } from "next-auth";
+import { getSession, useSession } from "next-auth/react";
 import React, { ReactNode } from "react";
 import AccessDenied from "../templates/AccessDenied/AccessDenied";
 import Loading from "../templates/Loading/Loading";
@@ -7,24 +9,18 @@ export interface SessionLayoutProps {
   children: ReactNode;
 }
 
-const SessionLayout: React.FC<SessionLayoutProps> = ({
-  children,
-}: SessionLayoutProps) => {
-  const [session, loading] = useSession();
+const SessionLayout: React.FC<SessionLayoutProps> = ({ children }) => {
+  const { data: session, status } = useSession();
 
-  if (typeof window !== "undefined" && loading) return <Loading />;
-
-  if (session) {
-    return <div>{children}</div>;
+  if (status === "loading") {
+    return <p>Loading...</p>;
   }
-  return <AccessDenied />;
+
+  if (status === "unauthenticated") {
+    return <AccessDenied />;
+  }
+
+  return <>{children}</>;
 };
 
 export default SessionLayout;
-
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  return {
-    props: { session },
-  };
-}

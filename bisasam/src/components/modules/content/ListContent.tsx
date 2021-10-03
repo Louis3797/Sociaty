@@ -2,7 +2,7 @@ import ContentBody from "../../elements/content/multi/ContentBody";
 import ContentHead from "../../elements/content/multi/ContentHead";
 import ContentItemList from "../../elements/content/multi/ContentItemList";
 
-export interface ListContentProps {
+interface ListContentProps {
   contentId: string;
   userImg: string;
   name: string;
@@ -43,10 +43,10 @@ const ListContent: React.FC<ListContentProps> = ({
       />
 
       <ContentBody
-        text={text}
+        text={text ? text : ""}
         contentId={contentId}
         userId={userId}
-        gifUrl={gifUrl}
+        gifUrl={gifUrl ? gifUrl : ""}
       />
 
       <ContentItemList

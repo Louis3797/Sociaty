@@ -1,60 +1,75 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
-import prisma from "../../../lib/prismaClient";
+import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "../../../lib/prismaClient";
 
-// For more information on each option (and a full list of options) go to
-// https://next-auth.js.org/configuration/options
-const options = {
-  site: process.env.NEXTAUTH_URL,
-  // https://next-auth.js.org/configuration/providers
+export default NextAuth({
   providers: [
-    Providers.Google({
+    GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
     }),
-    Providers.GitHub({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
-    }),
   ],
-
-  // Database optional. MySQL, Maria DB, Postgres and MongoDB are supported.
-  // https://next-auth.js.org/configuration/databases
-  //
-  // Notes:
-  // * You must to install an appropriate node_module for your database
-  // * The Email provider requires a database (OAuth providers do not)
 
   adapter: PrismaAdapter(prisma),
 
-  // The secret should be set to a reasonably long random string.
-  // It is used to sign cookies and to sign and encrypt JSON Web Tokens, unless
-  // a separate secret is defined explicitly for encrypting the JWT.
   secret: process.env.SECRET,
 
   pages: {
-    // signIn: '/auth/signin',  // Displays signin buttons
-    // signOut: '/auth/signout', // Displays form with sign out button
+    // signIn: '/auth/signin',
+    // signOut: '/auth/signout',
     // error: '/auth/error', // Error code passed in query string as ?error=
-    // verifyRequest: '/auth/verify-request', // Used for check email page
-    // newUser: null // If set, new users will be directed here on first sign in
+    // verifyRequest: '/auth/verify-request', // (used for check email message)
+    // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
   },
+
   session: {
     jwt: true,
     maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
   },
 
+  jwt: {
+    secret: process.env.SECRET,
+  },
   callbacks: {
-    // async signIn(user, account, profile) { return true },
-    // async redirect(url, baseUrl) { return baseUrl },
-    // async session(session, user) { return session },
-    // async jwt(token, user, account, profile, isNewUser) { return token }
+    // async signIn({ user, account, profile, email, credentials }) {
+    //   return true;
+    // },
+    // async redirect({ url, baseUrl }) { return baseUrl },
+    async session({ session, user, token }) {
+      session.user = token.user;
+      // session.accessToken = token.accessToken;
+      return session;
+    },
+    async jwt({ token, user, account, profile, isNewUser }) {
+      if (user ? true : false && typeof user !== "undefined") {
+        const getUser: {
+          id: string;
+          name: string | null;
+          email: string | null;
+          image: string | null;
+          displayName: string;
+        } | null = await prisma.user.findUnique({
+          where: { id: user?.id },
+          select: {
+            id: true,
+            name: true,
+            displayName: true,
+            email: true,
+            image: true,
+          },
+        });
+
+        token.user = getUser;
+      }
+      // if (account?.accessToken) {
+      //   token.accessToken = account.accessToken;
+      // }
+      return token;
+    },
   },
   events: {
-    // async signIn(message) { /* on successful sign in */ },
+    // async signIn({user}) { /* on successful sign in */ },
     // async signOut(message) { /* on signout */ },
     // async createUser(message) { /* user created */ },
     // async updateUser(message) { /* user updated - e.g. their email was verified */ },
@@ -62,9 +77,9 @@ const options = {
     // async session(message) { /* session is active */ },
     // async error(message) { /* error in authentication flow */ }
   },
-  //Set to false
-  debug: true,
-};
 
-export default (req: NextApiRequest, res: NextApiResponse) =>
-  NextAuth(req, res, options);
+  //Set to false
+  // debug: process.env.NODE_ENV === "development",
+  debug: false,
+  theme: "light",
+});

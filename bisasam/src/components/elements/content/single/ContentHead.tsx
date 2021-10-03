@@ -8,21 +8,28 @@ import DeleteForeverRoundedIcon from "@material-ui/icons/DeleteForeverRounded";
 import BlockRoundedIcon from "@material-ui/icons/BlockRounded";
 import { OperationVariables, useMutation } from "@apollo/client";
 import { DELETE_POST } from "../../../../graphql/mutations";
+import { useSession } from "next-auth/react";
+import Moment from "react-moment";
+import { Stringifier } from "postcss";
+import { SubscriptionButtonLink } from "../../profile/SubscribtionButton";
 interface ContentHeadProps {
   img: string;
-  name: string;
   userId: string;
   contentId: string;
   displayName: string;
+  time: string;
+  subscribed: string;
 }
 
 const ContentHead: React.FC<ContentHeadProps> = ({
   img,
-  name,
   userId,
   contentId,
   displayName,
+  time,
+  subscribed,
 }) => {
+  const { data: session } = useSession();
   const router = useRouter();
 
   const [deletePost] = useMutation<any, OperationVariables>(DELETE_POST);
@@ -43,16 +50,40 @@ const ContentHead: React.FC<ContentHeadProps> = ({
         src={img}
         className=" ml-4 mr-4"
         alt="User Avatar"
-        click={() => router.push(`/u/${userId}`)}
+        click={() =>
+          router.push(
+            `/u/${encodeURIComponent(
+              decodeURIComponent(
+                // @ts-ignore
+                displayName
+              ).replace(/\s+/g, "")
+            )}`
+          )
+        }
       />
       <div className="flex flex-row w-full h-full items-center justify-evenly">
         <div className="flex flex-col w-full h-auto items-start text-justify">
           <p className="text-lg font-semibold text-button mr-1">
             {displayName}
           </p>
-          <p className="text-button text-opacity-40 text-base">@{name}</p>
+
+          <Moment className="text-button text-opacity-40 text-base" fromNow>
+            {time}
+          </Moment>
         </div>
 
+        {subscribed !== "isCurrentUser" && userId !== session?.user?.id && (
+          <SubscriptionButtonLink
+            className=""
+            status={subscribed}
+            currentUserId={
+              !!session && typeof session.user?.id === "string"
+                ? session?.user?.id
+                : ""
+            }
+            userId={userId}
+          />
+        )}
         <ButtonDropdown
           icon={
             <MoreHorizRoundedIcon fontSize="default" className="text-button" />
@@ -61,7 +92,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
           size="small"
           className="mx-5"
         >
-          {userId === window.sessionStorage.getItem("UID") && (
+          {userId === session?.user?.id && (
             <DropdownItem
               icon={<DeleteForeverRoundedIcon fontSize="default" />}
               text="Delete"
@@ -73,7 +104,7 @@ const ContentHead: React.FC<ContentHeadProps> = ({
               }}
             />
           )}
-          {userId === window.sessionStorage.getItem("UID") && (
+          {userId !== session?.user?.id && (
             <DropdownItem
               icon={<BlockRoundedIcon fontSize="default" />}
               text="Block User"

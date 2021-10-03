@@ -10,6 +10,7 @@ import { SCContext } from "../../templates/ContentPage/ContentPage";
 
 const SingleContent: React.FC = () => {
   const tempData = React.useContext(SCContext);
+  // @ts-ignore
   const contentData = tempData.getSingleUserContent;
 
   const { loading, error, data } = useQuery(GET_CONTENT_LIKE_STATUS, {
@@ -24,10 +25,11 @@ const SingleContent: React.FC = () => {
       <div className="flex flex-col w-full h-full bg-primary-800 pt-1 rounded-8">
         <ContentHead
           img={contentData.user.image}
-          name={contentData.user.name}
           userId={contentData.userId}
           contentId={contentData.id}
           displayName={contentData.user.displayName}
+          time={contentData.created_at}
+          subscribed={contentData.user.subscribed}
         />
         <ContentBody
           text={contentData.content_text}
@@ -39,7 +41,6 @@ const SingleContent: React.FC = () => {
           userId={contentData.userId}
           commentAmount={contentData.numComments}
           likeAmount={contentData.numLikes}
-          time={contentData.created_at}
           liked={data?.getContentLikeStatus?.favourite}
         />
       </div>

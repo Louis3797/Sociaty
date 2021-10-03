@@ -6,10 +6,16 @@ import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 import Button from "../../elements/button/Button";
 import { InputField } from "../../elements/input/InputField";
 import SingleUserAvatar from "../../elements/UserAvatar/SingleUserAvatar";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import { UPDATE_PROFILE } from "../../../graphql/mutations";
-import { OperationVariables, useMutation } from "@apollo/client";
+import {
+  OperationVariables,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import { useSnackbar, VariantType } from "notistack";
+import { CHECK_FOR_AVAILABLE_USERNAME } from "../../../graphql/querys";
 
 export interface EditProfileModalProps {
   className?: string;
@@ -86,15 +92,20 @@ interface EPModalBodyProps {
   bio: string | null;
 }
 
+interface Result {
+  checkForAvailableUsername: number;
+}
+
 const EPModalBody: React.FC<EPModalBodyProps> = ({
   bannerUri,
   displayedName,
   bio,
 }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
   const [bUri, setbUri] = useState<string>(bannerUri === null ? "" : bannerUri);
   const [dName, setdName] = useState<string>(displayedName);
-  const [newBio, setNewBio] = useState<string>(bio);
+  const [newBio, setNewBio] = useState<string>(bio ? bio : "");
+  const [error, setError] = useState<boolean>(false);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -106,11 +117,36 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
     UPDATE_PROFILE
   );
 
+  const [checkAvailability, { called, loading, data }] = useLazyQuery<
+    Result,
+    OperationVariables
+  >(CHECK_FOR_AVAILABLE_USERNAME);
   const handleError = () => {
     return bUri.length > 255 || dName.length > 25 || newBio.length > 160;
   };
 
-  const handleSubmit = async (event) => {
+  function handleValidation(): void {
+    checkAvailability({
+      variables: {
+        displayName: dName,
+      },
+    });
+    console.log(data);
+    if (
+      data?.checkForAvailableUsername === 0 ||
+      dName === window.sessionStorage.getItem("UNAME")
+    ) {
+      setError(false);
+      handleSubmit();
+    } else if (
+      // @ts-ignore
+      data?.checkForAvailableUsername >= 1 &&
+      dName != window.sessionStorage.getItem("UNAME")
+    ) {
+      setError(true);
+    }
+  }
+  const handleSubmit = async () => {
     await updateProfile({
       variables: {
         userId: window.sessionStorage.getItem("UID"),
@@ -119,32 +155,39 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
         bannerUrl: bUri,
       },
     });
+    window.sessionStorage.setItem("UNAME", dName);
+    window.location.href = `/u/${dName}`;
     handleAlert("success");
-    event.preventDefault();
   };
 
   return (
     <div className="flex flex-col items-start justify-center w-full h-full py-4 px-3">
       <div className="flex flex-row w-full items-center justify-start">
         <SingleUserAvatar
-          src={session.user.image}
+          src={
+            session && typeof session.user?.image === "string"
+              ? session.user.image
+              : ""
+          }
           size="big"
           alt="Current User Avatar"
           className="mr-4"
         />
         <div className="flex flex-col w-full items-start justify-start">
           <p className="text-xl font-semibold text-primary-200">
-            @{session.user.name}
+            @
+            {session && typeof session.user?.name === "string"
+              ? session.user.name
+              : ""}
           </p>
           <p className="text-base font-semibold text-primary-200">
-            {session.user.email}
+            {session && typeof session.user?.email === "string"
+              ? session.user.email
+              : ""}
           </p>
         </div>
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex  flex-col w-full h-full items-start justify-center bg-transparent relative space-y-5 mt-5"
-      >
+      <div className="flex  flex-col w-full h-full items-start justify-center bg-transparent relative space-y-5 mt-5">
         <InputField
           name="bannerUri-input"
           counter={255}
@@ -157,15 +200,22 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
           }}
           rows={4}
         />
-        <InputField
-          name="displayName-input"
-          counter={25}
-          label="Username"
-          value={dName}
-          onChange={(e) => {
-            setdName(e.target.value);
-          }}
-        />
+        <div className="flex flex-col w-full h-full">
+          <InputField
+            name="displayName-input"
+            counter={25}
+            label="Username"
+            value={dName}
+            onChange={(e) => {
+              setdName(e.target.value);
+            }}
+          />
+          {error && (
+            <p className="text-error text-sm">
+              Your username is already in use, please choose another one
+            </p>
+          )}
+        </div>
         <InputField
           name="status-input"
           counter={160}
@@ -180,15 +230,16 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
         <div className="flex w-full h-full justify-end flex-row">
           <Button
             size="big"
-            onClick={() => {}}
+            onClick={() => {
+              handleValidation();
+            }}
             className=""
             disabled={handleError()}
             variant="primary"
             text="Save"
-            type="submit"
           />
         </div>
-      </form>
+      </div>
     </div>
   );
 };

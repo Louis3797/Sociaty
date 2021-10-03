@@ -34,7 +34,8 @@ const CommentItems: React.FC<CommentItemsProps> = ({
         <LikeButton
           size="big"
           onClick={() => {
-            likeHandler(like, sessionStorage.getItem("UID"), commentId);
+            // @ts-ignore
+            likeHandler(like, window.sessionStorage.getItem("UID"), commentId);
             if (like) {
               setnumLikes(numLikes - 1);
             } else {

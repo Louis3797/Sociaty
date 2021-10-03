@@ -10,7 +10,6 @@ interface ContentItemListProps {
   liked: boolean;
   contentId: string;
   userId: string;
-  time: string;
 }
 
 const ContentItemList: React.FC<ContentItemListProps> = ({
@@ -19,7 +18,6 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
   liked,
   contentId,
   userId,
-  time,
 }) => {
   const [like, setlike] = useState(liked);
   const [likeHandler] = useHandleContentLike();
@@ -45,9 +43,6 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
           <p className="font-bold mr-1">{numLikes}</p>
           <p className="text-primary-200">{'"Gefällt-mir" Angaben'}</p>
         </div>
-        <Moment className="text-button text-opacity-40 text-base px-4" fromNow>
-          {time}
-        </Moment>
       </div>
       <div className="items-center justify-around flex flex-row w-full h-7">
         <ShareButton
@@ -60,6 +55,7 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
         <LikeButton
           size="big"
           onClick={() => {
+            // @ts-ignore
             likeHandler(like, sessionStorage.getItem("UID"), contentId);
             if (like) {
               setnumLikes(numLikes - 1);

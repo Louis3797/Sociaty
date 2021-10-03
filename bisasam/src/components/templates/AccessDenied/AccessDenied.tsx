@@ -1,12 +1,12 @@
-import { signIn } from "next-auth/client";
+import { signIn } from "next-auth/react";
 import React from "react";
 
 const AccessDenied: React.FC = () => {
   return (
-    <div>
+    <div className="flex flex-col w-full h-full items-center justify-center">
       <h1>Access Denied</h1>
       <button type="submit" onClick={() => signIn()}>
-        Sign in to get Access
+        <span>Sign in to get Access</span>
       </button>
     </div>
   );

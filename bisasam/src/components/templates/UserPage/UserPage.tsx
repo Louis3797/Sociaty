@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { RootProps } from "../../../pages/u/[id]";
+import React, { useState } from "react";
+import { UserpageContext } from "../../../context/userpageContext";
+import { RootProps } from "../../../pages/u/[name]";
 import MainLayout from "../../layouts/MainLayout";
 import ProfileContent from "../../modules/profile/ProfileContent";
 import ProfileHeader from "../../modules/profile/ProfileHeader";
@@ -10,12 +11,7 @@ interface UserPageProps {
 }
 
 const UserPage: React.FC<UserPageProps> = ({ data }) => {
-  const [userdata, setuserdata] = useState(null);
-
-  useEffect(() => {
-    setuserdata(data.getUserData);
-  }, [data]);
-
+  const [userdata, setUserdata] = useState<Object>(data.getUserData);
   return (
     <MainLayout
       rightPanel={
@@ -25,19 +21,11 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
       }
     >
       <div className="flex flex-col w-full items-center bg-transparent h-auto">
-        <ProfileHeader
-          name={userdata?.name}
-          img={userdata?.image}
-          displayName={userdata?.displayName}
-          bannerUrl={userdata?.bannerUrl}
-          bio={userdata?.bio ? userdata?.bio : "Hey im new here"}
-        />
-        <ProfileInfoBox
-          follower={userdata?.numFollowers}
-          follows={userdata?.numFollowing}
-          posts={userdata?.numContributions}
-        />
-        <ProfileContent />
+        <UserpageContext.Provider value={[userdata, setUserdata]}>
+          <ProfileHeader />
+          <ProfileInfoBox />
+          <ProfileContent />
+        </UserpageContext.Provider>
       </div>
     </MainLayout>
   );

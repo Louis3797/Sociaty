@@ -16,7 +16,7 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
   return (
     <button
       {...props}
-      className={`focus:outline-none text-primary-100 underline text-md ${className}`}
+      className={`focus:outline-none text-primary-100 text-md ${className}`}
     >
       {text}
     </button>

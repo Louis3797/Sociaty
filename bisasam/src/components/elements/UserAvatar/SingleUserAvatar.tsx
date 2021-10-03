@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, ImgHTMLAttributes } from "react";
+import React, { DetailedHTMLProps, ImgHTMLAttributes } from "react";
 
 type SingleUserAvatarProps = DetailedHTMLProps<
   ImgHTMLAttributes<HTMLImageElement>,
@@ -8,7 +8,7 @@ type SingleUserAvatarProps = DetailedHTMLProps<
   size: "big" | "small";
   className?: string;
   alt: string;
-  click?: (event) => void;
+  click?: (event: React.MouseEvent<HTMLImageElement>) => void;
 };
 
 const sizeClassnames = {
@@ -24,6 +24,7 @@ const SingleUserAvatar: React.FC<SingleUserAvatarProps> = ({
   click,
 }) => {
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       onClick={click}
       src={src}

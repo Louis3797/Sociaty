@@ -8,7 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -22,7 +22,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/pages/api/auth/[...nextauth].js", "src/tests/Register.test.js", "src/tests/Index.test.js", "next.config.js", "src/components/elements/ProfileH.eadertsx", "src/lib/apolloClient.js"  ],
+, "src/pages/api/auth/[...nextauth].js", "src/tests/Register.test.js", "src/tests/Index.test.js", "next.config.js", "src/components/elements/ProfileH.eadertsx", "src/lib/apolloClient.ts", "tests/Index.test.spec"  ],
   "exclude": [
     "node_modules"
   ],

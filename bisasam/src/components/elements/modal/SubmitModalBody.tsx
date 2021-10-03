@@ -1,12 +1,12 @@
 import React from "react";
-import { useSession } from "next-auth/client";
+import { useSession } from "next-auth/react";
 import ButtonIcon from "../button/ButtonIcon";
 import SingleUserAvatar from "../UserAvatar/SingleUserAvatar";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 import { usePickedGif } from "../../../globals-stores/usePickedGif";
 
 interface SubmitModalBodyProps {
-  onTextChange: (e) => void;
+  onTextChange: (e: React.FormEvent<HTMLTextAreaElement>) => void;
   img: string;
   gif: string;
   textValue: string;
@@ -18,14 +18,18 @@ const SubmitModalBody: React.FC<SubmitModalBodyProps> = ({
   gif,
   textValue,
 }) => {
-  const [session] = useSession();
+  const { data: session } = useSession();
 
   const setGifUrl = usePickedGif((state) => state.setGifUrl);
   return (
     <div className="flex flex-row justify-start p-3 border-b border-primary-300 h-auto">
       <SingleUserAvatar
         size="small"
-        src={session.user?.image}
+        src={
+          !!session && typeof session.user?.image === "string"
+            ? session.user?.image
+            : ""
+        }
         className="mrs-4"
         alt="UserImg"
       />
@@ -38,6 +42,7 @@ const SubmitModalBody: React.FC<SubmitModalBodyProps> = ({
         />
         {gif.length > 0 && (
           <div className="relative h-auto w-auto">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={gif}
               alt="submit-gif"

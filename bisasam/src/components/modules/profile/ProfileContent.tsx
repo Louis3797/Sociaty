@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
 import { ApolloError } from "apollo-server-micro";
@@ -6,11 +7,6 @@ import React, { useEffect, useState } from "react";
 import { GET_USER_CONTENT } from "../../../graphql/querys";
 import ContentEmptyState from "../content/ContentEmptyState";
 import ListContent from "../content/ListContent";
-
-export interface Hashtags {
-  id?: string;
-  text: string;
-}
 
 export interface Content {
   id: string;
@@ -22,7 +18,6 @@ export interface Content {
   numComments: number;
   gif_url: string;
   favourite?: boolean;
-  tags?: Hashtags;
   __typename: string;
 }
 
@@ -45,8 +40,6 @@ interface QueryProps {
   error: ApolloError;
 }
 
-export interface ProfileContentProps {}
-
 const LoadingState: React.FC = () => {
   return (
     <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-10">
@@ -55,43 +48,56 @@ const LoadingState: React.FC = () => {
   );
 };
 
+export interface ProfileContentProps {}
+
 const ProfileContent: React.FC<ProfileContentProps> = () => {
   const router = useRouter();
 
-  const [userContent, setuserContent] = useState(null);
-  const { id } = router.query;
+  const { name } = router.query;
 
   const { loading, error, data } = useQuery<QueryProps>(GET_USER_CONTENT, {
     variables: {
-      userId: id,
+      displayName: name,
       currentUserId: window.sessionStorage.getItem("UID"),
     },
   });
+  const [userContent, setuserContent] = useState(data?.getUserContent);
 
   useEffect(() => {
     setuserContent(data?.getUserContent);
-  }, [data]);
+    return userContent;
+  }, [data, userContent]);
 
-  const content = userContent?.content.map((content) => {
-    return (
-      <ListContent
-        key={content.id}
-        userId={userContent?.id}
-        contentId={content.id}
-        displayName={userContent?.displayName}
-        name={userContent?.name}
-        userImg={userContent?.image}
-        text={content.content_text}
-        likeAmount={content.numLikes}
-        commentAmount={content.numComments}
-        liked={content.favourite}
-        createdAt={content.created_at}
-        gifUrl={content.gif_url}
-      />
-    );
-  });
+  const content = userContent?.content.map(
+    (content: {
+      id: React.Key | null | undefined;
+      content_text: string | undefined;
+      numLikes: number;
+      numComments: number;
+      favourite: boolean;
+      created_at: string;
+      gif_url: string | undefined;
+    }) => {
+      return (
+        <ListContent
+          key={content.id}
+          userId={userContent?.id}
+          contentId={content.id}
+          displayName={userContent?.displayName}
+          name={userContent?.name}
+          userImg={userContent?.image}
+          text={content.content_text}
+          likeAmount={content.numLikes}
+          commentAmount={content.numComments}
+          liked={content.favourite}
+          createdAt={content.created_at}
+          gifUrl={content.gif_url}
+        />
+      );
+    }
+  );
   return (
-    <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-10">
+    <div className="flex flex-col w-full h-full bg-transparent items-center justify-start mt-5">
       {error ? (
         <h1>Error</h1>
       ) : loading ? (

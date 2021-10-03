@@ -57,6 +57,7 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
           <LikeButton
             size="small"
             onClick={() => {
+              // @ts-ignore
               likeHandler(like, sessionStorage.getItem("UID"), contentId);
               if (like) {
                 setnumLikes(numLikes - 1);

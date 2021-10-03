@@ -1,11 +1,23 @@
 import prisma from "../../lib/prismaClient";
 import { ApolloServer, gql } from "apollo-server-micro";
+// @ts-ignore
 import { GraphQLDate, GraphQLTime, GraphQLDateTime } from "graphql-iso-date";
-import { useCurrentUser } from "../../globals-stores/useCurrentUser";
-import { getCsrfToken, getSession } from "next-auth/client";
+import {
+  Content,
+  Comment,
+  Hashtag,
+  Prisma,
+  User,
+  User_liked_content,
+  UserFollows,
+  PrismaPromise,
+  User_liked_comment,
+} from "@prisma/client";
+import { GraphQLScalarType } from "graphql";
 
 const typeDefs = gql`
   scalar GraphQLDateTime
+  scalar Void
 
   type Content {
     id: ID!
@@ -101,6 +113,7 @@ const typeDefs = gql`
     numFollowers: Int!
     online: Boolean
     numContributions: Int!
+    subscribed: String!
     content: [Content]
     comments: [Comment]
     messages: [Message]
@@ -135,12 +148,16 @@ const typeDefs = gql`
   }
 
   type Query {
-    getUserID(email: String!): User!
-    getUserData(id: String!): User!
-    getUserContent(userId: String!, currentUserId: String!): User!
-    getSingleUserContent(userId: String!, contentId: String!): Content
+    getUserData(displayName: String!, currentUserId: String!): User
+    getUserContent(displayName: String!, currentUserId: String!): User!
+    getSingleUserContent(
+      userId: String!
+      contentId: String!
+      currentUserId: String!
+    ): Content
     getCommentsOfContent(contentId: String!, currentUserId: String!): [Comment]
     getContentLikeStatus(contentId: String!, currentUserId: String!): Content!
+    checkForAvailableUsername(displayName: String!): Int!
   }
 
   type Mutation {
@@ -163,20 +180,50 @@ const typeDefs = gql`
     deleteComment(contentId: String!, commentId: String!): String!
     createCommentLike(userId: String!, commentId: String!): String!
     deleteCommentLike(userId: String!, commentId: String!): String!
+    handleSubscription(
+      userId: String!
+      currentUserId: String!
+      currentStatus: Boolean!
+    ): String!
   }
 `;
 
+const voidScalar = new GraphQLScalarType({
+  name: "Void",
+
+  description: "Represents NULL values",
+
+  serialize() {
+    return null;
+  },
+
+  parseValue() {
+    return null;
+  },
+
+  parseLiteral() {
+    return null;
+  },
+});
+
 const resolvers = {
+  Void: voidScalar,
   Content: {
-    favourite: async (parent, _args, context, info) => {
-      const data = await prisma.user_liked_content.findUnique({
-        where: {
-          userId_content_id: {
-            userId: info.variableValues.currentUserId,
-            content_id: parent.id,
+    favourite: async (
+      parent: { id: string },
+      _args: any,
+      context: any,
+      info: { variableValues: { currentUserId: string } }
+    ) => {
+      const data: User_liked_content | null =
+        await prisma.user_liked_content.findUnique({
+          where: {
+            userId_content_id: {
+              userId: info.variableValues.currentUserId,
+              content_id: parent.id,
+            },
           },
-        },
-      });
+        });
 
       if (data === null) {
         return false;
@@ -186,7 +233,12 @@ const resolvers = {
     },
   },
   Comment: {
-    favourite: async (parent, _args, context, info) => {
+    favourite: async (
+      parent: { id: string },
+      _args: any,
+      context: any,
+      info: { variableValues: { currentUserId: string } }
+    ) => {
       const data = await prisma.user_liked_comment.findUnique({
         where: {
           userId_comment_id: {
@@ -203,26 +255,60 @@ const resolvers = {
       }
     },
   },
-  Query: {
-    getUserID: (parent, _args, context, info) => {
-      return prisma.user.findUnique({
-        where: {
-          email: _args.email,
-        },
-      });
+  User: {
+    subscribed: async (
+      parent: { id: string },
+      _args: any,
+      context: any,
+      info: { variableValues: { currentUserId: string } }
+    ): Promise<string> => {
+      if (parent.id === info.variableValues.currentUserId) {
+        return "isCurrentUser";
+      } else {
+        const data = await prisma.userFollows.findUnique({
+          where: {
+            followerId_followingId: {
+              followerId: info.variableValues.currentUserId,
+              followingId: parent.id,
+            },
+          },
+        });
+        if (data === null) {
+          return "false";
+        } else {
+          return "true";
+        }
+      }
     },
-    getUserData: (parent, _args, context, info) => {
-      return prisma.user.findUnique({
+  },
+  Query: {
+    getUserData: async (
+      parent: any,
+      _args: { displayName: string },
+      context: any,
+      info: any
+    ): Promise<User | null> => {
+      return await prisma.user.findFirst({
         where: {
-          id: _args.id,
+          displayName: _args.displayName,
         },
       });
     },
 
-    getUserContent: (parent, _args, context, info) => {
-      return prisma.user.findUnique({
+    getUserContent: async (
+      parent: any,
+      _args: { displayName: string },
+      context: any,
+      info: any
+    ): Promise<
+      | (User & {
+          content: Content[];
+        })
+      | null
+    > => {
+      return await prisma.user.findFirst({
         where: {
-          id: _args.userId,
+          displayName: _args.displayName,
         },
         include: {
           content: {
@@ -233,8 +319,18 @@ const resolvers = {
         },
       });
     },
-    getSingleUserContent: (parent, _args, context, info) => {
-      return prisma.content.findUnique({
+    getSingleUserContent: async (
+      parent: any,
+      _args: { contentId: string },
+      context: any,
+      info: any
+    ): Promise<
+      | (Content & {
+          user: User;
+        })
+      | null
+    > => {
+      return await prisma.content.findUnique({
         where: {
           id: _args.contentId,
         },
@@ -243,8 +339,18 @@ const resolvers = {
         },
       });
     },
-    getCommentsOfContent: (parent, _args, context, info) => {
-      return prisma.comment.findMany({
+    getCommentsOfContent: async (
+      parent: any,
+      _args: { contentId: string },
+      context: any,
+      info: any
+    ): Promise<
+      | (Comment & {
+          user: User;
+        })[]
+      | null
+    > => {
+      return await prisma.comment.findMany({
         where: {
           content_id: _args.contentId,
         },
@@ -256,19 +362,46 @@ const resolvers = {
         },
       });
     },
-    getContentLikeStatus: (parent, _args, context, info) => {
-      console.log(parent);
-      return prisma.content.findUnique({
+    getContentLikeStatus: async (
+      parent: any,
+      _args: { contentId: string },
+      context: any,
+      info: any
+    ): Promise<Content | null> => {
+      return await prisma.content.findUnique({
         where: {
           id: _args.contentId,
+        },
+      });
+    },
+    checkForAvailableUsername: async (
+      parent: any,
+      _args: { displayName: string },
+      context: any,
+      info: any
+    ): Promise<number> => {
+      return await prisma.user.count({
+        where: {
+          displayName: _args.displayName,
         },
       });
     },
   },
 
   Mutation: {
-    postContent: async (parent, _args, context, info) => {
-      const [createPost, updatedContributions] = await prisma.$transaction([
+    postContent: async (
+      parent: any,
+      _args: {
+        content_text: string;
+        userId: string;
+        gif_url: string;
+      },
+      context: any,
+      info: any
+    ): Promise<Content> => {
+      const [createPost, updatedContributions] = await prisma.$transaction<
+        [Prisma.Prisma__ContentClient<Content>, Prisma.Prisma__UserClient<User>]
+      >([
         prisma.content.create({
           data: {
             content_text: _args.content_text,
@@ -287,10 +420,63 @@ const resolvers = {
         }),
       ]);
 
+      // Split Text in Words an safe in Array
+      let temp: string[] = _args.content_text.split(" ");
+
+      // Check if item is an Hashtag
+      function isHashtag(text: string): boolean {
+        if (
+          text.substr(0, 1) === "#" &&
+          text.length > 1 &&
+          text.slice(1).includes("#") === false
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      // Check if item exists
+      async function checkForExistence(text: string): Promise<boolean> {
+        let temp: Hashtag | null = await prisma.hashtag.findUnique({
+          where: {
+            text: text,
+          },
+        });
+        return temp === null ? false : true;
+      }
+
+      temp.forEach(async (item) => {
+        if (isHashtag(item)) {
+          if ((await checkForExistence(item)) === false) {
+            await prisma.hashtag.create({
+              data: {
+                text: item,
+              },
+            });
+          }
+          await prisma.contentOnHashtag.create({
+            data: {
+              hashtagText: item,
+              contentId: createPost?.id,
+            },
+          });
+        }
+      });
+
       return createPost;
     },
-    createContentLike: async (parent, _args, context, info) => {
-      const [createLike, updatedContent] = await prisma.$transaction([
+    createContentLike: async (
+      parent: any,
+      _args: { userId: string; contentId: string },
+      context: any,
+      info: any
+    ): Promise<User_liked_content> => {
+      const [createLike, updatedContent] = await prisma.$transaction<
+        [
+          Prisma.Prisma__User_liked_contentClient<User_liked_content>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.user_liked_content.create({
           data: {
             userId: _args.userId,
@@ -308,8 +494,18 @@ const resolvers = {
       ]);
       return createLike;
     },
-    deleteContentLike: async (parent, _args, context, info) => {
-      const [deleteLike, updatedContent] = await prisma.$transaction([
+    deleteContentLike: async (
+      parent: any,
+      _args: { userId: string; contentId: string },
+      context: any,
+      info: any
+    ): Promise<Prisma.BatchPayload> => {
+      const [deleteLike, updatedContent] = await prisma.$transaction<
+        [
+          PrismaPromise<Prisma.BatchPayload>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.user_liked_content.deleteMany({
           where: {
             userId: _args.userId,
@@ -327,8 +523,24 @@ const resolvers = {
       ]);
       return deleteLike;
     },
-    postComment: async (parent, _args, context, info) => {
-      const [createComment, updatedContent] = await prisma.$transaction([
+    postComment: async (
+      parent: any,
+      _args: {
+        contentId: string;
+        userId: string;
+        comment_text: string;
+        gif_url: string;
+      },
+      context: any,
+      info: any
+    ) => {
+      // Create Comment and update the number of Comments of the Content
+      const [createComment, updatedContent] = await prisma.$transaction<
+        [
+          Prisma.Prisma__CommentClient<Comment>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.comment.create({
           data: {
             content_id: _args.contentId,
@@ -346,10 +558,64 @@ const resolvers = {
           },
         }),
       ]);
+
+      // Split Text in Words an safe in Array
+      let temp: string[] = _args.comment_text.split(" ");
+
+      // Check if item is an Hashtag
+      function isHashtag(text: string): boolean {
+        if (
+          text.substr(0, 1) === "#" &&
+          text.length > 1 &&
+          text.slice(1).includes("#") === false
+        ) {
+          return true;
+        }
+        return false;
+      }
+
+      // Check if item exists
+      async function checkForExistence(text: string): Promise<boolean> {
+        let temp: Hashtag | null = await prisma.hashtag.findUnique({
+          where: {
+            text: text,
+          },
+        });
+        return temp === null ? false : true;
+      }
+
+      temp.forEach(async (item) => {
+        if (isHashtag(item)) {
+          if ((await checkForExistence(item)) === false) {
+            await prisma.hashtag.create({
+              data: {
+                text: item,
+              },
+            });
+          }
+          await prisma.commentOnHashtag.create({
+            data: {
+              hashtagText: item,
+              commentId: createComment?.id,
+            },
+          });
+        }
+      });
+
       return createComment;
     },
 
-    updateProfile: async (parent, _args, context, info) => {
+    updateProfile: async (
+      parent: any,
+      _args: {
+        userId: string;
+        bio: string;
+        displayName: string;
+        bannerUrl: string;
+      },
+      context: any,
+      info: any
+    ): Promise<string> => {
       await prisma.user.update({
         where: { id: _args.userId },
         data: {
@@ -361,8 +627,15 @@ const resolvers = {
       return "Ok";
     },
 
-    deletePost: async (parent, _args, context, info) => {
-      const [deletePost, updateUser] = await prisma.$transaction([
+    deletePost: async (
+      parent: any,
+      _args: { contentId: string; userId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
+      const [deletePost, updateUser] = await prisma.$transaction<
+        [Prisma.Prisma__ContentClient<Content>, Prisma.Prisma__UserClient<User>]
+      >([
         prisma.content.delete({
           where: { id: _args.contentId },
         }),
@@ -376,8 +649,18 @@ const resolvers = {
 
       return "Ok";
     },
-    deleteComment: async (parent, _args, context, info) => {
-      const [deleteComment, updatePost] = await prisma.$transaction([
+    deleteComment: async (
+      parent: any,
+      _args: { commentId: string; contentId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
+      const [deleteComment, updatePost] = await prisma.$transaction<
+        [
+          Prisma.Prisma__CommentClient<Comment>,
+          Prisma.Prisma__ContentClient<Content>
+        ]
+      >([
         prisma.comment.delete({
           where: { id: _args.commentId },
         }),
@@ -391,8 +674,18 @@ const resolvers = {
 
       return "Ok";
     },
-    createCommentLike: async (parent, _args, context, info) => {
-      const [createLike, updatedComment] = await prisma.$transaction([
+    createCommentLike: async (
+      parent: any,
+      _args: { userId: string; commentId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
+      const [createLike, updatedComment] = await prisma.$transaction<
+        [
+          Prisma.Prisma__User_liked_commentClient<User_liked_comment>,
+          Prisma.Prisma__CommentClient<Comment>
+        ]
+      >([
         prisma.user_liked_comment.create({
           data: {
             userId: _args.userId,
@@ -410,8 +703,18 @@ const resolvers = {
       ]);
       return "Ok";
     },
-    deleteCommentLike: async (parent, _args, context, info) => {
-      const [deleteLike, updatedComment] = await prisma.$transaction([
+    deleteCommentLike: async (
+      parent: any,
+      _args: { userId: string; commentId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
+      const [deleteLike, updatedComment] = await prisma.$transaction<
+        [
+          PrismaPromise<Prisma.BatchPayload>,
+          Prisma.Prisma__CommentClient<Comment>
+        ]
+      >([
         prisma.user_liked_comment.deleteMany({
           where: {
             userId: _args.userId,
@@ -429,11 +732,88 @@ const resolvers = {
       ]);
       return "Ok";
     },
+    handleSubscription: async (
+      parent: any,
+      _args: { currentStatus: boolean; currentUserId: string; userId: string },
+      context: any,
+      info: any
+    ): Promise<string> => {
+      if (_args.currentStatus) {
+        const [handleSub, updateCurrentUser, updateFollowedUser] =
+          await prisma.$transaction<
+            [
+              Prisma.Prisma__UserFollowsClient<UserFollows>,
+              Prisma.Prisma__UserClient<User>,
+              Prisma.Prisma__UserClient<User>
+            ]
+          >([
+            prisma.userFollows.delete({
+              where: {
+                followerId_followingId: {
+                  followerId: _args.currentUserId,
+                  followingId: _args.userId,
+                },
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.currentUserId,
+              },
+              data: {
+                numFollowing: { decrement: 1 },
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.userId,
+              },
+              data: {
+                numFollowers: { decrement: 1 },
+              },
+            }),
+          ]);
+        return "Unfollowed";
+      } else {
+        const [handleSub, updateCurrentUser, updateFollowedUser] =
+          await prisma.$transaction<
+            [
+              Prisma.Prisma__UserFollowsClient<UserFollows>,
+              Prisma.Prisma__UserClient<User>,
+              Prisma.Prisma__UserClient<User>
+            ]
+          >([
+            prisma.userFollows.create({
+              data: {
+                followerId: _args.currentUserId,
+                followingId: _args.userId,
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.currentUserId,
+              },
+              data: {
+                numFollowing: { increment: 1 },
+              },
+            }),
+            prisma.user.update({
+              where: {
+                id: _args.userId,
+              },
+              data: {
+                numFollowers: { increment: 1 },
+              },
+            }),
+          ]);
+        return "Followed";
+      }
+    },
   },
 };
 
-const apolloServer = new ApolloServer({
+const apolloServer: ApolloServer = new ApolloServer({
   typeDefs,
+  // @ts-ignore
   resolvers,
   context: ({ req, res }) => ({ req, res }),
 });

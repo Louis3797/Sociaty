@@ -1,27 +1,31 @@
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialActions"]
-}
-
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                 String    @id @default(cuid())
-  userId             String
-  providerType       String
-  providerId         String
-  providerAccountId  String
-  refreshToken       String?
-  accessToken        String?
-  accessTokenExpires DateTime?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  user               User      @relation(fields: [userId], references: [id])
+generator client {
+  provider = "prisma-client-js"
+}
 
-  @@unique([providerId, providerAccountId])
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Content {
@@ -73,38 +77,34 @@ model Message {
 
 model Session {
   id           String   @id @default(cuid())
+  sessionToken String   @unique
   userId       String
   expires      DateTime
-  sessionToken String   @unique
-  accessToken  String   @unique
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Hashtag {
-  id               String             @id @default(cuid())
-  text             String
+  text             String             @unique
   CommentOnHashtag CommentOnHashtag[]
   ContentOnHashtag ContentOnHashtag[]
 }
 
 model CommentOnHashtag {
-  hashtagId String
-  commentId String
-  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onUpdate: Cascade)
-  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hashtagText String
+  commentId   String
+  hashtag     Hashtag @relation(fields: [hashtagText], references: [text], onUpdate: Cascade)
+  comment     Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([hashtagId, commentId])
+  @@id([hashtagText, commentId])
 }
 
 model ContentOnHashtag {
-  hashtagId String
-  contentId String
-  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onUpdate: Cascade)
-  content   Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hashtagText String
+  contentId   String
+  hashtag     Hashtag @relation(fields: [hashtagText], references: [text], onUpdate: Cascade)
+  content     Content @relation(fields: [contentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([hashtagId, contentId])
+  @@id([hashtagText, contentId])
 }
 
 model Comment {
@@ -150,15 +150,24 @@ model User_liked_content {
   @@index(fields: [userId, content_id], name: "LikedContentIndex")
 }
 
+model UserFollows {
+  follower    User   @relation("follower", fields: [followerId], references: [id])
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id])
+  followingId String
+
+  @@id([followerId, followingId])
+}
+
 model User {
   id               String               @id @default(cuid())
-  name             String
-  displayName      String?              @default(cuid()) @db.VarChar(25)
-  email            String               @unique
+  name             String?
+  displayName      String               @unique @default(cuid()) @db.VarChar(25)
+  email            String?              @unique
   emailVerified    DateTime?
   created_at       DateTime             @default(now()) @db.Timestamp(0)
   updatedAt        DateTime             @updatedAt
-  image            String               @db.VarChar(255)
+  image            String?              @db.VarChar(255)
   bannerUrl        String?              @db.VarChar(255)
   bio              String?              @db.VarChar(255)
   numFollowing     Int                  @default(0)
@@ -171,23 +180,20 @@ model User {
   liked_content    User_liked_content[]
   in_group         User_in_group[]
   liked_comments   User_liked_comment[]
-  blockedBy        User[]               @relation("user1_blocked_user2", references: [id])
-  blocked          User[]               @relation("user1_blocked_user2", references: [id])
-  followedBy       User[]               @relation("user1_follows_user2", references: [id])
-  following        User[]               @relation("user1_follows_user2", references: [id])
+  blockedBy        User[]               @relation("UserBlocked", references: [id])
+  blocked          User[]               @relation("UserBlocked", references: [id])
+  followedBy       UserFollows[]        @relation("follower")
+  following        UserFollows[]        @relation("following")
   accounts         Account[]
   sessions         Session[]
 
 
 }
 
-model VerificationRequest {
-  id         String   @id @default(cuid())
+model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 
   @@unique([identifier, token])
 }

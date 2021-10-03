@@ -1,17 +1,8 @@
 import { gql } from "@apollo/client";
 
-export const GET_USER_ID = gql`
-  query GET_USER_ID($email: String!) {
-    getUserID(email: $email) {
-      id
-      name
-    }
-  }
-`;
-
 export const GET_USER = gql`
-  query GET_USER($id: String!) {
-    getUserData(id: $id) {
+  query GET_USER($displayName: String!, $currentUserId: String!) {
+    getUserData(displayName: $displayName, currentUserId: $currentUserId) {
       id
       name
       displayName
@@ -23,13 +14,14 @@ export const GET_USER = gql`
       numFollowers
       numContributions
       online
+      subscribed
     }
   }
 `;
 
 export const GET_USER_CONTENT = gql`
-  query GET_USER_CONTENT($userId: String!, $currentUserId: String!) {
-    getUserContent(userId: $userId, currentUserId: $currentUserId) {
+  query GET_USER_CONTENT($displayName: String!, $currentUserId: String!) {
+    getUserContent(displayName: $displayName, currentUserId: $currentUserId) {
       id
       name
       displayName
@@ -56,8 +48,16 @@ export const GET_USER_CONTENT = gql`
 `;
 
 export const GET_SINGLE_CONTENT = gql`
-  query GET_SINGLE_CONTENT($userId: String!, $contentId: String!) {
-    getSingleUserContent(userId: $userId, contentId: $contentId) {
+  query GET_SINGLE_CONTENT(
+    $userId: String!
+    $contentId: String!
+    $currentUserId: String!
+  ) {
+    getSingleUserContent(
+      userId: $userId
+      contentId: $contentId
+      currentUserId: $currentUserId
+    ) {
       id
       content_text
       userId
@@ -76,6 +76,7 @@ export const GET_SINGLE_CONTENT = gql`
         name
         displayName
         image
+        subscribed
       }
     }
   }
@@ -105,5 +106,11 @@ export const GET_CONTENT_LIKE_STATUS = gql`
     getContentLikeStatus(contentId: $contentId, currentUserId: $currentUserId) {
       favourite
     }
+  }
+`;
+
+export const CHECK_FOR_AVAILABLE_USERNAME = gql`
+  query CHECK_FOR_AVAILABLE_USERNAME($displayName: String!) {
+    checkForAvailableUsername(displayName: $displayName)
   }
 `;

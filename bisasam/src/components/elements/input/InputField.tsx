@@ -20,6 +20,7 @@ export const InputField: React.FC<
   }, [props.value]);
 
   const ring =
+    // @ts-ignore
     text.length > counter ? `ring-1 ring-error` : `ring-1 ring-primary-300`;
   return (
     <div

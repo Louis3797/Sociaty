@@ -1,7 +1,9 @@
 import { OperationVariables, useMutation } from "@apollo/client";
 import { CREATE_COMMENT_LIKE, DELETE_COMMENT_LIKE } from "../graphql/mutations";
 
-export const useHandleCommentLike = () => {
+export const useHandleCommentLike = (): readonly [
+  (isLiked: boolean, userId: string, commentId: string) => void
+] => {
   const [deleteLike] = useMutation<any, OperationVariables>(
     DELETE_COMMENT_LIKE
   );
