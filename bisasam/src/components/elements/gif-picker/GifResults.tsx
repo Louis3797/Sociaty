@@ -1,4 +1,5 @@
 import { GifsResult, GiphyFetch } from "@giphy/js-fetch-api";
+import { IGif } from "@giphy/js-types";
 import { CircularProgress } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { usePickedGif } from "../../../globals-stores/usePickedGif";
@@ -20,44 +21,41 @@ const GifResults: React.FC<GifResultsProps> = ({ gifText, close }) => {
   const API_KEY: string = process.env.GIPHY_API_KEY
     ? process.env.GIPHY_API_KEY
     : "";
-  const [gifObj, setgifObj] = useState<any>();
+  const [gifObj, setGifObj] = useState<IGif[] | null>(null);
   const setGifUrl = usePickedGif((state) => state.setGifUrl);
   const gf = new GiphyFetch(API_KEY);
 
   async function searchForGif() {
     let gifs;
-    try {
-      if (gifText.length === 0) {
-        gifs = await gf.trending({
-          limit: 30,
-          type: "gifs",
-          rating: "pg",
-        });
-      } else {
-        gifs = await gf.search(gifText, {
-          sort: "relevant",
-          lang: "en",
-          limit: 30,
-          type: "gifs",
-          rating: "pg",
-        });
-      }
-
-      setgifObj(gifs.data);
-    } catch (error) {
-      console.error(`search`, error);
+    if (gifText.length === 0) {
+      gifs = await gf.trending({
+        limit: 30,
+        type: "gifs",
+        rating: "pg",
+      });
+    } else {
+      gifs = await gf.search(gifText, {
+        sort: "relevant",
+        lang: "en",
+        limit: 30,
+        type: "gifs",
+        rating: "pg",
+      });
     }
+
+    setGifObj(gifs.data);
   }
+
   useEffect(() => {
     searchForGif();
-  }, [gifText]);
+  }, []);
 
   const add = (url: string) => {
     setGifUrl(url);
     close();
   };
 
-  const gifResults = gifObj.map(
+  const gifResults = gifObj?.map(
     (
       gif: {
         images: {
@@ -81,9 +79,13 @@ const GifResults: React.FC<GifResultsProps> = ({ gifText, close }) => {
   );
   return (
     <div className="flex flex-row flex-wrap w-full bg-transparent h-full">
-      {gifResults.length === 0 ? <GifLoadingState /> : gifResults}
+      {gifResults?.length === 0 ? <GifLoadingState /> : gifResults}
     </div>
   );
 };
 
 export default GifResults;
+
+function useAsync(arg0: () => Promise<void>, arg1: never[]) {
+  throw new Error("Function not implemented.");
+}
