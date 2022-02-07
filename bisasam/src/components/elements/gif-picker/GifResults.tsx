@@ -48,7 +48,7 @@ const GifResults: React.FC<GifResultsProps> = ({ gifText, close }) => {
 
   useEffect(() => {
     searchForGif();
-  }, []);
+  });
 
   const add = (url: string) => {
     setGifUrl(url);
