@@ -6,7 +6,7 @@ export interface InputProps extends React.ComponentPropsWithoutRef<"input"> {
 }
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, textarea, rows, ...props }, ref) => {
-    const style = `w-full text-secondary placeholder-primary-200 focus:outline-none bg-transparent`;
+    const style = `w-full text-primary-100 placeholder-primary-200 focus:outline-none bg-transparent`;
 
     return textarea ? (
       <textarea
@@ -16,7 +16,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         rows={rows}
       />
     ) : (
-      <input type="text" className={style} ref={ref} {...props} />
+      <input
+        type="text"
+        className={`${style} ${className}`}
+        ref={ref}
+        {...props}
+      />
     );
   }
 );

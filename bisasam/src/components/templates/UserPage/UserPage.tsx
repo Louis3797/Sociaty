@@ -16,7 +16,7 @@ const UserPage: React.FC<UserPageProps> = ({ data }) => {
     <MainLayout
       rightPanel={
         <div className="w-full h-full">
-          <h1>Hallooo</h1>
+          <h1>Test</h1>
         </div>
       }
     >
