@@ -4,6 +4,7 @@ import { GET_COMMENTS_OF_CONTENT } from "../../../../graphql/querys";
 import Comment from "../../../modules/comment/Comment";
 import CommentEmptyState from "../../../modules/comment/CommentEmptyState";
 import { CircularProgress } from "@material-ui/core";
+import { useSession } from "next-auth/react";
 
 interface QueryProps {
   getCommentsOfContent: any;
@@ -24,12 +25,13 @@ const LoadingState: React.FC = () => {
 };
 
 const CommentsBox: React.FC<CommentsBoxProps> = ({ contentId }) => {
+  const { data: session } = useSession();
   const { loading, error, data } = useQuery<QueryProps>(
     GET_COMMENTS_OF_CONTENT,
     {
       variables: {
         contentId: contentId,
-        currentUserId: window.sessionStorage.getItem("UID"),
+        currentUserId: session?.user?.id,
       },
     }
   );
