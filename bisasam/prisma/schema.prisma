@@ -4,7 +4,8 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 model Account {
@@ -33,7 +34,7 @@ model Content {
   content_text     String?              @db.Text
   created_at       DateTime             @default(now()) @db.Timestamp(0)
   userId           String
-  image_id         String?
+  image_id         String?              @unique
   image            Image?               @relation(fields: [image_id], references: [id])
   user             User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   liked            User_liked_content[]
@@ -51,6 +52,8 @@ model Group {
   admin_id          String
   messages          Message[]
   user_in_group     User_in_group[]
+
+  @@fulltext([group_name])
 }
 
 model Image {
@@ -66,7 +69,7 @@ model Message {
   text_message String?  @db.VarChar(255)
   userId       String
   group_id     String
-  image_id     String?
+  image_id     String?  @unique
   gif_url      String?
   users        User     @relation(fields: [userId], references: [id])
   chat         Group    @relation(fields: [group_id], references: [id])
@@ -87,6 +90,8 @@ model Hashtag {
   text             String             @unique
   CommentOnHashtag CommentOnHashtag[]
   ContentOnHashtag ContentOnHashtag[]
+
+  @@fulltext([text])
 }
 
 model CommentOnHashtag {
@@ -187,7 +192,7 @@ model User {
   accounts         Account[]
   sessions         Session[]
 
-
+  @@fulltext([name])
 }
 
 model VerificationToken {
