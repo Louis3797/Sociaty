@@ -193,6 +193,7 @@ model User {
   sessions         Session[]
 
   @@fulltext([name])
+  @@fulltext([displayName])
 }
 
 model VerificationToken {
