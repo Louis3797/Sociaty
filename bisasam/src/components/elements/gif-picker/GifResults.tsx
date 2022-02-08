@@ -43,6 +43,7 @@ const GifResults: React.FC<GifResultsProps> = ({ gifText, close }) => {
       });
     }
 
+    //@ts-ignore
     setGifObj(gifs.data);
   }
 
