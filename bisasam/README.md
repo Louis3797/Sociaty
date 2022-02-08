@@ -1,6 +1,6 @@
 # For what is this Folder ?
 
-The Bisasam Folder is for the NExt.js Frontend
+The Bisasam Folder is for the Next.js Frontend
 
 ## Getting Started
 

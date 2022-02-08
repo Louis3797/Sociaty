@@ -16,19 +16,23 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+  
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/pages/api/auth/[...nextauth].js", "src/tests/Register.test.js", "src/tests/Index.test.js", "next.config.js", "src/components/elements/ProfileH.eadertsx", "src/lib/apolloClient.ts", "tests/Index.test.spec"  ],
+, "src/pages/api/auth/[...nextauth].js", "src/tests/Register.test.js", "src/tests/Index.test.js", "next.config.js", "src/components/elements/ProfileH.eadertsx", "src/lib/apolloClient.ts", "__test__/Index.test.spec"  ],
   "exclude": [
     "node_modules"
   ],
-  "baseUrl": ".",
+  "baseUrl": "./",
   "paths": {
-    "@/components/*": ["components/*"],
-    "@/styles/*": ["styles/*"],
+    "@components/*": ["components/*"],
+    "@modules/*": ["src/components/modules/*"],
+    "@styles/*": ["styles/*"],
+    "@hooks/*": ["hooks/*"]
+
   }
 }

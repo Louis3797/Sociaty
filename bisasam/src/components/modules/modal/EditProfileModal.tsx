@@ -26,7 +26,7 @@ export interface EditProfileModalProps {
   bio: string | null;
 }
 
-const EditProfileModal: React.SFC<EditProfileModalProps> = ({
+const EditProfileModal: React.FC<EditProfileModalProps> = ({
   className,
   isOpen,
   onRequestClose,
@@ -131,7 +131,6 @@ const EPModalBody: React.FC<EPModalBodyProps> = ({
         displayName: dName,
       },
     });
-    console.log(data);
     if (
       data?.checkForAvailableUsername === 0 ||
       dName === window.sessionStorage.getItem("UNAME")

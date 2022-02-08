@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { RefetchQueriesFunction, useMutation } from "@apollo/client";
 import React, { useState } from "react";
 import { POST_COMMENT } from "../../../graphql/mutations";
 import ArrowUpwardRoundedIcon from "@material-ui/icons/ArrowUpwardRounded";
@@ -11,6 +11,7 @@ import GifPicker from "../../modules/picker/GifPicker";
 import { usePickedGif } from "../../../globals-stores/usePickedGif";
 import CloseRoundedIcon from "@material-ui/icons/CloseRounded";
 import { useSnackbar, VariantType } from "notistack";
+import { GET_COMMENTS_OF_CONTENT } from "../../../graphql/querys";
 
 export interface CommentFieldProps {
   contentId: string;
@@ -22,8 +23,17 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
   const [text, settext] = useState("");
   const [gif, setgif] = useState("");
   const [showGifModal, setshowGifModal] = useState(false);
-
-  const [createComment] = useMutation(POST_COMMENT);
+  const [createComment] = useMutation(POST_COMMENT, {
+    refetchQueries: [
+      {
+        query: GET_COMMENTS_OF_CONTENT,
+        variables: {
+          contentId: contentId,
+          currentUserId: window.sessionStorage.getItem("UID"),
+        },
+      },
+    ],
+  });
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -44,14 +54,17 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
       settext("");
       setgif("");
       handleAlert("success");
-      window.location.reload();
     }
   }
 
   return (
     <div className="flex flex-row h-auto items-center justify-center w-full bg-primary-800 p-2 rounded-5">
       <SingleUserAvatar
-        src={!!session ? session.user?.image : ""}
+        src={
+          !!session && typeof session.user?.image === "string"
+            ? session.user?.image
+            : ""
+        }
         size="small"
         alt="User Image"
       />

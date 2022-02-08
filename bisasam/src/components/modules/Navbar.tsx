@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import ForumRoundedIcon from "@material-ui/icons/ForumRounded";
 import AddIcon from "@material-ui/icons/Add";
 import { SubmitModal } from "./modal/SubmitModal";
-import { Session } from "next-auth";
+import SearchBar from "../elements/searchbar/SearchBar";
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession();
@@ -25,6 +25,9 @@ const Navbar: React.FC = () => {
             sociaty
           </p>
         </Link>
+        <div className="w-2/5">
+          <SearchBar className="" placeholder="# to search for Hashtags" />
+        </div>
         <div className="flex flex-row w-15 h-8 items-center justify-between bg-primary-900 top-0 relative">
           <Link href={"/chats"} passHref>
             <ForumRoundedIcon fontSize="small" />
@@ -38,7 +41,7 @@ const Navbar: React.FC = () => {
           <SingleUserAvatar
             size="small"
             src={
-              !!session && typeof session.user?.image === "string"
+              session && typeof session.user?.image === "string"
                 ? session.user?.image
                 : ""
             }

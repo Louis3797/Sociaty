@@ -38,7 +38,9 @@ const ContentItemList: React.FC<ContentItemListProps> = ({
           <ShareButton
             size="small"
             onClick={() => {
-              navigator.clipboard.writeText(window.location.href);
+              navigator.clipboard.writeText(
+                "http://localhost:3000/contribution/" + contentId
+              );
               handleAlert("info");
             }}
           />
