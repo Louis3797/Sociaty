@@ -16,7 +16,7 @@ interface DataListProps {
 const DataList: React.FC<DataListProps> = ({ user }) => {
   return (
     <div className="flex flex-col h-auto bg-primary-600 w-full rounded-5 transition duration-1000 ease-in-out ring-1 ring-primary-300">
-      {user.length > 0 ? (
+      {!!user && user.length > 0 ? (
         user.map((u) => (
           <ResultItem
             name={u.name}

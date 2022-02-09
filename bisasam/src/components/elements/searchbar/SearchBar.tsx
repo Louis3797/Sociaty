@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "../input/Input";
 
 import SearchRoundedIcon from "@material-ui/icons/SearchRounded";
@@ -32,7 +32,7 @@ const SearchBar: React.FC<
     // if yes than query for user data
 
     if (searchQuery.length > 2) {
-      setTimeout(() => getUser({ variables: { name: searchQuery } }), 1000);
+      getUser({ variables: { name: searchQuery } });
     }
   }, [getUser, searchQuery]);
 
