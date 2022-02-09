@@ -158,6 +158,7 @@ const typeDefs = gql`
     getCommentsOfContent(contentId: String!, currentUserId: String!): [Comment]
     getContentLikeStatus(contentId: String!, currentUserId: String!): Content!
     checkForAvailableUsername(displayName: String!): Int!
+    searchForUser(name: String!): [User]
   }
 
   type Mutation {
@@ -383,6 +384,27 @@ const resolvers = {
       return await prisma.user.count({
         where: {
           displayName: _args.displayName,
+        },
+      });
+    },
+    // -------------------------------------------------------------
+    // search for username query
+    searchForUser: async (
+      parent: any,
+      _args: { name: string },
+      context: any,
+      info: any
+    ): Promise<User[]> => {
+      return await prisma.user.findMany({
+        take: 10,
+        where: {
+          name: {
+            search: _args.name + "*",
+          },
+
+          displayName: {
+            search: _args.name + "*",
+          },
         },
       });
     },
