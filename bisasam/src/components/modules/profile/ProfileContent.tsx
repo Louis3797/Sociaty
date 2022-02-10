@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { GET_USER_CONTENT } from "../../../graphql/querys";
 import ContentEmptyState from "../content/ContentEmptyState";
 import ListContent from "../content/ListContent";
+import { useSession } from "next-auth/react";
 
 export interface Content {
   id: string;
@@ -52,13 +53,14 @@ export interface ProfileContentProps {}
 
 const ProfileContent: React.FC<ProfileContentProps> = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const { name } = router.query;
 
   const { loading, error, data } = useQuery<QueryProps>(GET_USER_CONTENT, {
     variables: {
       displayName: name,
-      currentUserId: window.sessionStorage.getItem("UID"),
+      currentUserId: session.user.id,
     },
   });
   const [userContent, setuserContent] = useState(data?.getUserContent);

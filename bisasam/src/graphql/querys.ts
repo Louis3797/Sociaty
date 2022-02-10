@@ -114,3 +114,15 @@ export const CHECK_FOR_AVAILABLE_USERNAME = gql`
     checkForAvailableUsername(displayName: $displayName)
   }
 `;
+
+export const SEARCH_FOR_USER = gql`
+  query SEARCH_FOR_USER($name: String!) {
+    searchForUser(name: $name) {
+      id
+      name
+      displayName
+      image
+      online
+    }
+  }
+`;

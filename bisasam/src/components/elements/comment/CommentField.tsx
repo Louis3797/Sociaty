@@ -29,7 +29,7 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
         query: GET_COMMENTS_OF_CONTENT,
         variables: {
           contentId: contentId,
-          currentUserId: window.sessionStorage.getItem("UID"),
+          currentUserId: session?.user?.id,
         },
       },
     ],
@@ -47,7 +47,7 @@ const CommentField: React.FC<CommentFieldProps> = ({ contentId }) => {
         variables: {
           contentId: contentId.toString(),
           comment_text: text,
-          userId: window.sessionStorage.getItem("UID"),
+          userId: session?.user?.id,
           gif_url: gif,
         },
       });

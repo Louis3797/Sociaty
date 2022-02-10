@@ -192,7 +192,7 @@ model User {
   accounts         Account[]
   sessions         Session[]
 
-  @@fulltext([name])
+  @@fulltext([name, displayName])
 }
 
 model VerificationToken {
